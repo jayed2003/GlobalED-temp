@@ -30,6 +30,19 @@
   --color-accent-800: #92400e;
   --color-accent-900: #78350f;
   --color-accent-950: #451a03;
+
+  /* Animations */
+  --animate-marquee: marquee 40s linear infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
