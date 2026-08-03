@@ -21,12 +21,33 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd",
+  ),
   title: {
     default: "GlobalEd | IELTS & Study Abroad Consultancy",
     template: "%s | GlobalEd",
   },
   description:
     "GlobalEd is a trusted study abroad and IELTS preparation consultancy in Bangladesh, guiding students to top destinations including the UK, USA, Canada, Australia, and Europe.",
+  openGraph: {
+    type: "website",
+    siteName: "GlobalEd",
+    title: "GlobalEd | IELTS & Study Abroad Consultancy",
+    description:
+      "Study abroad and IELTS preparation consultancy in Bangladesh — 13 destinations, 300+ partner universities, free counselling.",
+    images: [
+      {
+        url: "/images/og-default.svg",
+        width: 1200,
+        height: 630,
+        alt: "GlobalEd — IELTS & Study Abroad Consultancy",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({
