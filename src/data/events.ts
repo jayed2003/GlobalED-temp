@@ -9,7 +9,7 @@ export const events: EventItem[] = [
     date: "2026-09-12",
     time: "10:00 AM – 5:00 PM",
     venue: "GlobalEd Dhanmondi Branch, Dhaka",
-    bannerImage: "/images/events/expo-2026.jpg",
+    bannerImage: "/images/events/expo-2026.svg",
     description:
       "Meet representatives from 40+ partner universities across the UK, Canada, Australia, and Europe. On-spot assessments, scholarship guidance, and free IELTS counselling — all under one roof.",
   },
@@ -20,7 +20,7 @@ export const events: EventItem[] = [
     date: "2026-09-20",
     time: "9:00 AM – 1:00 PM",
     venue: "GlobalEd Banani Branch, Dhaka",
-    bannerImage: "/images/events/mock-test.jpg",
+    bannerImage: "/images/events/mock-test.svg",
     description:
       "Sit a full British Council-format IELTS mock test (Listening, Reading, Writing) and receive a same-day band score estimate with one-to-one feedback from our chief instructor.",
   },
@@ -31,10 +31,10 @@ export const events: EventItem[] = [
     date: "2026-07-18",
     time: "11:00 AM – 4:00 PM",
     venue: "GlobalEd Dhanmondi Branch, Dhaka",
-    bannerImage: "/images/events/uk-admission-day.jpg",
+    bannerImage: "/images/events/uk-admission-day.svg",
     description:
       "Over 200 students met delegates from 15 UK universities, with on-spot conditional offers issued to eligible candidates.",
-    gallery: ["/images/events/uk-day-1.jpg", "/images/events/uk-day-2.jpg"],
+    gallery: ["/images/events/uk-day-1.svg", "/images/events/uk-day-2.svg"],
   },
   {
     slug: "australia-education-fair-jun-2026",
@@ -43,9 +43,9 @@ export const events: EventItem[] = [
     date: "2026-06-27",
     time: "10:00 AM – 5:00 PM",
     venue: "GlobalEd Chattogram Branch",
-    bannerImage: "/images/events/aus-fair.jpg",
+    bannerImage: "/images/events/aus-fair.svg",
     description:
       "Our Chattogram branch hosted 10 Australian university representatives for a day of counselling, application fee waivers, and scholarship assessments.",
-    gallery: ["/images/events/aus-fair-1.jpg", "/images/events/aus-fair-2.jpg"],
+    gallery: ["/images/events/aus-fair-1.svg", "/images/events/aus-fair-2.svg"],
   },
 ];

@@ -6,7 +6,7 @@ export const courses: Course[] = [
     slug: "ielts-regular",
     title: "IELTS Regular Course",
     category: "ielts",
-    image: "/images/courses/ielts-regular.jpg",
+    image: "/images/courses/ielts-regular.svg",
     overview:
       "Our flagship IELTS preparation program covering all four modules — Listening, Reading, Writing, and Speaking — with weekly mock tests and individual feedback.",
     curriculum: [
@@ -25,7 +25,7 @@ export const courses: Course[] = [
     slug: "ielts-executive-class",
     title: "IELTS Executive Class",
     category: "ielts",
-    image: "/images/courses/ielts-executive.jpg",
+    image: "/images/courses/ielts-executive.svg",
     overview:
       "Designed for working professionals — the same complete IELTS preparation compressed into evening and weekend sessions that fit around your job.",
     curriculum: [
@@ -43,7 +43,7 @@ export const courses: Course[] = [
     slug: "ielts-master-class",
     title: "IELTS Master Class",
     category: "ielts",
-    image: "/images/courses/ielts-master.jpg",
+    image: "/images/courses/ielts-master.svg",
     overview:
       "An intensive band 7+ bootcamp for students who already have the basics — advanced techniques, daily practice, and mentor-led review sessions.",
     curriculum: [
@@ -62,7 +62,7 @@ export const courses: Course[] = [
     slug: "spoken-english",
     title: "Spoken English",
     category: "english",
-    image: "/images/courses/spoken-english.jpg",
+    image: "/images/courses/spoken-english.svg",
     overview:
       "Build real speaking confidence for interviews, presentations, and everyday conversation — from nervous beginner to fluent communicator.",
     curriculum: [
@@ -80,7 +80,7 @@ export const courses: Course[] = [
     slug: "one-to-one",
     title: "One-to-One",
     category: "english",
-    image: "/images/courses/one-to-one.jpg",
+    image: "/images/courses/one-to-one.svg",
     overview:
       "Private, fully personalized English or IELTS coaching with a dedicated instructor — your schedule, your pace, your goals.",
     curriculum: [
@@ -98,7 +98,7 @@ export const courses: Course[] = [
     slug: "language-club",
     title: "Language Club",
     category: "english",
-    image: "/images/courses/language-club.jpg",
+    image: "/images/courses/language-club.svg",
     overview:
       "A weekly practice community for learners who want to keep their English sharp — debates, movie discussions, book clubs, and games.",
     curriculum: [
@@ -116,7 +116,7 @@ export const courses: Course[] = [
     slug: "japanese-language",
     title: "Japanese Language",
     category: "other-languages",
-    image: "/images/courses/japanese.jpg",
+    image: "/images/courses/japanese.svg",
     overview:
       "JLPT-focused Japanese courses from N5 to N3 — for students targeting Japan, and professionals working with Japanese companies.",
     curriculum: [

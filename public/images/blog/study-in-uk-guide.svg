@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e5b89"/><stop offset="1" stop-color="#5d90b8"/></linearGradient></defs>
+<rect width="1200" height="675" fill="url(#g)"/>
+<text x="50%" y="47%" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="75" font-weight="700" fill="rgba(255,255,255,0.92)">Study in UK Guide</text>
+<text x="50%" y="59%" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="38" fill="rgba(255,255,255,0.65)">GlobalEd Blog</text>
+</svg>

@@ -9,7 +9,7 @@ export const posts: BlogPost[] = [
     slug: "study-in-uk-from-bangladesh-guide-2026",
     title: "Study in the UK from Bangladesh: Complete Guide for 2026",
     category: "country-wise",
-    coverImage: "/images/blog/study-in-uk-guide.jpg",
+    coverImage: "/images/blog/study-in-uk-guide.svg",
     excerpt:
       "Everything Bangladeshi students need to know about UK admissions in 2026 — entry requirements, costs, CAS, and the 2-year Graduate Route.",
     content:
@@ -22,7 +22,7 @@ export const posts: BlogPost[] = [
     slug: "sweden-scholarships-for-bangladeshi-students",
     title: "Top 5 Scholarships in Sweden for Bangladeshi Students",
     category: "scholarships",
-    coverImage: "/images/blog/sweden-scholarships.jpg",
+    coverImage: "/images/blog/sweden-scholarships.svg",
     excerpt:
       "From the Swedish Institute Scholarship to university tuition waivers — here are the five funding routes our students use most.",
     content:
@@ -34,7 +34,7 @@ export const posts: BlogPost[] = [
     slug: "ielts-writing-task-2-band-7-strategies",
     title: "IELTS Writing Task 2: 7 Strategies That Take You to Band 7",
     category: "ielts",
-    coverImage: "/images/blog/ielts-writing-band7.jpg",
+    coverImage: "/images/blog/ielts-writing-band7.svg",
     excerpt:
       "Most Bangladeshi candidates get stuck at 6.0 in Writing. These seven examiner-backed strategies fix the most common mistakes.",
     content:
@@ -46,7 +46,7 @@ export const posts: BlogPost[] = [
     slug: "ielts-vs-pte-vs-duolingo-which-test",
     title: "IELTS vs PTE vs Duolingo: Which English Test Should You Take?",
     category: "ielts",
-    coverImage: "/images/blog/ielts-vs-pte.jpg",
+    coverImage: "/images/blog/ielts-vs-pte.svg",
     excerpt:
       "A practical comparison of cost, acceptance, difficulty, and result time — so you pick the right test for your destination.",
     content:
@@ -58,7 +58,7 @@ export const posts: BlogPost[] = [
     slug: "how-to-improve-english-speaking-confidence",
     title: "How to Improve Your English Speaking Confidence in 90 Days",
     category: "english",
-    coverImage: "/images/blog/speaking-confidence.jpg",
+    coverImage: "/images/blog/speaking-confidence.svg",
     excerpt:
       "A realistic 90-day plan used in our Spoken English course — daily habits that turn hesitant speakers into confident communicators.",
     content:
@@ -70,7 +70,7 @@ export const posts: BlogPost[] = [
     slug: "study-in-malaysia-affordable-pathway",
     title: "Study in Malaysia: The Most Affordable Quality Pathway from Bangladesh",
     category: "country-wise",
-    coverImage: "/images/blog/study-in-malaysia.jpg",
+    coverImage: "/images/blog/study-in-malaysia.svg",
     excerpt:
       "Tuition from BDT 4 lakh per year, English-taught programs, and twinning degrees with UK and Australian universities.",
     content:
