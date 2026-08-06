@@ -4,8 +4,8 @@ import type { Branch } from "@/types";
 /** Branch card with contact details and an embedded Google Map. */
 export default function BranchCard({ branch }: { branch: Branch }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
-      <div className="p-6">
+    <div className="flex h-full flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+      <div className="flex-grow p-6">
         <h3 className="font-heading text-lg font-semibold text-primary-900">{branch.name}</h3>
         <ul className="mt-4 space-y-3 text-sm text-neutral-600">
           <li className="flex gap-2.5">
@@ -42,7 +42,7 @@ export default function BranchCard({ branch }: { branch: Branch }) {
         src={branch.mapEmbedUrl}
         title={`Map — GlobalEd ${branch.name} branch`}
         loading="lazy"
-        className="h-56 w-full border-0"
+        className="h-56 w-full shrink-0 border-0"
         referrerPolicy="no-referrer-when-downgrade"
         allowFullScreen
       />

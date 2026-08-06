@@ -18,7 +18,8 @@ export default function Navbar() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-neutral-100 bg-white/95 shadow-sm backdrop-blur">
+    <>
+      <header className="sticky top-0 z-50 border-b border-neutral-100 bg-white/95 shadow-sm backdrop-blur">
       <Container>
         <nav className="flex h-16 items-center justify-between lg:h-20" aria-label="Main navigation">
           {/* Logo */}
@@ -98,9 +99,11 @@ export default function Navbar() {
           </div>
         </nav>
       </Container>
+    </header>
 
-      {/* Mobile drawer */}
-      {mobileOpen && (
+    {/* Mobile drawer — rendered as a sibling of <header> so fixed inset-0
+        resolves against the viewport, not the backdrop-blurred header. */}
+    {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
           <div
             className="absolute inset-0 bg-primary-950/50"
@@ -133,14 +136,14 @@ export default function Navbar() {
                           setOpenGroup(openGroup === item.label ? null : item.label)
                         }
                         aria-expanded={openGroup === item.label}
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-medium text-neutral-800 hover:bg-primary-50"
+                        className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold text-primary-700 hover:bg-primary-50"
                       >
                         {item.label}
                         <ChevronDown
                           size={16}
                           aria-hidden
                           className={cn(
-                            "transition-transform",
+                            "shrink-0 transition-transform duration-200",
                             openGroup === item.label && "rotate-180",
                           )}
                         />
@@ -174,7 +177,7 @@ export default function Navbar() {
                     <Link
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block rounded-lg px-3 py-3 text-sm font-medium text-neutral-800 hover:bg-primary-50"
+                      className="block rounded-lg px-3 py-3 text-sm font-semibold text-neutral-800 hover:bg-primary-50"
                     >
                       {item.label}
                     </Link>
@@ -195,6 +198,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

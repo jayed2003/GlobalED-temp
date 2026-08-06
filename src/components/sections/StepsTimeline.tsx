@@ -1,5 +1,6 @@
 import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
+import Reveal from "@/components/ui/Reveal";
 
 const steps = [
   {
@@ -40,18 +41,19 @@ export default function StepsTimeline() {
         />
         <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {steps.map((step, index) => (
-            <li
-              key={step.title}
-              className="relative rounded-xl border border-neutral-200 bg-white p-6 shadow-sm"
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-700 font-heading text-lg font-bold text-white">
-                {index + 1}
-              </span>
-              <h3 className="mt-4 font-heading text-lg font-semibold text-primary-900">
-                {step.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-neutral-600">{step.description}</p>
-            </li>
+            <Reveal key={step.title} delay={index * 80}>
+              <li
+                className="relative rounded-xl border border-neutral-200 bg-white p-6 shadow-sm"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-700 font-heading text-lg font-bold text-white">
+                  {index + 1}
+                </span>
+                <h3 className="mt-4 font-heading text-lg font-semibold text-primary-900">
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-600">{step.description}</p>
+              </li>
+            </Reveal>
           ))}
         </ol>
       </Container>

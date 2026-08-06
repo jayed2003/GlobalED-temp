@@ -9,6 +9,7 @@ import EventsTeaser from "@/components/sections/EventsTeaser";
 import PartnerMarquee from "@/components/sections/PartnerMarquee";
 import CtaBanner from "@/components/sections/CtaBanner";
 import JsonLd from "@/components/ui/JsonLd";
+import Reveal from "@/components/ui/Reveal";
 import { site } from "@/data/site";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
@@ -47,11 +48,21 @@ export default function Home() {
       <ServicesGrid />
       <StepsTimeline />
       <DestinationsGrid />
-      <Testimonials />
-      <BlogsPreview />
-      <EventsTeaser />
-      <PartnerMarquee />
-      <CtaBanner />
+      <Reveal>
+        <Testimonials />
+      </Reveal>
+      <Reveal>
+        <BlogsPreview />
+      </Reveal>
+      <Reveal>
+        <EventsTeaser />
+      </Reveal>
+      <Reveal>
+        <PartnerMarquee />
+      </Reveal>
+      <Reveal>
+        <CtaBanner />
+      </Reveal>
     </>
   );
 }

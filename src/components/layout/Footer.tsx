@@ -24,9 +24,9 @@ const socials = [
 export default function Footer() {
   return (
     <footer className="bg-primary-950 text-primary-100">
-      <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <Container className="grid grid-cols-2 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {/* Brand */}
-        <div className="sm:col-span-2 lg:col-span-3 xl:col-span-1">
+        <div className="col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-1">
           <Link href="/" className="flex items-center gap-2" aria-label="GlobalEd home">
             <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-primary-800">
               <GraduationCap size={22} aria-hidden />
@@ -57,7 +57,7 @@ export default function Footer() {
         </div>
 
         {/* Destinations */}
-        <nav aria-label="Footer destinations">
+        <nav aria-label="Footer destinations" className="order-1 sm:order-none">
           <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
             Destinations
           </h3>
@@ -81,35 +81,42 @@ export default function Footer() {
         </nav>
 
         {/* Services + Courses */}
-        <nav aria-label="Footer services and courses">
-          <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
-            Services
-          </h3>
-          <ul className="mt-4 space-y-2 text-sm">
-            {services.slice(0, 4).map((s) => (
-              <li key={s.slug}>
-                <Link href={`/services/${s.slug}`} className="transition-colors hover:text-accent-300">
-                  {s.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <h3 className="mt-6 font-heading text-sm font-semibold uppercase tracking-wider text-white">
-            Courses
-          </h3>
-          <ul className="mt-4 space-y-2 text-sm">
-            {courses.slice(0, 4).map((c) => (
-              <li key={c.slug}>
-                <Link href={`/courses/${c.slug}`} className="transition-colors hover:text-accent-300">
-                  {c.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        <nav
+          aria-label="Footer services and courses"
+          className="col-span-2 order-3 grid grid-cols-2 gap-6 sm:order-none sm:col-span-1 sm:block"
+        >
+          <div>
+            <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
+              Services
+            </h3>
+            <ul className="mt-4 space-y-2 text-sm">
+              {services.slice(0, 4).map((s) => (
+                <li key={s.slug}>
+                  <Link href={`/services/${s.slug}`} className="transition-colors hover:text-accent-300">
+                    {s.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="sm:mt-6">
+            <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
+              Courses
+            </h3>
+            <ul className="mt-4 space-y-2 text-sm">
+              {courses.slice(0, 4).map((c) => (
+                <li key={c.slug}>
+                  <Link href={`/courses/${c.slug}`} className="transition-colors hover:text-accent-300">
+                    {c.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </nav>
 
         {/* Quick links */}
-        <nav aria-label="Footer quick links">
+        <nav aria-label="Footer quick links" className="order-2 sm:order-none">
           <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
             Quick Links
           </h3>
@@ -132,7 +139,7 @@ export default function Footer() {
         </nav>
 
         {/* Branches */}
-        <div>
+        <div className="col-span-2 order-4 sm:order-none sm:col-span-1">
           <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
             Our Branches
           </h3>
