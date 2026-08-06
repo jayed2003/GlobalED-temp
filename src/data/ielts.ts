@@ -1,6 +1,6 @@
 import type { IeltsContent } from "@/types";
 
-/** IELTS hub page content (placeholder — to be reviewed by the IELTS team). */
+/** IELTS hub page content from globaled.io */
 export const ielts: IeltsContent = {
   whatIsIelts: {
     title: "What is IELTS?",
@@ -15,6 +15,16 @@ export const ielts: IeltsContent = {
   whyGlobaled: {
     title: "Why take IELTS with GlobalEd?",
     usps: [
+      {
+        title: "British Council Authorized Testing Center",
+        description:
+          "We are a British Council Authorized Testing Center, where you can take your IELTS exam after proper preparation.",
+      },
+      {
+        title: "JPT Authorized Registration Center",
+        description:
+          "We are a JPT Authorized Registration Center. After completing your language courses, you can register and take the JPT exam right here at our center.",
+      },
       {
         title: "Band 7+ Instructors",
         description:

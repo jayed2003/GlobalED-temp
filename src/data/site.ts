@@ -1,25 +1,24 @@
 import type { SiteSettings } from "@/types";
 
 /**
- * Global site settings — placeholder values until the company provides
- * real contact details, social links, and statistics.
+ * Global site settings — from globaled.io
  */
 export const site: SiteSettings = {
   brandName: "GlobalEd",
   tagline: "IELTS & Study Abroad Consultancy",
-  phone: "+880 1700-000000",
-  email: "info@globaled.com.bd",
-  whatsapp: "8801700000000",
+  phone: "019555 44772",
+  email: "info@globaled.io",
+  whatsapp: "8801955544772",
   socials: {
-    facebook: "https://facebook.com/globaledbd",
-    instagram: "https://instagram.com/globaledbd",
-    linkedin: "https://linkedin.com/company/globaledbd",
-    youtube: "https://youtube.com/@globaledbd",
+    facebook: "https://facebook.com/GoWithGlobalEd",
+    instagram: "https://instagram.com/GoWithGlobalEd",
+    linkedin: "https://linkedin.com/company/GoWithGlobalEd",
+    youtube: "https://youtube.com/@GoWithGlobalEd",
   },
   stats: {
-    studentsPlaced: "5,000+",
-    partnerUniversities: "300+",
-    visaSuccessRate: "97%",
-    yearsOfExperience: "12+",
+    studentsPlaced: "500+",
+    partnerUniversities: "10+",
+    visaSuccessRate: "90%",
+    yearsOfExperience: "7+",
   },
 };

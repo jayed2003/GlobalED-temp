@@ -13,7 +13,8 @@ export default function Hero() {
             IELTS&nbsp;|&nbsp;Study Abroad
           </p>
           <h1 className="mt-5 font-heading text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-            Your Global Education Journey Starts Here
+            Invest in dreams build your career with{" "}
+            <span className="text-accent-500">GlobalED</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-primary-100">
             From IELTS preparation to university admission and visa success —

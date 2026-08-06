@@ -1,14 +1,14 @@
 import type { Organization } from "@/types";
 
-/** Placeholder organization story — replace with the company's real history. */
+/** Organization story from globaled.io */
 export const organization: Organization = {
   history: [
-    "GlobalEd began in 2013 as a small IELTS coaching centre in Dhanmondi, Dhaka, with a single classroom and a big promise: honest, transparent guidance for Bangladeshi students dreaming of studying abroad.",
-    "As our IELTS students asked for admission support, we grew into a full study abroad consultancy — adding university partnerships, visa documentation teams, and dedicated counsellors for every major destination.",
-    "Today, GlobalEd serves students from three branches across Bangladesh and has guided thousands of students into universities across the UK, USA, Canada, Australia, Europe, and Asia.",
+    "GlobalEd is a sister concern of Global Citizen Limited, an organization officially authorized by the British Council. Global Citizen Limited has been playing a vital role in IELTS registration and testing, ensuring a smooth and reliable process in coordination with the British Council.",
+    "As a sub-brand of Global Citizen Limited, GlobalEd focuses on delivering a broader range of services, including online courses, skill-based training, career counseling, corporate workshops, and visa/admission guidance. With a vision to empower learners and professionals, GlobalEd is dedicated to building pathways toward global education, career growth, and international opportunities.",
+    "Global Citizen Limited and GlobalEd work together to prepare students and professionals for global opportunities. Global Citizen Limited is an authorized partner of the British Council, providing official IELTS registration and testing services. Through GlobalEd, we offer online courses and certification programs, career counseling, visa and admission support, as well as corporate training and workshops, enabling students and professionals to gain international-level knowledge and skills.",
   ],
   mission:
-    "To make world-class education accessible to every Bangladeshi student through honest counselling, expert IELTS training, and end-to-end study abroad support.",
+    "Preparing Bangladeshi students and professionals through world-class education, modern training, and expert guidance, so they can confidently pursue global opportunities, competitive careers, and international-level success.",
   vision:
     "To be Bangladesh's most trusted education consultancy — measured not by the number of files we process, but by the number of dreams we deliver.",
   timeline: [
@@ -20,6 +20,12 @@ export const organization: Organization = {
   ],
   sisterOrganizations: [
     {
+      name: "Global Citizen Limited (GCL)",
+      description:
+        "Our parent organization — British Council authorized for IELTS registration and testing.",
+      logo: "/images/logos/sister-gcl.svg",
+    },
+    {
       name: "GlobalEd Language Club",
       description:
         "Our language training wing offering IELTS, Spoken English, and Japanese language programs.",
@@ -30,6 +36,33 @@ export const organization: Organization = {
       description:
         "A non-profit initiative providing free counselling and scholarship support to underprivileged students.",
       logo: "/images/logos/sister-foundation.svg",
+    },
+  ],
+  boardOfDirectors: [
+    {
+      name: "Professor Shamim Ara Hassan",
+      designation: "Chairman, Global Citizen LTD.",
+      photo: "/images/board/vc.svg",
+    },
+    {
+      name: "Engr. Abdul Aziz",
+      designation: "Managing Director, Global Citizen LTD.",
+      photo: "/images/board/soto-sir.svg",
+    },
+    {
+      name: "Engr. Abdul Alim",
+      designation: "Director, Global Citizen LTD.",
+      photo: "/images/board/boro-sir.svg",
+    },
+    {
+      name: "Advocate Umme Salma",
+      designation: "Director, Global Citizen LTD.",
+      photo: "/images/board/salma-mam.svg",
+    },
+    {
+      name: "Ln. Mir Abdul Alim",
+      designation: "Director, Global Citizen LTD.",
+      photo: "/images/board/alim.svg",
     },
   ],
 };

@@ -198,10 +198,17 @@ export interface SisterOrganization {
   logo: string;
 }
 
+export interface BoardMember {
+  name: string;
+  designation: string;
+  photo: string;
+}
+
 export interface Organization {
   history: string[];
   mission: string;
   vision: string;
   timeline: TimelineEntry[];
   sisterOrganizations: SisterOrganization[];
+  boardOfDirectors: BoardMember[];
 }

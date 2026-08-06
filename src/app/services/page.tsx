@@ -6,6 +6,7 @@ import FaqAccordion from "@/components/ui/FaqAccordion";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
 import { services } from "@/data/services";
+import { faqs } from "@/data/faqs";
 
 export const metadata: Metadata = {
   title: "Our Services",
@@ -13,24 +14,7 @@ export const metadata: Metadata = {
     "University admission support, scholarship guidance, documentation, visa application, pre & post departure guidance, and language support from GlobalEd Bangladesh.",
 };
 
-const faqs = [
-  {
-    q: "Is GlobalEd's counselling really free?",
-    a: "Yes — counselling, university shortlisting, and application support are completely free for students. We are compensated by our partner universities, never by hidden charges to you.",
-  },
-  {
-    q: "Which countries does GlobalEd cover?",
-    a: "We cover 13 destinations: UK, USA, Canada, Australia, New Zealand, Sweden, Finland, Denmark, Greece, Malta, Cyprus, South Korea, and Malaysia.",
-  },
-  {
-    q: "Can you help if I have a study gap?",
-    a: "Yes. Many of our successful students had study gaps. We build a strong, honest case around your work experience and motivation.",
-  },
-  {
-    q: "How long does the whole process take?",
-    a: "Typically 3–6 months from first counselling to visa decision, depending on your destination and intake. Starting early always helps.",
-  },
-];
+const serviceFaqs = faqs.slice(-4); // Last 4 are service-related FAQs
 
 export default function ServicesPage() {
   return (
@@ -55,7 +39,7 @@ export default function ServicesPage() {
         <Container className="max-w-3xl">
           <SectionHeading eyebrow="FAQs" title="Common Questions About Our Services" />
           <div className="mt-10">
-            <FaqAccordion faqs={faqs} />
+            <FaqAccordion faqs={serviceFaqs} />
           </div>
         </Container>
       </section>

@@ -12,7 +12,7 @@ import { team } from "@/data/team";
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Learn about GlobalEd — our history since 2013, our mission and vision, our sister educational organizations, and the team behind thousands of study abroad successes.",
+    "Learn about GlobalEd — our history since 2013, our mission and vision, our sister educational organizations, board of directors, and the team behind thousands of study abroad successes.",
 };
 
 export default function AboutPage() {
@@ -101,8 +101,41 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      {/* Team */}
+      {/* Board of Directors */}
       <section className="bg-primary-50 py-16 sm:py-20">
+        <Container>
+          <SectionHeading
+            eyebrow="Leadership"
+            title="Board of Directors"
+            description="The visionary leaders guiding Global Citizen Limited and GlobalEd."
+          />
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {organization.boardOfDirectors.map((member) => (
+              <div
+                key={member.name}
+                className="rounded-xl border border-neutral-200 bg-white p-6 text-center shadow-sm"
+              >
+                <div className="relative mx-auto h-24 w-24 rounded-full overflow-hidden bg-neutral-100">
+                  <Image
+                    src={member.photo}
+                    alt={`${member.name} photo`}
+                    fill
+                    className="object-cover"
+                    sizes="96px"
+                  />
+                </div>
+                <h3 className="mt-4 font-heading text-lg font-semibold text-primary-900">
+                  {member.name}
+                </h3>
+                <p className="mt-1 text-sm text-primary-600">{member.designation}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Team */}
+      <section className="py-16 sm:py-20">
         <Container>
           <SectionHeading
             eyebrow="Our Team"

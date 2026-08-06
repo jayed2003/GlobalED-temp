@@ -126,6 +126,7 @@ export default function Footer() {
               { label: "IELTS", href: "/ielts" },
               { label: "Blogs", href: "/blogs" },
               { label: "Events", href: "/events" },
+              { label: "FAQs", href: "/faqs" },
               { label: "Contact", href: "/contact" },
               { label: "Free Consultation", href: "/consultation" },
             ].map((link) => (
