@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, GraduationCap, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { navItems } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 import Container from "./Container";
@@ -23,13 +24,15 @@ export default function Navbar() {
       <Container>
         <nav className="flex h-16 items-center justify-between lg:h-20" aria-label="Main navigation">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2" aria-label="GlobalEd home">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-700 text-white">
-              <GraduationCap size={22} aria-hidden />
-            </span>
-            <span className="font-heading text-xl font-bold text-primary-800 sm:text-2xl">
-              Global<span className="text-accent-500">Ed</span>
-            </span>
+          <Link href="/" className="flex items-center" aria-label="GlobalEd home">
+            <Image
+              src="/images/logos/logo.svg"
+              alt="GlobalEd"
+              width={460}
+              height={100}
+              priority
+              className="h-8 w-auto sm:h-9"
+            />
           </Link>
 
           {/* Desktop menu */}
@@ -38,8 +41,9 @@ export default function Navbar() {
               <li key={item.label} className="group relative">
                 <Link
                   href={item.href}
+                  onClick={(e) => e.currentTarget.blur()}
                   className={cn(
-                    "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-1 rounded-md px-3 py-2 text-base font-medium transition-colors",
                     isActive(item.href)
                       ? "text-primary-700"
                       : "text-neutral-700 hover:text-primary-700",
@@ -67,6 +71,7 @@ export default function Navbar() {
                         <li key={child.href}>
                           <Link
                             href={child.href}
+                            onClick={(e) => e.currentTarget.blur()}
                             className="block rounded-lg px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-primary-50 hover:text-primary-700"
                           >
                             {child.label}
@@ -83,7 +88,7 @@ export default function Navbar() {
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
             <Link
-              href="/consultation"
+              href="/get-started"
               className="hidden rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-primary-950 shadow-sm transition-colors hover:bg-accent-400 sm:inline-block lg:px-6"
             >
               Free Consultation
@@ -112,9 +117,13 @@ export default function Navbar() {
           />
           <div className="absolute right-0 top-0 flex h-full w-80 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-neutral-100 p-5">
-              <span className="font-heading text-lg font-bold text-primary-800">
-                Global<span className="text-accent-500">Ed</span>
-              </span>
+              <Image
+                src="/images/logos/logo.svg"
+                alt="GlobalEd"
+                width={460}
+                height={100}
+                className="h-7 w-auto"
+              />
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
@@ -188,7 +197,7 @@ export default function Navbar() {
 
             <div className="p-5">
               <Link
-                href="/consultation"
+                href="/get-started"
                 onClick={() => setMobileOpen(false)}
                 className="block rounded-lg bg-accent-500 px-6 py-3 text-center text-sm font-semibold text-primary-950 hover:bg-accent-400"
               >

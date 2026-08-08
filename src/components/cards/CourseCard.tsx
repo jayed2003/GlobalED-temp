@@ -26,7 +26,7 @@ export default function CourseCard({ course }: { course: Course }) {
         )}
       </div>
       <div className="flex flex-1 flex-col p-5">
-        <span className="text-xs font-semibold uppercase tracking-wider text-primary-500">
+        <span className="font-secondary text-xs font-semibold uppercase tracking-wider text-primary-500">
           {courseCategoryLabels[course.category]}
         </span>
         <h3 className="mt-1 font-heading text-lg font-semibold text-primary-900">
@@ -44,7 +44,7 @@ export default function CourseCard({ course }: { course: Course }) {
         </div>
         <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-4">
           <span className="font-heading text-lg font-bold text-primary-700">{course.price}</span>
-          <span className="text-sm font-semibold text-accent-600 group-hover:underline">
+          <span className="text-sm font-semibold text-accent-800 group-hover:underline">
             View details
           </span>
         </div>

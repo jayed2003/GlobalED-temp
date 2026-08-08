@@ -9,7 +9,7 @@ export const destinations: Destination[] = [
     slug: "uk",
     name: "United Kingdom",
     tagline: "One-year master's degrees and a 2-year post-study work visa.",
-    heroImage: "/images/destinations/uk-hero.svg",
+    heroImage: "/images/destinations/uk-hero.jpg",
     flagImage: "/images/flags/uk.svg",
     overview:
       "The UK is the most popular destination for Bangladeshi students — home to world-ranked universities, one-year master's programs, and the Graduate Route that lets you work for two years after graduation.",
@@ -53,7 +53,7 @@ export const destinations: Destination[] = [
     slug: "usa",
     name: "United States",
     tagline: "The world's largest selection of universities and research funding.",
-    heroImage: "/images/destinations/usa-hero.svg",
+    heroImage: "/images/destinations/usa-hero.jpg",
     flagImage: "/images/flags/usa.svg",
     overview:
       "The USA offers unmatched variety — 4,000+ universities, generous assistantships for graduate students, and Optional Practical Training (OPT) that lets you work after graduation.",
@@ -97,7 +97,7 @@ export const destinations: Destination[] = [
     slug: "canada",
     name: "Canada",
     tagline: "Post-graduation work permits and a clear pathway to PR.",
-    heroImage: "/images/destinations/canada-hero.svg",
+    heroImage: "/images/destinations/canada-hero.jpg",
     flagImage: "/images/flags/canada.svg",
     overview:
       "Canada combines world-class education with immigration-friendly policies — the Post-Graduation Work Permit and Express Entry make it a top choice for students planning a future abroad.",
@@ -141,7 +141,7 @@ export const destinations: Destination[] = [
     slug: "australia",
     name: "Australia",
     tagline: "Globally ranked universities with strong post-study work rights.",
-    heroImage: "/images/destinations/australia-hero.svg",
+    heroImage: "/images/destinations/australia-hero.jpg",
     flagImage: "/images/flags/australia.svg",
     overview:
       "Australia welcomes over half a million international students with high-ranking universities, a great climate, and Temporary Graduate visas offering 2–4 years of post-study work.",
@@ -185,7 +185,7 @@ export const destinations: Destination[] = [
     slug: "new-zealand",
     name: "New Zealand",
     tagline: "High-quality education in one of the world's safest countries.",
-    heroImage: "/images/destinations/new-zealand-hero.svg",
+    heroImage: "/images/destinations/new-zealand-hero.jpg",
     flagImage: "/images/flags/new-zealand.svg",
     overview:
       "New Zealand's eight universities are all globally ranked, and its post-study work visa of up to 3 years makes it an excellent choice for students seeking quality and peace of mind.",
@@ -229,7 +229,7 @@ export const destinations: Destination[] = [
     slug: "sweden",
     name: "Sweden",
     tagline: "Innovative universities with generous scholarships for internationals.",
-    heroImage: "/images/destinations/sweden-hero.svg",
+    heroImage: "/images/destinations/sweden-hero.jpg",
     flagImage: "/images/flags/sweden.svg",
     overview:
       "Sweden offers English-taught programs at world-class universities, strong industry links, and scholarships that can cover up to 100% of tuition for Bangladeshi students.",
@@ -273,7 +273,7 @@ export const destinations: Destination[] = [
     slug: "finland",
     name: "Finland",
     tagline: "The world's best education system with early-bird scholarships.",
-    heroImage: "/images/destinations/finland-hero.svg",
+    heroImage: "/images/destinations/finland-hero.jpg",
     flagImage: "/images/flags/finland.svg",
     overview:
       "Finland's universities are famous for teaching quality and student wellbeing. Early-bird discounts and merit scholarships make it surprisingly affordable for Bangladeshi students.",
@@ -317,7 +317,7 @@ export const destinations: Destination[] = [
     slug: "denmark",
     name: "Denmark",
     tagline: "Innovation-driven education in the world's happiest country.",
-    heroImage: "/images/destinations/denmark-hero.svg",
+    heroImage: "/images/destinations/denmark-hero.jpg",
     flagImage: "/images/flags/denmark.svg",
     overview:
       "Denmark offers problem-based learning at globally respected universities, with strong career links in engineering, business, and life sciences.",
@@ -361,7 +361,7 @@ export const destinations: Destination[] = [
     slug: "greece",
     name: "Greece",
     tagline: "Affordable European degrees with a Mediterranean lifestyle.",
-    heroImage: "/images/destinations/greece-hero.svg",
+    heroImage: "/images/destinations/greece-hero.jpg",
     flagImage: "/images/flags/greece.svg",
     overview:
       "Greece is an emerging destination offering low tuition, English-taught programs, and a Schengen visa — an affordable gateway into European education.",
@@ -405,7 +405,7 @@ export const destinations: Destination[] = [
     slug: "malta",
     name: "Malta",
     tagline: "English-speaking EU destination with affordable tuition.",
-    heroImage: "/images/destinations/malta-hero.svg",
+    heroImage: "/images/destinations/malta-hero.jpg",
     flagImage: "/images/flags/malta.svg",
     overview:
       "Malta is Europe's English-speaking island nation — no language barrier, EU-recognized degrees, and a booming economy in iGaming, finance, and tourism.",
@@ -449,7 +449,7 @@ export const destinations: Destination[] = [
     slug: "cyprus",
     name: "Cyprus",
     tagline: "Budget-friendly European education with easy admission.",
-    heroImage: "/images/destinations/cyprus-hero.svg",
+    heroImage: "/images/destinations/cyprus-hero.jpg",
     flagImage: "/images/flags/cyprus.svg",
     overview:
       "Cyprus offers internationally recognized degrees at very affordable fees, with flexible entry requirements — a practical first step into European higher education.",
@@ -493,7 +493,7 @@ export const destinations: Destination[] = [
     slug: "south-korea",
     name: "South Korea",
     tagline: "High-tech education with the fully funded GKS scholarship.",
-    heroImage: "/images/destinations/south-korea-hero.svg",
+    heroImage: "/images/destinations/south-korea-hero.jpg",
     flagImage: "/images/flags/south-korea.svg",
     overview:
       "South Korea combines cutting-edge technology universities with one of Asia's best scholarships — the Global Korea Scholarship (GKS) — plus a vibrant culture students love.",
@@ -537,7 +537,7 @@ export const destinations: Destination[] = [
     slug: "malaysia",
     name: "Malaysia",
     tagline: "World-recognized degrees at a fraction of Western costs.",
-    heroImage: "/images/destinations/malaysia-hero.svg",
+    heroImage: "/images/destinations/malaysia-hero.jpg",
     flagImage: "/images/flags/malaysia.svg",
     overview:
       "Malaysia is the smart budget choice — English-taught programs, twinning degrees with UK and Australian universities, and total costs a Bangladeshi family can realistically afford.",

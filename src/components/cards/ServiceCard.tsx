@@ -31,7 +31,7 @@ export default function ServiceCard({
         <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-50 text-primary-700 transition-colors group-hover:bg-primary-700 group-hover:text-white">
           <Icon size={24} aria-hidden />
         </span>
-        <span className="font-heading text-2xl font-bold text-neutral-200 transition-colors group-hover:text-accent-500">
+        <span className="font-heading text-2xl font-bold text-neutral-200 transition-colors group-hover:text-accent-700">
           {String(index + 1).padStart(2, "0")}
         </span>
       </div>

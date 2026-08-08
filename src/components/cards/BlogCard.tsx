@@ -22,7 +22,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
       </div>
       <div className="flex flex-1 flex-col p-5">
         <div className="flex flex-wrap items-center gap-3 text-xs">
-          <span className="rounded-full bg-primary-50 px-3 py-1 font-semibold text-primary-700">
+          <span className="font-secondary rounded-full bg-primary-50 px-3 py-1 font-semibold text-primary-700">
             {blogCategoryLabels[post.category]}
           </span>
           <span className="flex items-center gap-1 text-neutral-500">

@@ -1,5 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="96" height="64" viewBox="0 0 96 64">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e5b89"/><stop offset="1" stop-color="#5d90b8"/></linearGradient></defs>
-<rect width="96" height="64" rx="6" fill="url(#g)"/>
-<text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24.32" font-weight="700" fill="rgba(255,255,255,0.9)">AU</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+<rect width="60" height="30" fill="#00008b"/>
+<g>
+<rect width="30" height="15" fill="#00008b"/>
+<path d="M0,0 30,15 M30,0 0,15" stroke="#fff" stroke-width="3"/>
+<path d="M0,0 30,15 M30,0 0,15" stroke="#c8102e" stroke-width="1"/>
+<path d="M15,0 15,15 M0,7.5 30,7.5" stroke="#fff" stroke-width="5"/>
+<path d="M15,0 15,15 M0,7.5 30,7.5" stroke="#c8102e" stroke-width="3"/>
+</g>
+<g fill="#fff">
+<circle cx="46" cy="7" r="1.6"/>
+<circle cx="50" cy="15" r="2"/>
+<circle cx="44" cy="19" r="1.6"/>
+<circle cx="38" cy="17" r="1.4"/>
+<circle cx="41" cy="10" r="1.2"/>
+<circle cx="49" cy="24" r="1.2"/>
+</g>
 </svg>

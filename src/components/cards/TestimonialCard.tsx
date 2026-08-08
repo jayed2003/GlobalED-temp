@@ -40,7 +40,7 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
         </span>
         <div className="min-w-0">
           <p className="text-sm font-semibold text-primary-900">{testimonial.studentName}</p>
-          <p className="truncate text-xs text-neutral-500">
+          <p className="font-secondary truncate text-xs text-neutral-500">
             {testimonial.university}, {testimonial.country}
           </p>
         </div>

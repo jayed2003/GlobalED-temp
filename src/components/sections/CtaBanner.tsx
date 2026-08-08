@@ -17,7 +17,7 @@ export default function CtaBanner() {
             completely free, no obligations.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <ButtonLink href="/consultation" size="lg">
+            <ButtonLink href="/get-started" size="lg">
               Get Started Free
               <ArrowRight size={18} aria-hidden />
             </ButtonLink>

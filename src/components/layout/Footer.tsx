@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { GraduationCap, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -27,13 +28,14 @@ export default function Footer() {
       <Container className="grid grid-cols-2 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {/* Brand */}
         <div className="col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-1">
-          <Link href="/" className="flex items-center gap-2" aria-label="GlobalEd home">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-primary-800">
-              <GraduationCap size={22} aria-hidden />
-            </span>
-            <span className="font-heading text-xl font-bold text-white">
-              Global<span className="text-accent-500">Ed</span>
-            </span>
+          <Link href="/" className="flex items-center" aria-label="GlobalEd home">
+            <Image
+              src="/images/logos/logo-white-full.svg"
+              alt="GlobalEd — Building Global Future"
+              width={460}
+              height={140}
+              className="h-12 w-auto"
+            />
           </Link>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-primary-200">
             Bangladesh&apos;s trusted consultancy for IELTS preparation and

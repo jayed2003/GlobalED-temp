@@ -19,10 +19,20 @@ export default function DestinationCard({ destination }: { destination: Destinat
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-primary-950/90 via-primary-950/25 to-transparent" aria-hidden />
+        <span className="absolute right-3 top-3 h-8 w-8 overflow-hidden rounded-full border-2 border-white/90 shadow-md">
+          <Image
+            src={destination.flagImage}
+            alt=""
+            aria-hidden
+            fill
+            className="object-cover"
+            sizes="32px"
+          />
+        </span>
       </div>
       <div className="absolute inset-x-0 bottom-0 p-5">
         <h3 className="font-heading text-lg font-semibold text-white">{destination.name}</h3>
-        <p className="mt-1 line-clamp-2 text-sm text-primary-100">{destination.tagline}</p>
+        <p className="font-secondary mt-1 line-clamp-2 text-sm text-primary-100">{destination.tagline}</p>
         <span className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-accent-300">
           Explore
           <ArrowRight size={14} aria-hidden className="transition-transform group-hover:translate-x-1" />

@@ -35,9 +35,13 @@ export interface University {
   city: string;
 }
 
+export type FaqCategory = "general" | "study-abroad" | "ielts";
+
 export interface Faq {
   q: string;
   a: string;
+  /** Only set on the central FAQ page dataset; per-destination FAQs omit this. */
+  category?: FaqCategory;
 }
 
 export interface Destination {

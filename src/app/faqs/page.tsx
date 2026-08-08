@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/sections/PageHero";
 import CtaBanner from "@/components/sections/CtaBanner";
-import FaqAccordion from "@/components/ui/FaqAccordion";
+import FaqFilter from "@/components/sections/FaqFilter";
 import Container from "@/components/layout/Container";
 import { faqs } from "@/data/faqs";
 
@@ -22,7 +22,7 @@ export default function FaqsPage() {
 
       <section className="py-16 sm:py-20">
         <Container className="max-w-3xl">
-          <FaqAccordion faqs={faqs} />
+          <FaqFilter faqs={faqs} />
         </Container>
       </section>
 

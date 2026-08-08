@@ -1,5 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="96" height="64" viewBox="0 0 96 64">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a3358"/><stop offset="1" stop-color="#3a72a0"/></linearGradient></defs>
-<rect width="96" height="64" rx="6" fill="url(#g)"/>
-<text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24.32" font-weight="700" fill="rgba(255,255,255,0.9)">US</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+<rect width="60" height="30" fill="#fff"/>
+<g fill="#b22234">
+<rect y="0" width="60" height="2.31"/>
+<rect y="4.62" width="60" height="2.31"/>
+<rect y="9.23" width="60" height="2.31"/>
+<rect y="13.85" width="60" height="2.31"/>
+<rect y="18.46" width="60" height="2.31"/>
+<rect y="23.08" width="60" height="2.31"/>
+<rect y="27.69" width="60" height="2.31"/>
+</g>
+<rect width="24" height="16.15" fill="#3c3b6e"/>
 </svg>

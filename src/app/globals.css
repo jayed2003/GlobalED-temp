@@ -1,35 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  /* Fonts — wired to next/font variables in layout.tsx */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  /* Fonts — brand guideline: DM Sans (headings/brand), Arial (body — system
+     font, no next/font import needed), Raleway (secondary titles). */
+  --font-sans: Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-secondary: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
 
-  /* Brand — navy (placeholder palette pending company brand guide) */
-  --color-primary-50: #f0f6fa;
-  --color-primary-100: #dce9f2;
-  --color-primary-200: #bad3e5;
-  --color-primary-300: #8fb6d2;
-  --color-primary-400: #5d90b8;
-  --color-primary-500: #3a72a0;
-  --color-primary-600: #1e5b89;
-  --color-primary-700: #0b3c6b;
-  --color-primary-800: #0a3358;
-  --color-primary-900: #082844;
-  --color-primary-950: #051b30;
+  /* Brand — primary blue (#1d46ba, company brand guideline) */
+  --color-primary-50: #f4f6fc;
+  --color-primary-100: #e2e7f6;
+  --color-primary-200: #c0cbec;
+  --color-primary-300: #93a6de;
+  --color-primary-400: #5c7acd;
+  --color-primary-500: #1d46ba;
+  --color-primary-600: #1a3da3;
+  --color-primary-700: #163388;
+  --color-primary-800: #12296e;
+  --color-primary-900: #0e2053;
+  --color-primary-950: #0b173c;
 
-  /* Accent — amber (CTAs, highlights, date badges, star ratings) */
-  --color-accent-50: #fffbeb;
-  --color-accent-100: #fef3c7;
-  --color-accent-200: #fde68a;
-  --color-accent-300: #fcd34d;
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
-  --color-accent-600: #d97706;
-  --color-accent-700: #b45309;
-  --color-accent-800: #92400e;
-  --color-accent-900: #78350f;
-  --color-accent-950: #451a03;
+  /* Accent — brand emerald (sampled #07dd80 from the logo/swatch artwork in the
+     brand guideline PDF; the PDF's printed hex #ff8000 is a labeling error —
+     that value is orange, but the swatch, "Ed" logotype, and RGB name
+     ("Emerald") all render as green. CTAs, highlights, date badges, star ratings. */
+  --color-accent-50: #eefdf6;
+  --color-accent-100: #d5f9e9;
+  --color-accent-200: #a6f3d1;
+  --color-accent-300: #6febb5;
+  --color-accent-400: #39e499;
+  --color-accent-500: #07dd80;
+  --color-accent-600: #06be6e;
+  --color-accent-700: #069b5a;
+  --color-accent-800: #057c48;
+  --color-accent-900: #046038;
+  --color-accent-950: #044528;
+
+  /* Neutral — third/fourth brand colors (#f2f1f3 light, #93a8ac mid); 600 tuned
+     darker than a linear interpolation would give, to clear WCAG AA body-text contrast. */
+  --color-neutral-50: #faf9fa;
+  --color-neutral-100: #f2f1f3;
+  --color-neutral-200: #dadfe1;
+  --color-neutral-300: #c7d0d3;
+  --color-neutral-400: #b0bec1;
+  --color-neutral-500: #93a8ac;
+  --color-neutral-600: #667579;
+  --color-neutral-700: #586669;
+  --color-neutral-800: #4d5a5d;
+  --color-neutral-900: #323b3d;
+  --color-neutral-950: #22282a;
 
   /* Animations */
   --animate-marquee: marquee 40s linear infinite;

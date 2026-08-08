@@ -1,5 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="96" height="64" viewBox="0 0 96 64">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#082844"/><stop offset="1" stop-color="#5d90b8"/></linearGradient></defs>
-<rect width="96" height="64" rx="6" fill="url(#g)"/>
-<text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24.32" font-weight="700" fill="rgba(255,255,255,0.9)">GR</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+<rect width="60" height="30" fill="#0d5eaf"/>
+<g fill="#fff">
+<rect y="3.33" width="60" height="3.33"/>
+<rect y="10" width="60" height="3.33"/>
+<rect y="16.67" width="60" height="3.33"/>
+<rect y="23.33" width="60" height="3.33"/>
+</g>
+<rect width="24" height="16.67" fill="#0d5eaf"/>
+<rect x="9.5" width="5" height="16.67" fill="#fff"/>
+<rect y="6" width="24" height="5" fill="#fff"/>
 </svg>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Inter } from "next/font/google";
+import { DM_Sans, Raleway } from "next/font/google";
 import TopBar from "@/components/layout/TopBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -7,16 +7,19 @@ import FloatingWhatsApp from "@/components/layout/FloatingWhatsApp";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import "./globals.css";
 
-const poppins = Poppins({
+// Brand guideline: DM Sans (headings/brand), Arial (body — system font, no
+// import needed), Raleway (secondary titles).
+const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-poppins",
+  variable: "--font-dm-sans",
   display: "swap",
 });
 
-const inter = Inter({
+const raleway = Raleway({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-raleway",
   display: "swap",
 });
 
@@ -30,6 +33,10 @@ export const metadata: Metadata = {
   },
   description:
     "GlobalEd is a trusted study abroad and IELTS preparation consultancy in Bangladesh, guiding students to top destinations including the UK, USA, Canada, Australia, and Europe.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/images/logos/apple-touch-icon.png",
+  },
   openGraph: {
     type: "website",
     siteName: "GlobalEd",
@@ -56,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${raleway.variable}`}>
       <body className="antialiased">
         <a
           href="#main-content"

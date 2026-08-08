@@ -10,12 +10,12 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 
 const palettes = [
-  ["#0b3c6b", "#1e5b89"],
-  ["#0a3358", "#3a72a0"],
-  ["#082844", "#5d90b8"],
-  ["#1e5b89", "#5d90b8"],
-  ["#92400e", "#d97706"],
-  ["#451a03", "#b45309"],
+  ["#163388", "#1a3da3"],
+  ["#12296e", "#1d46ba"],
+  ["#0e2053", "#5c7acd"],
+  ["#1a3da3", "#5c7acd"],
+  ["#984c00", "#e07000"],
+  ["#582c00", "#bc5e00"],
 ];
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");

@@ -1,5 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="96" height="64" viewBox="0 0 96 64">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#451a03"/><stop offset="1" stop-color="#b45309"/></linearGradient></defs>
-<rect width="96" height="64" rx="6" fill="url(#g)"/>
-<text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24.32" font-weight="700" fill="rgba(255,255,255,0.9)">KR</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30">
+<rect width="60" height="30" fill="#fff"/>
+<circle cx="30" cy="15" r="6" fill="#cd2e3a"/>
+<path fill="#0047a0" d="M30 9a6 6 0 000 12 3 3 0 010-6 3 3 0 000-6z"/>
+<g stroke="#000" stroke-width="1">
+<path d="M43 6h6M43 8h6M43 10h6"/>
+<path d="M43 20h2.5M46.5 20h2.5M43 22h6M43 24h2.5M46.5 24h2.5"/>
+<path d="M11 6h6M11 8h2.5M14.5 8h2.5M11 10h6"/>
+<path d="M11 20h6M11 22h6M11 24h6"/>
+</g>
 </svg>

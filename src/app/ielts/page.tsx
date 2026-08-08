@@ -6,7 +6,6 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import CourseCard from "@/components/cards/CourseCard";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
-import IeltsBookingForm from "@/components/forms/IeltsBookingForm";
 import { ielts } from "@/data/ielts";
 import { courses } from "@/data/courses";
 
@@ -33,7 +32,7 @@ export default function IeltsPage() {
             instructors, real mock tests, and official test booking support.
           </p>
           <div className="mt-8">
-            <ButtonLink href="#book-test" size="lg">
+            <ButtonLink href="/ielts-registration" size="lg">
               <BookOpenCheck size={18} aria-hidden />
               Book an IELTS Test
             </ButtonLink>
@@ -102,35 +101,6 @@ export default function IeltsPage() {
               Ask a Counsellor <ArrowRight size={14} aria-hidden />
             </ButtonLink>
           </p>
-        </Container>
-      </section>
-
-      {/* Book a test */}
-      <section id="book-test" className="scroll-mt-24 bg-primary-50 py-16 sm:py-20">
-        <Container className="grid gap-12 lg:grid-cols-2">
-          <div>
-            <SectionHeading
-              align="left"
-              eyebrow="Book Now"
-              title="Book an IELTS Test"
-              description="Fill in the form and our IELTS team will confirm your seat, course placement, or official test booking — usually within 24 hours."
-            />
-            <ul className="mt-6 space-y-3 text-sm text-neutral-600">
-              {[
-                "Free level assessment before placement",
-                "Official test registration handled by our team",
-                "Same-day confirmation on working days",
-              ].map((point) => (
-                <li key={point} className="flex gap-2.5">
-                  <CheckCircle2 size={17} aria-hidden className="mt-0.5 shrink-0 text-green-600" />
-                  {point}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8">
-            <IeltsBookingForm />
-          </div>
         </Container>
       </section>
 

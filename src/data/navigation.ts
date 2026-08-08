@@ -19,7 +19,14 @@ export const navItems: NavItem[] = [
       href: `/destinations/${d.slug}`,
     })),
   },
-  { label: "IELTS", href: "/ielts" },
+  {
+    label: "IELTS",
+    href: "/ielts",
+    children: [
+      { label: "Browse IELTS Courses", href: "/ielts" },
+      { label: "IELTS Mock Registration", href: "/ielts-registration" },
+    ],
+  },
   {
     label: "Services",
     href: "/services",
@@ -36,15 +43,6 @@ export const navItems: NavItem[] = [
       href: `/courses/${c.slug}`,
     })),
   },
-  {
-    label: "Blogs & Events",
-    href: "/blogs",
-    children: [
-      { label: "Blogs", href: "/blogs" },
-      { label: "Events", href: "/events" },
-    ],
-  },
   { label: "About Us", href: "/about" },
-  { label: "FAQs", href: "/faqs" },
   { label: "Contact", href: "/contact" },
 ];

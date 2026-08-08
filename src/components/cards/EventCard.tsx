@@ -21,7 +21,7 @@ export default function EventCard({ event }: { event: EventItem }) {
       <div className="min-w-0">
         <span
           className={cn(
-            "text-xs font-semibold uppercase tracking-wider",
+            "font-secondary text-xs font-semibold uppercase tracking-wider",
             event.status === "upcoming" ? "text-green-600" : "text-neutral-400",
           )}
         >
