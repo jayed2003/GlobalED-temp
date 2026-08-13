@@ -12,6 +12,32 @@ export const ielts: IeltsContent = {
       "Results valid for 2 years; paper and computer formats available",
     ],
   },
+  whyIelts: {
+    title: "Why IELTS?",
+    body: "IELTS opens the door to studying, working, and migrating abroad. It's the go-to English test for university admissions, visa applications, and skilled migration programs — trusted for its fairness and global recognition.",
+    reasons: [
+      {
+        title: "Accepted Everywhere",
+        description:
+          "Recognized by universities, employers, and immigration authorities in the UK, Canada, Australia, USA, and 140+ other countries.",
+      },
+      {
+        title: "Required for Study Visas",
+        description:
+          "Most study visa applications for the UK, Canada, Australia, and Europe require a valid IELTS score as proof of English proficiency.",
+      },
+      {
+        title: "Fair, Human-Marked Speaking & Writing",
+        description:
+          "Unlike fully automated tests, IELTS Speaking and Writing are assessed by trained examiners, giving a more accurate picture of your ability.",
+      },
+      {
+        title: "Opens Migration Pathways",
+        description:
+          "Points-based immigration programs — including Canada Express Entry and Australia's skilled visas — accept IELTS scores directly.",
+      },
+    ],
+  },
   whyGlobaled: {
     title: "Why take IELTS with GlobalEd?",
     usps: [

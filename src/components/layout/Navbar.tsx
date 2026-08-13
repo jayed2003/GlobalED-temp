@@ -26,10 +26,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center" aria-label="GlobalEd home">
             <Image
-              src="/images/logos/logo.svg"
+              src="/images/logos/logo-01.png"
               alt="GlobalEd"
               width={460}
-              height={100}
+              height={90}
               priority
               className="h-8 w-auto sm:h-9"
             />
@@ -118,10 +118,10 @@ export default function Navbar() {
           <div className="absolute right-0 top-0 flex h-full w-80 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-neutral-100 p-5">
               <Image
-                src="/images/logos/logo.svg"
+                src="/images/logos/logo-01.png"
                 alt="GlobalEd"
                 width={460}
-                height={100}
+                height={90}
                 className="h-7 w-auto"
               />
               <button

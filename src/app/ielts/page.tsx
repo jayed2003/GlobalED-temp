@@ -1,23 +1,51 @@
 import type { Metadata } from "next";
-import { ArrowRight, BadgeCheck, BookOpenCheck, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, BadgeCheck, BookOpenCheck, FileQuestion, Globe2, GraduationCap } from "lucide-react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import Container from "@/components/layout/Container";
-import CtaBanner from "@/components/sections/CtaBanner";
-import CourseCard from "@/components/cards/CourseCard";
-import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { ielts } from "@/data/ielts";
-import { courses } from "@/data/courses";
 
 export const metadata: Metadata = {
   title: "IELTS with GlobalEd",
   description:
-    "What is IELTS, why prepare with GlobalEd, our IELTS preparation courses, and IELTS test booking for students in Bangladesh.",
+    "What is IELTS, why it matters, why prepare with GlobalEd, our IELTS preparation courses, and IELTS test booking for students in Bangladesh.",
 };
 
-export default function IeltsPage() {
-  const prepCourses = courses.filter((c) => ielts.preparation.courseSlugs.includes(c.slug));
+const links = [
+  {
+    href: "/ielts/what-is-ielts",
+    icon: FileQuestion,
+    title: ielts.whatIsIelts.title,
+    description: "Formats, modules, and scoring — the basics of the test.",
+  },
+  {
+    href: "/ielts/why-ielts",
+    icon: Globe2,
+    title: ielts.whyIelts.title,
+    description: "Why IELTS matters for study, work, and migration abroad.",
+  },
+  {
+    href: "/ielts/with-globaled",
+    icon: BadgeCheck,
+    title: ielts.whyGlobaled.title,
+    description: "British Council authorized testing and band 7+ instructors.",
+  },
+  {
+    href: "/ielts/preparation",
+    icon: GraduationCap,
+    title: ielts.preparation.title,
+    description: "Regular, executive, and master class preparation batches.",
+  },
+  {
+    href: "/ielts-registration",
+    icon: BookOpenCheck,
+    title: "Book an IELTS Test",
+    description: "Register for your official IELTS test or preparation course.",
+  },
+];
 
+export default function IeltsPage() {
   return (
     <>
       {/* Hero */}
@@ -25,7 +53,7 @@ export default function IeltsPage() {
         <Container>
           <Breadcrumb items={[{ label: "IELTS" }]} />
           <h1 className="mt-5 max-w-3xl font-heading text-4xl font-bold text-white sm:text-5xl">
-            IELTS with GlobalEd
+            IELTS with Global<span className="text-accent-500">Ed</span>
           </h1>
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-primary-100">
             Bangladesh&apos;s trusted IELTS preparation center — expert
@@ -40,71 +68,36 @@ export default function IeltsPage() {
         </Container>
       </section>
 
-      {/* What is IELTS */}
-      <section id="what-is-ielts" className="scroll-mt-24 py-16 sm:py-20">
-        <Container className="grid items-start gap-12 lg:grid-cols-2">
-          <div>
-            <SectionHeading align="left" eyebrow="The Test" title={ielts.whatIsIelts.title} />
-            <p className="mt-5 leading-relaxed text-neutral-600">{ielts.whatIsIelts.body}</p>
-          </div>
-          <ul className="space-y-3">
-            {ielts.whatIsIelts.points.map((point) => (
-              <li
-                key={point}
-                className="flex gap-3 rounded-lg border border-neutral-200 bg-white p-4 text-sm leading-relaxed text-neutral-700 shadow-sm"
-              >
-                <CheckCircle2 size={18} aria-hidden className="mt-0.5 shrink-0 text-green-600" />
-                {point}
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
-
-      {/* Why GlobalEd */}
-      <section id="why-globaled" className="scroll-mt-24 bg-primary-50 py-16 sm:py-20">
+      {/* Section links */}
+      <section className="py-16 sm:py-20">
         <Container>
-          <SectionHeading eyebrow="Why Us" title={ielts.whyGlobaled.title} />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {ielts.whyGlobaled.usps.map((usp) => (
-              <div
-                key={usp.title}
-                className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm"
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="group rounded-xl border border-neutral-200 bg-white p-6 shadow-sm transition-colors hover:border-primary-200 hover:bg-primary-50"
               >
-                <BadgeCheck size={28} aria-hidden className="text-accent-600" />
-                <h3 className="mt-3 font-heading text-base font-semibold text-primary-900">
-                  {usp.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-600">{usp.description}</p>
-              </div>
+                <link.icon size={28} aria-hidden className="text-accent-600" />
+                <h2 className="mt-3 font-heading text-lg font-semibold text-primary-900">
+                  {link.title}
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+                  {link.description}
+                </p>
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700">
+                  Learn more
+                  <ArrowRight
+                    size={14}
+                    aria-hidden
+                    className="transition-transform group-hover:translate-x-1"
+                  />
+                </span>
+              </Link>
             ))}
           </div>
         </Container>
       </section>
-
-      {/* Preparation */}
-      <section id="preparation" className="scroll-mt-24 py-16 sm:py-20">
-        <Container>
-          <SectionHeading
-            eyebrow="Prepare"
-            title={ielts.preparation.title}
-            description={ielts.preparation.body}
-          />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {prepCourses.map((course) => (
-              <CourseCard key={course.slug} course={course} />
-            ))}
-          </div>
-          <p className="mt-8 text-center text-sm text-neutral-500">
-            Not sure which course fits you?{" "}
-            <ButtonLink href="/consultation" variant="outline" size="sm" className="ml-2">
-              Ask a Counsellor <ArrowRight size={14} aria-hidden />
-            </ButtonLink>
-          </p>
-        </Container>
-      </section>
-
-      <CtaBanner />
     </>
   );
 }

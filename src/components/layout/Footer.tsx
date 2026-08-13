@@ -30,10 +30,10 @@ export default function Footer() {
         <div className="col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-1">
           <Link href="/" className="flex items-center" aria-label="GlobalEd home">
             <Image
-              src="/images/logos/logo-white-full.svg"
+              src="/images/logos/white-logo.png"
               alt="GlobalEd — Building Global Future"
               width={460}
-              height={140}
+              height={113}
               className="h-12 w-auto"
             />
           </Link>

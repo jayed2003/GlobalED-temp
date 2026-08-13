@@ -3,6 +3,7 @@ import StatsBand from "@/components/sections/StatsBand";
 import ServicesGrid from "@/components/sections/ServicesGrid";
 import StepsTimeline from "@/components/sections/StepsTimeline";
 import DestinationsGrid from "@/components/sections/DestinationsGrid";
+import WhyGlobalEd from "@/components/sections/WhyGlobalEd";
 import Testimonials from "@/components/sections/Testimonials";
 import BlogsPreview from "@/components/sections/BlogsPreview";
 import EventsTeaser from "@/components/sections/EventsTeaser";
@@ -49,6 +50,9 @@ export default function Home() {
       <StepsTimeline />
       <DestinationsGrid />
       <Reveal>
+        <WhyGlobalEd />
+      </Reveal>
+      <Reveal>
         <Testimonials />
       </Reveal>
       <Reveal>
@@ -61,7 +65,7 @@ export default function Home() {
         <PartnerMarquee />
       </Reveal>
       <Reveal>
-        <CtaBanner />
+        <CtaBanner variant="faq" />
       </Reveal>
     </>
   );

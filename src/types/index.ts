@@ -108,6 +108,11 @@ export interface IeltsContent {
     body: string;
     points: string[];
   };
+  whyIelts: {
+    title: string;
+    body: string;
+    reasons: IeltsUsp[];
+  };
   whyGlobaled: {
     title: string;
     usps: IeltsUsp[];

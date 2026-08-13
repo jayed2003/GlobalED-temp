@@ -7,7 +7,7 @@ export default function PageHero({
   description,
   breadcrumb,
 }: {
-  title: string;
+  title: React.ReactNode;
   description?: string;
   breadcrumb: BreadcrumbItem[];
 }) {

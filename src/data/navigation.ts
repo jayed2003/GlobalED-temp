@@ -10,7 +10,6 @@ export interface NavItem {
 
 /** Primary navigation — dropdown children are generated from content data. */
 export const navItems: NavItem[] = [
-  { label: "Home", href: "/" },
   {
     label: "Destinations",
     href: "/destinations",
@@ -23,8 +22,11 @@ export const navItems: NavItem[] = [
     label: "IELTS",
     href: "/ielts",
     children: [
-      { label: "Browse IELTS Courses", href: "/ielts" },
-      { label: "IELTS Mock Registration", href: "/ielts-registration" },
+      { label: "What is IELTS?", href: "/ielts/what-is-ielts" },
+      { label: "Why IELTS?", href: "/ielts/why-ielts" },
+      { label: "IELTS with GlobalEd", href: "/ielts/with-globaled" },
+      { label: "IELTS Preparation", href: "/ielts/preparation" },
+      { label: "Book an IELTS Test", href: "/ielts-registration" },
     ],
   },
   {
@@ -43,6 +45,14 @@ export const navItems: NavItem[] = [
       href: `/courses/${c.slug}`,
     })),
   },
-  { label: "About Us", href: "/about" },
+  {
+    label: "About Us",
+    href: "/about",
+    children: [
+      { label: "Our Success", href: "/about/our-success" },
+      { label: "Our Organization", href: "/about/our-organization" },
+      { label: "Our Team", href: "/about/our-team" },
+    ],
+  },
   { label: "Contact", href: "/contact" },
 ];

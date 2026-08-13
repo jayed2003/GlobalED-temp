@@ -14,7 +14,14 @@ export default function Hero() {
           </p>
           <h1 className="mt-5 font-heading text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
             Invest in dreams build your career with{" "}
-            <span className="text-accent-500">GlobalED</span>
+            <Image
+              src="/images/logos/logo-02.png"
+              alt="GlobalED"
+              width={509}
+              height={100}
+              priority
+              className="ml-1 inline-block h-9 w-auto -translate-y-1.5 align-middle sm:h-11 sm:-translate-y-2 lg:h-12 lg:-translate-y-2.5"
+            />
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-primary-100">
             From IELTS preparation to university admission and visa success —
