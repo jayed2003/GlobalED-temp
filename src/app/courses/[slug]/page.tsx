@@ -76,7 +76,14 @@ export default async function CourseDetailPage({
             </h1>
             <p className="mt-4 max-w-xl leading-relaxed text-primary-100">{course.overview}</p>
             <div className="mt-8">
-              <ButtonLink href={`/consultation?course=${course.slug}`} size="lg">
+              <ButtonLink
+                href={
+                  course.category === "ielts"
+                    ? "/ielts-registration"
+                    : `/consultation?course=${course.slug}`
+                }
+                size="lg"
+              >
                 Enroll Now <ArrowRight size={18} aria-hidden />
               </ButtonLink>
             </div>
@@ -114,6 +121,7 @@ export default async function CourseDetailPage({
             </ul>
           </div>
           <aside className="space-y-4">
+            <div className="hidden lg:block lg:h-10" aria-hidden />
             <div className="rounded-xl border border-neutral-200 bg-primary-50 p-6">
               <h3 className="font-heading text-lg font-bold text-primary-900">Course Details</h3>
               <ul className="mt-4 space-y-4 text-sm">
@@ -140,7 +148,11 @@ export default async function CourseDetailPage({
                 </li>
               </ul>
               <ButtonLink
-                href={`/consultation?course=${course.slug}`}
+                href={
+                  course.category === "ielts"
+                    ? "/ielts-registration"
+                    : `/consultation?course=${course.slug}`
+                }
                 className="mt-6 w-full"
               >
                 Book a Seat
