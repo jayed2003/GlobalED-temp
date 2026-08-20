@@ -102,6 +102,23 @@ export interface IeltsUsp {
   description: string;
 }
 
+export interface IeltsSkillArea {
+  skill: string;
+  points: string[];
+}
+
+export interface IeltsFreeService {
+  title: string;
+  description: string;
+  points: string[];
+  ctaLabel: string;
+}
+
+export interface IeltsAchievement {
+  band: string;
+  outcome: string;
+}
+
 export interface IeltsContent {
   whatIsIelts: {
     title: string;
@@ -115,13 +132,28 @@ export interface IeltsContent {
   };
   whyGlobaled: {
     title: string;
+    body: string;
     usps: IeltsUsp[];
+    freeServices: IeltsFreeService[];
   };
   preparation: {
     title: string;
     body: string;
+    skillAreas: IeltsSkillArea[];
     /** Course slugs linked from the preparation section */
     courseSlugs: string[];
+  };
+  progressTracker: {
+    title: string;
+    body: string;
+    trackItems: string[];
+    benefits: string[];
+  };
+  successStories: {
+    title: string;
+    body: string;
+    achievements: IeltsAchievement[];
+    quotes: string[];
   };
 }
 

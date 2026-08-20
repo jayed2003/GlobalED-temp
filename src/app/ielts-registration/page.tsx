@@ -3,12 +3,17 @@ import { BadgeCheck, CheckCircle2 } from "lucide-react";
 import PageHero from "@/components/sections/PageHero";
 import IeltsBookingForm from "@/components/forms/IeltsBookingForm";
 import Container from "@/components/layout/Container";
+import SectionHeading from "@/components/ui/SectionHeading";
+import FaqAccordion from "@/components/ui/FaqAccordion";
+import { faqs } from "@/data/faqs";
 
 export const metadata: Metadata = {
   title: "IELTS Registration",
   description:
-    "Register for your IELTS test or preparation course with GlobalEd — Bangladesh's trusted IELTS center.",
+    "Register for your IELTS test or preparation package with GlobalEd — Bangladesh's trusted IELTS center.",
 };
+
+const ieltsFaqs = faqs.filter((faq) => faq.category === "ielts");
 
 const trustPoints = [
   "Free level assessment before placement",
@@ -59,6 +64,19 @@ export default function IeltsRegistrationPage() {
                 <IeltsBookingForm />
               </div>
             </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-primary-50 py-16 sm:py-20">
+        <Container className="max-w-3xl">
+          <SectionHeading
+            eyebrow="FAQs"
+            title="Registration Questions"
+            description="Common questions about registering, exam day, results, and rescheduling."
+          />
+          <div className="mt-10">
+            <FaqAccordion faqs={ieltsFaqs} />
           </div>
         </Container>
       </section>

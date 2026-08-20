@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, BookOpenCheck, FileQuestion, Globe2, GraduationCap } from "lucide-react";
+import { ArrowRight, BadgeCheck, BookOpenCheck, FileQuestion, Globe2, GraduationCap, Quote } from "lucide-react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import Container from "@/components/layout/Container";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { ielts } from "@/data/ielts";
 
 export const metadata: Metadata = {
   title: "IELTS with GlobalEd",
   description:
-    "What is IELTS, why it matters, why prepare with GlobalEd, our IELTS preparation courses, and IELTS test booking for students in Bangladesh.",
+    "What is IELTS, why it matters, why prepare with GlobalEd, our IELTS preparation packages, and IELTS test booking for students in Bangladesh.",
 };
 
 const links = [
@@ -29,19 +30,19 @@ const links = [
     href: "/ielts/with-globaled",
     icon: BadgeCheck,
     title: ielts.whyGlobaled.title,
-    description: "British Council authorized testing and band 7+ instructors.",
+    description: "British Council authorized testing, expert trainers, and free trial services.",
   },
   {
     href: "/ielts/preparation",
     icon: GraduationCap,
     title: ielts.preparation.title,
-    description: "Regular, executive, and master class preparation batches.",
+    description: "A skill-by-skill program plus Essential, Advanced, and Premium packages.",
   },
   {
     href: "/ielts-registration",
     icon: BookOpenCheck,
     title: "Book an IELTS Test",
-    description: "Register for your official IELTS test or preparation course.",
+    description: "Register for your official IELTS test or preparation package.",
   },
 ];
 
@@ -56,13 +57,17 @@ export default function IeltsPage() {
             IELTS with Global<span className="text-accent-500">Ed</span>
           </h1>
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-primary-100">
-            Bangladesh&apos;s trusted IELTS preparation center — expert
-            instructors, real mock tests, and official test booking support.
+            Whether your goal is to study abroad, migrate, advance your
+            career, or improve your English proficiency, GlobalEd is
+            committed to helping you achieve your target IELTS band score
+            through expert guidance, personalized support, and real exam
+            experience. From registration to test day, our team supports you
+            at every step of your IELTS journey.
           </p>
           <div className="mt-8">
-            <ButtonLink href="/ielts-registration" size="lg">
+            <ButtonLink href="/consultation" size="lg">
               <BookOpenCheck size={18} aria-hidden />
-              Book an IELTS Test
+              Book a Free IELTS Consultation
             </ButtonLink>
           </div>
         </Container>
@@ -94,6 +99,41 @@ export default function IeltsPage() {
                   />
                 </span>
               </Link>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Student Success Stories */}
+      <section className="bg-primary-50 py-16 sm:py-20">
+        <Container>
+          <SectionHeading
+            eyebrow="Real Students. Real Results."
+            title={ielts.successStories.title}
+            description={ielts.successStories.body}
+          />
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-5">
+            {ielts.successStories.achievements.map((achievement) => (
+              <div
+                key={achievement.outcome}
+                className="rounded-xl border border-neutral-200 bg-white p-5 text-center shadow-sm"
+              >
+                <p className="font-heading text-2xl font-bold text-primary-700">
+                  Band {achievement.band}
+                </p>
+                <p className="mt-1 text-xs text-neutral-500">{achievement.outcome}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 grid gap-6 sm:grid-cols-3">
+            {ielts.successStories.quotes.map((quote) => (
+              <div
+                key={quote}
+                className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm"
+              >
+                <Quote size={22} aria-hidden className="text-accent-600" />
+                <p className="mt-3 text-sm leading-relaxed text-neutral-700">{quote}</p>
+              </div>
             ))}
           </div>
         </Container>

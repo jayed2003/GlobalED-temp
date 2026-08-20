@@ -46,3 +46,6 @@ dev-server.log
 # internal reference docs — not website assets
 GlobalEd Brand Guideline*.pdf
 GlobalEd-Content-Requisition.docx
+
+# locally-installed agent skills — not part of the repo
+.agents/

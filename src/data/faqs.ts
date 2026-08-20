@@ -73,25 +73,60 @@ export const faqs: Faq[] = [
     a: "Typically 3–6 months from first counselling to visa decision, depending on your destination and intake. Starting early always helps.",
   },
 
-  // IELTS — placeholder, verify against current IELTS page content before launch
+  // IELTS — from GlobalEd-IELTS-related content.pdf
   {
     category: "ielts",
-    q: "What IELTS courses does GlobalEd offer?",
-    a: "We offer IELTS Regular, Executive, and Master courses, each designed around your target band score and available study time. See the Courses page for full details.",
+    q: "How do I register for IELTS through GlobalEd?",
+    a: "As a British Council Authorized IELTS Registration Centre, GlobalEd handles your registration directly — simply visit our Panthapath or Uttara centre, or book a free consultation, and our team will guide you through choosing a test date, format, and package.",
   },
   {
     category: "ielts",
-    q: "Do you offer official IELTS test booking?",
-    a: "Yes — our team handles official IELTS test registration for you, alongside course placement and a free level assessment.",
+    q: "What's the difference between Academic and General Training IELTS?",
+    a: "Academic IELTS is for university admission and professional registration, while General Training is typically for migration, work, and secondary education abroad. Our counsellors can help you confirm which one your target institution or country requires.",
   },
   {
     category: "ielts",
-    q: "How long does IELTS preparation take?",
-    a: "Most students prepare in 4–8 weeks depending on their starting level and target band score. We recommend a free assessment first to set the right timeline.",
+    q: "What does IELTS exam day look like at GlobalEd?",
+    a: "GlobalEd currently offers Computer-Delivered IELTS only. Listening, Reading, and Writing are completed in one sitting on the same day (around 2 hours 40 minutes with no breaks between sections); Speaking is usually scheduled the same day too, though it can occasionally be moved to within a week before or after. Bring the same valid ID used at registration — your photo is taken at the centre as an extra security check, and this is exactly the environment our Computer-Delivered mock tests are designed to mirror.",
   },
   {
     category: "ielts",
-    q: "Do you provide mock tests?",
-    a: "Yes — every IELTS course includes real mock tests under exam conditions, with detailed band-score feedback from our instructors.",
+    q: "When and how will I get my results?",
+    a: "Computer-Delivered IELTS results are typically released within 1–5 days of your test date. You'll receive an email as soon as your Test Report Form (TRF) is ready, and you can view or download it through your official IELTS candidate portal.",
+  },
+  {
+    category: "ielts",
+    q: "What is an Enquiry on Results (EOR)?",
+    a: "If you feel a section score doesn't reflect your performance, you can apply for an EOR (remark) within 6 weeks of your test date. A senior examiner re-checks the section(s) you select, and the enquiry fee is refunded if your score improves. Outcomes can arrive the same day or take up to a few weeks.",
+  },
+  {
+    category: "ielts",
+    q: "What is One Skill Retake (OSR)?",
+    a: "OSR lets you retake just one section — Listening, Reading, Writing, or Speaking — instead of sitting the full test again, within 60 days of your original Computer-Delivered IELTS. Your new score for that section replaces the old one on a fresh TRF, while your other three scores stay locked in. If you're also applying for an EOR on the same test, you'll need to wait for the EOR outcome before booking your OSR.",
+  },
+  {
+    category: "ielts",
+    q: "Which package is right for me — Essential, Advanced, or Premium?",
+    a: "It depends on how much practice and mentoring support you need. Essential suits students who are already fairly confident, Advanced adds one-to-one support for steady improvement, and Premium is built for students aiming for the highest band scores with unlimited practice and priority mentoring.",
+  },
+  {
+    category: "ielts",
+    q: "Can beginners join GlobalEd, or do I need a certain level first?",
+    a: "Absolutely — our programs are designed for all proficiency levels. Starting with the Free IELTS Level Assessment helps us place you on the right track from day one.",
+  },
+  {
+    category: "ielts",
+    q: "How long does IELTS preparation usually take?",
+    a: "This varies by your current level and target band score. Your Free Level Assessment includes a recommended preparation duration, and your Progress Tracker keeps you updated as you improve.",
+  },
+  {
+    category: "ielts",
+    q: "Will someone monitor my progress throughout the course?",
+    a: "Yes. Our trainers regularly evaluate your performance, identify weaker areas, and adjust your study plan — all visible through your personal Progress Tracker.",
+  },
+  {
+    category: "ielts",
+    q: "What if I need to reschedule a mock test or session?",
+    a: "Speak with your assigned trainer or our front desk as early as possible; we'll help you find the next available slot.",
   },
 ];
