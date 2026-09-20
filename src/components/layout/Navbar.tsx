@@ -5,12 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
-import { navItems } from "@/data/navigation";
+import type { NavItem } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 import Container from "./Container";
 
 /** Sticky navbar with hover mega-dropdowns (desktop) and drawer (mobile). */
-export default function Navbar() {
+export default function Navbar({ navItems }: { navItems: NavItem[] }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const pathname = usePathname();
@@ -88,7 +88,7 @@ export default function Navbar() {
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
             <Link
-              href="/get-started"
+              href="/consultation"
               className="hidden rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-primary-950 shadow-sm transition-colors hover:bg-accent-400 sm:inline-block lg:px-6"
             >
               Free Consultation
@@ -197,7 +197,7 @@ export default function Navbar() {
 
             <div className="p-5">
               <Link
-                href="/get-started"
+                href="/consultation"
                 onClick={() => setMobileOpen(false)}
                 className="block rounded-lg bg-accent-500 px-6 py-3 text-center text-sm font-semibold text-primary-950 hover:bg-accent-400"
               >

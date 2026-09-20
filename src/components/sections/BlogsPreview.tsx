@@ -2,10 +2,11 @@ import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import BlogCard from "@/components/cards/BlogCard";
 import { ButtonLink } from "@/components/ui/Button";
-import { posts } from "@/data/posts";
+import { getAllPosts } from "@/lib/content/blog";
 
 /** Home "Popular Blogs & News" — latest 3 posts. */
-export default function BlogsPreview() {
+export default async function BlogsPreview() {
+  const posts = await getAllPosts();
   const latest = [...posts]
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
     .slice(0, 3);

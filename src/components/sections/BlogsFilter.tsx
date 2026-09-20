@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import BlogCard from "@/components/cards/BlogCard";
-import { posts } from "@/data/posts";
+import type { BlogPost } from "@/types";
 import { blogCategoryLabels } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ const filters = [
 ];
 
 /** Blog grid with category filter chips. */
-export default function BlogsFilter() {
+export default function BlogsFilter({ posts }: { posts: BlogPost[] }) {
   const [active, setActive] = useState<string>("all");
 
   const visible =

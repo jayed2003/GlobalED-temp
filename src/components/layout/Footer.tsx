@@ -8,10 +8,10 @@ import {
   YoutubeIcon,
 } from "@/components/ui/BrandIcons";
 import { site } from "@/data/site";
-import { destinations } from "@/data/destinations";
 import { services } from "@/data/services";
-import { courses } from "@/data/courses";
 import { branches } from "@/data/branches";
+import { getAllDestinations } from "@/lib/content/destinations";
+import { getAllCourses } from "@/lib/content/courses";
 import Container from "./Container";
 
 const socials = [
@@ -22,7 +22,8 @@ const socials = [
 ];
 
 /** Multi-column footer with all branches (PFEC / Career Paths pattern). */
-export default function Footer() {
+export default async function Footer() {
+  const [destinations, courses] = await Promise.all([getAllDestinations(), getAllCourses()]);
   return (
     <footer className="bg-primary-950 text-primary-100">
       <Container className="grid grid-cols-2 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">

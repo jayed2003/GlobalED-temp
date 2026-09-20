@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import CourseCard from "@/components/cards/CourseCard";
-import { courses } from "@/data/courses";
+import type { Course } from "@/types";
 import { cn } from "@/lib/utils";
 
 const filters = [
@@ -13,7 +13,7 @@ const filters = [
 ] as const;
 
 /** Course grid with category filter chips. */
-export default function CoursesFilter() {
+export default function CoursesFilter({ courses }: { courses: Course[] }) {
   const [active, setActive] = useState<(typeof filters)[number]["key"]>("all");
 
   const visible =

@@ -218,11 +218,10 @@ export interface Branch {
 
 export interface Testimonial {
   studentName: string;
-  photo: string;
-  rating: 1 | 2 | 3 | 4 | 5;
-  quote: string;
+  /** The review, shown as a landscape (16:9) image on the card. */
+  reviewImage: string;
   university: string;
-  country: string;
+  country?: string;
   course?: string;
 }
 

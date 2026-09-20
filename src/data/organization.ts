@@ -42,27 +42,27 @@ export const organization: Organization = {
     {
       name: "Professor Shamim Ara Hassan",
       designation: "Chairman, Global Citizen LTD.",
-      photo: "/images/board/vc.svg",
+      photo: "/images/board/shamim-ara-hassan.webp",
     },
     {
       name: "Engr. Abdul Aziz",
       designation: "Managing Director, Global Citizen LTD.",
-      photo: "/images/board/soto-sir.svg",
+      photo: "/images/board/abdul-aziz.webp",
     },
     {
       name: "Engr. Abdul Alim",
       designation: "Director, Global Citizen LTD.",
-      photo: "/images/board/boro-sir.svg",
+      photo: "/images/board/abdul-alim.webp",
     },
     {
       name: "Advocate Umme Salma",
       designation: "Director, Global Citizen LTD.",
-      photo: "/images/board/salma-mam.svg",
+      photo: "/images/board/umme-salma.jpg",
     },
     {
       name: "Ln. Mir Abdul Alim",
       designation: "Director, Global Citizen LTD.",
-      photo: "/images/board/alim.svg",
+      photo: "/images/board/mir-abdul-alim.webp",
     },
   ],
 };

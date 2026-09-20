@@ -5,13 +5,14 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import DestinationCard from "@/components/cards/DestinationCard";
 import Reveal from "@/components/ui/Reveal";
 import { cn } from "@/lib/utils";
-import { destinations } from "@/data/destinations";
+import { getAllDestinations } from "@/lib/content/destinations";
 
 const MOBILE_LIMIT = 4;
 const DESKTOP_LIMIT = 8;
 
 /** Home "Best Study Abroad Destinations from Bangladesh" — 4 on mobile, 8 on desktop. */
-export default function DestinationsGrid() {
+export default async function DestinationsGrid() {
+  const destinations = await getAllDestinations();
   return (
     <section className="py-16 sm:py-24">
       <Container>

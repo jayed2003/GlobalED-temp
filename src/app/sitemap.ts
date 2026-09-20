@@ -1,13 +1,19 @@
 import type { MetadataRoute } from "next";
-import { destinations } from "@/data/destinations";
 import { services } from "@/data/services";
-import { courses } from "@/data/courses";
-import { posts } from "@/data/posts";
-import { events } from "@/data/events";
+import { getAllDestinations } from "@/lib/content/destinations";
+import { getAllCourses } from "@/lib/content/courses";
+import { getAllPosts } from "@/lib/content/blog";
+import { getAllEvents } from "@/lib/content/events";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [destinations, courses, posts, events] = await Promise.all([
+    getAllDestinations(),
+    getAllCourses(),
+    getAllPosts(),
+    getAllEvents(),
+  ]);
   const staticRoutes = [
     "",
     "/destinations",
@@ -26,8 +32,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/events",
     "/contact",
     "/consultation",
-    "/get-started",
-    "/ielts-registration",
   ].map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified: new Date(),

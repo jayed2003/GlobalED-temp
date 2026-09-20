@@ -33,17 +33,17 @@ export default function Hero() {
               Book Free Consultation
               <ArrowRight size={18} aria-hidden />
             </ButtonLink>
-            <ButtonLink href="/ielts" variant="white" size="lg">
+            <ButtonLink href="/courses" variant="white" size="lg">
               <BookOpenCheck size={18} aria-hidden />
-              Book IELTS Test
+              Browse Courses
             </ButtonLink>
           </div>
         </div>
         <div className="relative mx-auto w-full max-w-lg">
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10">
             <Image
-              src="/images/hero/home-hero.svg"
-              alt="Bangladeshi students preparing to study abroad with GlobalEd"
+              src="/images/hero/home-hero.jpg"
+              alt="Students sitting an English language test in an exam hall with headphones"
               fill
               priority
               className="object-cover"

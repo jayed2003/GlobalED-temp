@@ -1,17 +1,25 @@
 import Image from "next/image";
 import type { TeamMember } from "@/types";
 
+const DEFAULT_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
+
 /** Team member card with photo, name, and designation. */
-export default function TeamCard({ member }: { member: TeamMember }) {
+export default function TeamCard({
+  member,
+  sizes = DEFAULT_SIZES,
+}: {
+  member: TeamMember;
+  sizes?: string;
+}) {
   return (
-    <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+    <div className="h-full overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
       <div className="relative aspect-square">
         <Image
           src={member.photo}
           alt={`${member.name}, ${member.designation} at GlobalEd`}
           fill
           className="object-cover"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes={sizes}
         />
       </div>
       <div className="p-4 text-center">

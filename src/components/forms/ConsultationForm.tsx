@@ -1,52 +1,138 @@
-﻿"use client";
+"use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Send } from "lucide-react";
+import { Send, BookOpenCheck, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { branches } from "@/data/branches";
-import { destinations } from "@/data/destinations";
-import { courses } from "@/data/courses";
+import type { Destination, Course } from "@/types";
 import { submitLeadForm } from "@/lib/formSubmit";
+import { buttonClasses } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 import { FormField, FormStatus, Honeypot, Input, Select, SubmitButton, Textarea } from "./primitives";
+import FormProgress from "./FormProgress";
+import FormSuccess from "./FormSuccess";
 
 const phoneRegex = /^(\+?880|0)1[3-9]\d{8}$/;
 
-const schema = z.object({
+const baseFields = {
   name: z.string().min(2, "Please enter your full name").max(100),
   phone: z.string().regex(phoneRegex, "Enter a valid BD number (e.g. 017XXXXXXXX)"),
   email: z.string().email("Enter a valid email address"),
   branch: z.string().min(1, "Please choose your nearest branch"),
+  message: z.string().max(1000, "Message must be under 1000 characters").default(""),
+  consent: z.boolean().refine((v) => v === true, "Please agree to be contacted"),
+  company: z.string().default(""),
+};
+
+const generalSchema = z.object({
+  ...baseFields,
   destination: z.string().min(1, "Please choose a destination"),
   studyLevel: z.string().min(1, "Please choose your study level"),
-  ieltsStatus: z.string().optional(),
-  funding: z.string().optional(),
-  course: z.string().optional(),
-  message: z.string().max(1000, "Message must be under 1000 characters").optional(),
-  consent: z.boolean().refine((v) => v === true, "Please agree to be contacted"),
-  company: z.string().optional(),
+  ieltsStatus: z.string().default(""),
+  funding: z.string().default(""),
+  course: z.string().default(""),
+  preferredDate: z.string().default(""),
 });
 
-type FormData = z.infer<typeof schema>;
+const ieltsSchema = z.object({
+  ...baseFields,
+  destination: z.string().default(""),
+  studyLevel: z.string().default(""),
+  ieltsStatus: z.string().default(""),
+  funding: z.string().default(""),
+  course: z.string().min(1, "Please choose a course"),
+  preferredDate: z.string().min(1, "Please pick a preferred date"),
+});
 
-/** Free Consultation lead form (PFEC-style smart dropdowns). */
+type FormData = {
+  name: string;
+  phone: string;
+  email: string;
+  branch: string;
+  destination: string;
+  studyLevel: string;
+  ieltsStatus: string;
+  funding: string;
+  course: string;
+  preferredDate: string;
+  message: string;
+  consent: boolean;
+  company: string;
+};
+
+type StepId = "you" | "email" | "where" | "study" | "course" | "finish";
+
+type Step = { id: StepId; label: string; title: string; hint: string; fields: (keyof FormData)[] };
+
+const generalSteps: Step[] = [
+  { id: "you", label: "About you", title: "Let's start with the basics", hint: "Tell us who you are and how to reach you.", fields: ["name", "phone"] },
+  { id: "email", label: "Email", title: "Where should we send your confirmation?", hint: "We'll email your booking details right away.", fields: ["email"] },
+  { id: "where", label: "Location", title: "Where would you like to study?", hint: "Pick your nearest branch and dream destination.", fields: ["branch", "destination"] },
+  { id: "study", label: "Your plan", title: "Tell us about your plans", hint: "This helps your counsellor prepare for your session.", fields: ["studyLevel", "ieltsStatus", "funding", "course"] },
+  { id: "finish", label: "Finish", title: "Anything else we should know?", hint: "Optional — then you're done!", fields: ["message", "consent"] },
+];
+
+const ieltsSteps: Step[] = [
+  { id: "you", label: "About you", title: "Let's start with the basics", hint: "Tell us who you are and how to reach you.", fields: ["name", "phone"] },
+  { id: "email", label: "Email", title: "Where should we send your confirmation?", hint: "We'll email your booking details right away.", fields: ["email"] },
+  { id: "where", label: "Branch & date", title: "When and where?", hint: "Choose your nearest branch and preferred date.", fields: ["branch", "preferredDate"] },
+  { id: "course", label: "Course", title: "Which course are you interested in?", hint: "Pick a preparation course or just book the test.", fields: ["course"] },
+  { id: "finish", label: "Finish", title: "Anything else we should know?", hint: "Optional — then you're done!", fields: ["message", "consent"] },
+];
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Green tick shown inside a field once its value is valid. */
+function ValidTick({ show }: { show: boolean }) {
+  return (
+    <CheckCircle2
+      size={18}
+      aria-hidden
+      className={cn(
+        "pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-green-500 transition-all duration-300 motion-reduce:transition-none",
+        show ? "scale-100 opacity-100" : "scale-50 opacity-0",
+      )}
+    />
+  );
+}
+
+/** Unified lead form — covers both the general "Free Consultation" and the IELTS booking flow, as an animated step-by-step wizard. */
 export default function ConsultationForm({
+  context = "general",
   defaultDestination,
   defaultCourse,
+  destinations,
+  courses,
 }: {
+  context?: "general" | "ielts";
   defaultDestination?: string;
   defaultCourse?: string;
+  destinations: Pick<Destination, "slug" | "name">[];
+  courses: Pick<Course, "slug" | "title" | "category">[];
 }) {
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [direction, setDirection] = useState<"forward" | "back">("forward");
+  const [shake, setShake] = useState(false);
+  const stepRef = useRef<HTMLDivElement>(null);
+  const hasNavigated = useRef(false);
+  const isIelts = context === "ielts";
+  const steps = isIelts ? ieltsSteps : generalSteps;
+  const step = steps[stepIndex];
+  const isLast = stepIndex === steps.length - 1;
 
   const {
     register,
     handleSubmit,
     reset,
+    trigger,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(isIelts ? ieltsSchema : generalSchema) as Resolver<FormData>,
     mode: "onBlur",
     defaultValues: {
       destination: defaultDestination ?? "",
@@ -54,132 +140,301 @@ export default function ConsultationForm({
     },
   });
 
-  const onSubmit = async (data: FormData) => {
+  const [name, phone, email] = useWatch({ control, name: ["name", "phone", "email"] });
+  const nameOk = (name ?? "").trim().length >= 2;
+  const phoneOk = phoneRegex.test(phone ?? "");
+  const emailOk = emailRegex.test(email ?? "");
+
+  // Move focus to the first control of the new step (not on first render).
+  useEffect(() => {
+    if (!hasNavigated.current) return;
+    stepRef.current?.querySelector<HTMLElement>("input, select, textarea")?.focus({ preventScroll: true });
+  }, [stepIndex]);
+
+  const goTo = (index: number) => {
+    hasNavigated.current = true;
+    setDirection(index > stepIndex ? "forward" : "back");
     setStatus(null);
-    // Honeypot filled â†’ silently accept (spam bot)
-    if (data.company) {
-      setStatus({ type: "success", message: "Thank you! Our counsellor will contact you within 24 hours." });
-      return;
-    }
-    const result = await submitLeadForm({
-      form: "Free Consultation",
-      ...Object.fromEntries(
-        Object.entries(data).map(([key, value]) => [key, String(value ?? "")]),
-      ),
-    });
-    setStatus({ type: result.success ? "success" : "error", message: result.message });
-    if (result.success) reset();
+    setStepIndex(index);
   };
 
+  const next = async () => {
+    const ok = await trigger(step.fields);
+    if (!ok) {
+      setShake(true);
+      return;
+    }
+    goTo(stepIndex + 1);
+  };
+
+  const onSubmit = async (data: FormData) => {
+    setStatus(null);
+    // Honeypot filled → silently accept (spam bot)
+    if (data.company) {
+      setSuccess("Thank you! Our counsellor will contact you within 24 hours.");
+      return;
+    }
+    const payload: Record<string, string> = {
+      form: isIelts ? "IELTS Registration" : "Free Consultation",
+      formType: isIelts ? "IELTS" : "GENERAL",
+      ...Object.fromEntries(Object.entries(data).map(([key, value]) => [key, String(value ?? "")])),
+    };
+    const result = await submitLeadForm(payload);
+    if (result.success) {
+      setSuccess(result.message);
+      reset();
+    } else {
+      setStatus({ type: "error", message: result.message });
+    }
+  };
+
+  // If final validation fails on a field from an earlier step, jump back to that step.
+  const onInvalid = (invalid: Record<string, unknown>) => {
+    const target = steps.findIndex((st) => st.fields.some((f) => f in invalid));
+    if (target !== -1 && target !== stepIndex) goTo(target);
+    setShake(true);
+  };
+
+  const restart = () => {
+    setSuccess(null);
+    setStatus(null);
+    hasNavigated.current = false;
+    setDirection("forward");
+    setStepIndex(0);
+  };
+
+  const courseOptions = isIelts ? courses.filter((c) => c.category === "ielts") : courses;
+  const selectedDestination = destinations.find((d) => d.slug === defaultDestination)?.name;
+  const selectedCourse = courses.find((c) => c.slug === defaultCourse)?.title;
+
+  if (success) return <FormSuccess message={success} onReset={restart} />;
+
+  const chip = (text?: string) =>
+    text ? (
+      <p className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-800">
+        <CheckCircle2 size={14} aria-hidden className="text-green-600" />
+        Pre-selected: {text}
+      </p>
+    ) : null;
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="relative space-y-5">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (isLast) void handleSubmit(onSubmit, onInvalid)(e);
+        else void next();
+      }}
+      noValidate
+      className="relative space-y-6"
+    >
       <Honeypot registration={register("company")} />
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <FormField id="c-name" label="Full Name" required error={errors.name?.message}>
-          <Input id="c-name" type="text" placeholder="Your full name" autoComplete="name" aria-invalid={!!errors.name} {...register("name")} />
-        </FormField>
-        <FormField id="c-phone" label="Phone Number" required error={errors.phone?.message}>
-          <Input id="c-phone" type="tel" placeholder="01XXXXXXXXX" autoComplete="tel" aria-invalid={!!errors.phone} {...register("phone")} />
-        </FormField>
-      </div>
+      <FormProgress steps={steps.map((s) => s.label)} current={stepIndex} onGoTo={goTo} />
 
-      <FormField id="c-email" label="Email Address" required error={errors.email?.message}>
-        <Input id="c-email" type="email" placeholder="you@example.com" autoComplete="email" aria-invalid={!!errors.email} {...register("email")} />
-      </FormField>
+      <div
+        key={step.id}
+        ref={stepRef}
+        onAnimationEnd={(e) => {
+          if (e.animationName === "shake") setShake(false);
+        }}
+        className={cn(
+          "space-y-5",
+          direction === "forward" ? "animate-step-forward" : "animate-step-back",
+          "motion-reduce:animate-none",
+          shake && "animate-shake motion-reduce:animate-none",
+        )}
+      >
+        <div>
+          <h3 className="font-heading text-lg font-bold text-primary-900">{step.title}</h3>
+          <p className="mt-1 text-sm text-neutral-500">{step.hint}</p>
+        </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <FormField id="c-branch" label="Nearest Branch" required error={errors.branch?.message}>
-          <Select id="c-branch" aria-invalid={!!errors.branch} {...register("branch")}>
-            <option value="">Select a branch</option>
-            {branches.map((branch) => (
-              <option key={branch.name} value={branch.name}>
-                {branch.name}
-              </option>
-            ))}
-          </Select>
-        </FormField>
-        <FormField id="c-destination" label="Preferred Destination" required error={errors.destination?.message}>
-          <Select id="c-destination" aria-invalid={!!errors.destination} {...register("destination")}>
-            <option value="">Select a country</option>
-            {destinations.map((d) => (
-              <option key={d.slug} value={d.name}>
-                {d.name}
-              </option>
-            ))}
-            <option value="Not sure yet">Not sure yet</option>
-          </Select>
-        </FormField>
-      </div>
+        {step.id === "you" && (
+          <div className="grid gap-5 sm:grid-cols-2">
+            <FormField id="c-name" label="Full Name" required error={errors.name?.message}>
+              <div className="relative">
+                <Input id="c-name" type="text" placeholder="Your full name" autoComplete="name" aria-invalid={!!errors.name} {...register("name")} />
+                <ValidTick show={nameOk && !errors.name} />
+              </div>
+            </FormField>
+            <FormField id="c-phone" label="Phone Number" required error={errors.phone?.message}>
+              <div className="relative">
+                <Input id="c-phone" type="tel" placeholder="01XXXXXXXXX" autoComplete="tel" aria-invalid={!!errors.phone} {...register("phone")} />
+                <ValidTick show={phoneOk && !errors.phone} />
+              </div>
+            </FormField>
+          </div>
+        )}
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <FormField id="c-level" label="Study Level" required error={errors.studyLevel?.message}>
-          <Select id="c-level" aria-invalid={!!errors.studyLevel} {...register("studyLevel")}>
-            <option value="">Select your level</option>
-            <option value="HSC / A-Level completed">HSC / A-Level completed</option>
-            <option value="Bachelor's">Bachelor&apos;s degree</option>
-            <option value="Master's">Master&apos;s degree</option>
-            <option value="PhD">PhD</option>
-          </Select>
-        </FormField>
-        <FormField id="c-ielts" label="IELTS Status" error={errors.ieltsStatus?.message}>
-          <Select id="c-ielts" {...register("ieltsStatus")}>
-            <option value="">Select your status</option>
-            <option value="I have my score">I have my score</option>
-            <option value="Exam scheduled / awaiting result">Exam scheduled / awaiting result</option>
-            <option value="Not taken yet">Not taken yet</option>
-            <option value="Planning to retake">Planning to retake</option>
-          </Select>
-        </FormField>
-      </div>
+        {step.id === "email" && (
+          <FormField id="c-email" label="Email Address" required error={errors.email?.message}>
+            <div className="relative">
+              <Input id="c-email" type="email" placeholder="you@example.com" autoComplete="email" aria-invalid={!!errors.email} {...register("email")} />
+              <ValidTick show={emailOk && !errors.email} />
+            </div>
+          </FormField>
+        )}
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <FormField id="c-funding" label="Funding Plan" error={errors.funding?.message}>
-          <Select id="c-funding" {...register("funding")}>
-            <option value="">How will you fund your studies?</option>
-            <option value="Self-funded">Self-funded</option>
-            <option value="Family-funded">Family-funded</option>
-            <option value="Education loan">Education loan</option>
-            <option value="Seeking scholarship">Seeking scholarship</option>
-          </Select>
-        </FormField>
-        <FormField id="c-course" label="Interested Course" error={errors.course?.message}>
-          <Select id="c-course" {...register("course")}>
-            <option value="">Optional â€” choose a course</option>
-            {courses.map((course) => (
-              <option key={course.slug} value={course.title}>
-                {course.title}
-              </option>
-            ))}
-          </Select>
-        </FormField>
-      </div>
+        {step.id === "where" && (
+          <div className="space-y-5">
+            {!isIelts && chip(selectedDestination)}
+            <div className="grid gap-5 sm:grid-cols-2">
+              <FormField id="c-branch" label="Nearest Branch" required error={errors.branch?.message}>
+                <Select id="c-branch" aria-invalid={!!errors.branch} {...register("branch")}>
+                  <option value="">Select a branch</option>
+                  {branches.map((branch) => (
+                    <option key={branch.name} value={branch.name}>
+                      {branch.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormField>
 
-      <FormField id="c-message" label="Your Message" error={errors.message?.message}>
-        <Textarea id="c-message" placeholder="Tell us about your study abroad goalsâ€¦" aria-invalid={!!errors.message} {...register("message")} />
-      </FormField>
+              {isIelts ? (
+                <FormField id="c-date" label="Preferred Date" required error={errors.preferredDate?.message}>
+                  <Input
+                    id="c-date"
+                    type="date"
+                    min={new Date().toISOString().split("T")[0]}
+                    aria-invalid={!!errors.preferredDate}
+                    {...register("preferredDate")}
+                  />
+                </FormField>
+              ) : (
+                <FormField id="c-destination" label="Preferred Destination" required error={errors.destination?.message}>
+                  <Select id="c-destination" aria-invalid={!!errors.destination} {...register("destination")}>
+                    <option value="">Select a country</option>
+                    {destinations.map((d) => (
+                      <option key={d.slug} value={d.slug}>
+                        {d.name}
+                      </option>
+                    ))}
+                    <option value="not-sure">Not sure yet</option>
+                  </Select>
+                </FormField>
+              )}
+            </div>
+          </div>
+        )}
 
-      <div>
-        <label className="flex items-start gap-2.5 text-sm text-neutral-600">
-          <input
-            type="checkbox"
-            className="mt-0.5 h-4 w-4 rounded border-neutral-300 accent-primary-700"
-            aria-invalid={!!errors.consent}
-            {...register("consent")}
-          />
-          I agree to be contacted by GlobalEd about my enquiry.
-        </label>
-        {errors.consent && (
-          <p role="alert" className="mt-1.5 text-xs font-medium text-red-600">
-            {errors.consent.message}
-          </p>
+        {step.id === "study" && (
+          <div className="space-y-5">
+            {chip(selectedCourse)}
+            <div className="grid gap-5 sm:grid-cols-2">
+              <FormField id="c-level" label="Study Level" required error={errors.studyLevel?.message}>
+                <Select id="c-level" aria-invalid={!!errors.studyLevel} {...register("studyLevel")}>
+                  <option value="">Select your level</option>
+                  <option value="HSC / A-Level completed">HSC / A-Level completed</option>
+                  <option value="Bachelor's">Bachelor&apos;s degree</option>
+                  <option value="Master's">Master&apos;s degree</option>
+                  <option value="PhD">PhD</option>
+                </Select>
+              </FormField>
+              <FormField id="c-ielts" label="IELTS Status" error={errors.ieltsStatus?.message}>
+                <Select id="c-ielts" {...register("ieltsStatus")}>
+                  <option value="">Select your status</option>
+                  <option value="I have my score">I have my score</option>
+                  <option value="Exam scheduled / awaiting result">Exam scheduled / awaiting result</option>
+                  <option value="Not taken yet">Not taken yet</option>
+                  <option value="Planning to retake">Planning to retake</option>
+                </Select>
+              </FormField>
+              <FormField id="c-funding" label="Funding Plan" error={errors.funding?.message}>
+                <Select id="c-funding" {...register("funding")}>
+                  <option value="">How will you fund your studies?</option>
+                  <option value="Self-funded">Self-funded</option>
+                  <option value="Family-funded">Family-funded</option>
+                  <option value="Education loan">Education loan</option>
+                  <option value="Seeking scholarship">Seeking scholarship</option>
+                </Select>
+              </FormField>
+              <FormField id="c-course" label="Interested Course" error={errors.course?.message}>
+                <Select id="c-course" aria-invalid={!!errors.course} {...register("course")}>
+                  <option value="">Optional — choose a course</option>
+                  {courseOptions.map((course) => (
+                    <option key={course.slug} value={course.slug}>
+                      {course.title}
+                    </option>
+                  ))}
+                </Select>
+              </FormField>
+            </div>
+          </div>
+        )}
+
+        {step.id === "course" && (
+          <div className="space-y-5">
+            {chip(selectedCourse)}
+            <FormField id="c-course" label="Preferred Course" required error={errors.course?.message}>
+              <Select id="c-course" aria-invalid={!!errors.course} {...register("course")}>
+                <option value="">Select a course</option>
+                {courseOptions.map((course) => (
+                  <option key={course.slug} value={course.slug}>
+                    {course.title}
+                  </option>
+                ))}
+                <option value="no-course">Only test booking (no course)</option>
+              </Select>
+            </FormField>
+          </div>
+        )}
+
+        {step.id === "finish" && (
+          <div className="space-y-5">
+            <FormField id="c-message" label={isIelts ? "Additional Notes" : "Your Message"} error={errors.message?.message}>
+              <Textarea
+                id="c-message"
+                placeholder={isIelts ? "Anything we should know? (current level, target band, etc.)" : "Tell us about your study abroad goals…"}
+                aria-invalid={!!errors.message}
+                {...register("message")}
+              />
+            </FormField>
+
+            <div>
+              <label className="flex items-start gap-2.5 text-sm text-neutral-600">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4 rounded border-neutral-300 accent-primary-700"
+                  aria-invalid={!!errors.consent}
+                  {...register("consent")}
+                />
+                I agree to be contacted by GlobalEd about my enquiry.
+              </label>
+              {errors.consent && (
+                <p role="alert" className="mt-1.5 text-xs font-medium text-red-600">
+                  {errors.consent.message}
+                </p>
+              )}
+            </div>
+          </div>
         )}
       </div>
 
-      <SubmitButton loading={isSubmitting}>
-        <Send size={18} aria-hidden />
-        Book My Free Consultation
-      </SubmitButton>
+      <div className="flex items-center gap-3">
+        {stepIndex > 0 && (
+          <button
+            type="button"
+            onClick={() => goTo(stepIndex - 1)}
+            className={cn(buttonClasses({ variant: "outline", size: "lg" }), "shrink-0")}
+          >
+            <ArrowLeft size={18} aria-hidden />
+            Back
+          </button>
+        )}
+        {isLast ? (
+          <div className="flex-1">
+            <SubmitButton loading={isSubmitting}>
+              {isIelts ? <BookOpenCheck size={18} aria-hidden /> : <Send size={18} aria-hidden />}
+              {isIelts ? "Book My IELTS Test" : "Book My Free Consultation"}
+            </SubmitButton>
+          </div>
+        ) : (
+          <button type="submit" className={cn(buttonClasses({ size: "lg" }), "flex-1")}>
+            Continue
+            <ArrowRight size={18} aria-hidden />
+          </button>
+        )}
+      </div>
 
       <FormStatus status={status?.type ?? null} message={status?.message} />
     </form>

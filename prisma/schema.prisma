@@ -1,0 +1,224 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum AdminRole {
+  ADMIN
+  EDITOR
+}
+
+enum AdminPermission {
+  DESTINATIONS
+  COURSES
+  BLOGS
+  EVENTS
+  IELTS
+  LEADS
+  TESTIMONIALS
+}
+
+enum CourseCategory {
+  IELTS
+  ENGLISH
+  OTHER_LANGUAGES
+}
+
+enum BlogCategory {
+  COUNTRY_WISE
+  SCHOLARSHIPS
+  IELTS
+  ENGLISH
+}
+
+enum EventStatus {
+  UPCOMING
+  PREVIOUS
+}
+
+enum LeadFormType {
+  GENERAL
+  IELTS
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+model AdminUser {
+  id           String            @id @default(cuid())
+  name         String
+  email        String            @unique
+  passwordHash String
+  role         AdminRole         @default(EDITOR)
+  // Ignored when role is ADMIN (master admins always have full access).
+  permissions  AdminPermission[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model Destination {
+  id           String                   @id @default(cuid())
+  slug         String                   @unique
+  name         String
+  tagline      String
+  heroImage    String
+  flagImage    String
+  overview     String                   @db.Text
+  whyStudyHere String[]
+  tuitionRange String
+  livingCost   String
+  scholarships String[]
+  visaInfo     String[]
+  sortOrder    Int                      @default(0)
+  universities DestinationUniversity[]
+  faqs         DestinationFaq[]
+  leads        Lead[]
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+}
+
+model DestinationUniversity {
+  id            String      @id @default(cuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  name          String
+  city          String
+  sortOrder     Int         @default(0)
+}
+
+model DestinationFaq {
+  id            String      @id @default(cuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  q             String
+  a             String      @db.Text
+  sortOrder     Int         @default(0)
+}
+
+model Course {
+  id          String                   @id @default(cuid())
+  slug        String                   @unique
+  title       String
+  category    CourseCategory
+  image       String
+  overview    String                   @db.Text
+  curriculum  String[]
+  duration    String
+  schedule    String
+  price       String
+  badge       String?
+  sortOrder   Int                      @default(0)
+  ieltsUsedIn IeltsPreparationCourse[]
+  leads       Lead[]
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+}
+
+model IeltsContent {
+  id                          String                   @id @default("main")
+  whatIsIeltsTitle            String
+  whatIsIeltsBody             String                   @db.Text
+  whatIsIeltsPoints           String[]
+  whyIeltsTitle               String
+  whyIeltsBody                String                   @db.Text
+  whyIeltsReasons             Json
+  whyGlobaledTitle            String
+  whyGlobaledBody             String                   @db.Text
+  whyGlobaledUsps             Json
+  whyGlobaledFreeServices     Json
+  preparationTitle            String
+  preparationBody             String                   @db.Text
+  preparationSkillAreas       Json
+  preparationCourses          IeltsPreparationCourse[]
+  progressTrackerTitle        String
+  progressTrackerBody         String                   @db.Text
+  progressTrackerTrackItems   String[]
+  progressTrackerBenefits     String[]
+  successStoriesTitle         String
+  successStoriesBody          String                   @db.Text
+  successStoriesAchievements  Json
+  successStoriesQuotes        String[]
+  updatedAt                   DateTime                 @updatedAt
+}
+
+model IeltsPreparationCourse {
+  id             String       @id @default(cuid())
+  ieltsContentId String
+  ieltsContent   IeltsContent @relation(fields: [ieltsContentId], references: [id], onDelete: Cascade)
+  courseId       String
+  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  sortOrder      Int          @default(0)
+
+  @@unique([ieltsContentId, courseId])
+}
+
+model BlogPost {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  category    BlogCategory
+  coverImage  String
+  excerpt     String       @db.Text
+  content     String       @db.Text
+  author      String
+  publishedAt DateTime
+  featured    Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model EventItem {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  title       String
+  status      EventStatus
+  date        DateTime
+  time        String
+  venue       String
+  bannerImage String
+  description String      @db.Text
+  gallery     String[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Lead {
+  id               String       @id @default(cuid())
+  formType         LeadFormType
+  name             String
+  phone            String
+  email            String
+  branch           String
+  destinationId    String?
+  destination      Destination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  destinationOther String?
+  studyLevel       String?
+  ieltsStatus      String?
+  funding          String?
+  courseId         String?
+  course           Course?      @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  preferredDate    DateTime?
+  message          String?      @db.Text
+  status           LeadStatus   @default(NEW)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  studentName String
+  reviewImage String
+  university  String
+  country     String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

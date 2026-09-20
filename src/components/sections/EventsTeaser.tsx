@@ -2,10 +2,11 @@ import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import EventCard from "@/components/cards/EventCard";
 import { ButtonLink } from "@/components/ui/Button";
-import { events } from "@/data/events";
+import { getAllEvents } from "@/lib/content/events";
 
 /** Home upcoming events teaser (PFEC pattern). */
-export default function EventsTeaser() {
+export default async function EventsTeaser() {
+  const events = await getAllEvents();
   const upcoming = events
     .filter((event) => event.status === "upcoming")
     .sort((a, b) => a.date.localeCompare(b.date))

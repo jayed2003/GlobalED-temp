@@ -26,7 +26,7 @@ export default function CtaBanner({ variant = "default" }: { variant?: "default"
                 <ArrowRight size={18} aria-hidden />
               </ButtonLink>
             ) : (
-              <ButtonLink href="/get-started" size="lg">
+              <ButtonLink href="/consultation" size="lg">
                 Get Started Free
                 <ArrowRight size={18} aria-hidden />
               </ButtonLink>

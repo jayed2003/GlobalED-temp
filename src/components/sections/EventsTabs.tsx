@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import EventCard from "@/components/cards/EventCard";
-import { events } from "@/data/events";
+import type { EventItem } from "@/types";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -11,7 +11,7 @@ const tabs = [
 ] as const;
 
 /** Events listing with Upcoming / Previous tabs. */
-export default function EventsTabs() {
+export default function EventsTabs({ events }: { events: EventItem[] }) {
   const [active, setActive] = useState<(typeof tabs)[number]["key"]>("upcoming");
 
   const visible = events

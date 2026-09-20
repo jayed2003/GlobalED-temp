@@ -1,9 +1,10 @@
 import { GraduationCap } from "lucide-react";
 import Container from "@/components/layout/Container";
-import { destinations } from "@/data/destinations";
+import { getAllDestinations } from "@/lib/content/destinations";
 
 /** Infinite-scrolling partner university strip (PFEC / IECC logo marquee). */
-export default function PartnerMarquee() {
+export default async function PartnerMarquee() {
+  const destinations = await getAllDestinations();
   const partners = destinations
     .flatMap((d) => d.popularUniversities.slice(0, 1).map((u) => u.name))
     .slice(0, 10);
