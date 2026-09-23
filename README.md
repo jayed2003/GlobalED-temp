@@ -6,7 +6,8 @@ consultation bookings, IELTS test bookings and contact enquiries.
 
 - **Public site:** home, 13 study destinations, IELTS pages, services, courses,
   about, blogs, events, FAQs, contact, the consultation / IELTS booking form,
-  and the Privacy Policy and Terms & Conditions.
+  and the legal pages (Privacy Policy, Terms & Conditions, Return and Refund
+  Policy).
 - **Admin panel** (`/admin`): manage destinations, courses, blogs, events, IELTS
   content, reviews, leads and contact messages, plus admin accounts.
 
@@ -53,6 +54,22 @@ src/
   and the legal pages (`legal.ts`). Changing these means editing the file and
   redeploying.
 
+### Legal pages
+
+`/privacy-policy`, `/terms-and-conditions` and `/return-and-refund-policy`,
+content in `src/data/legal.ts`. They follow Global Citizen Limited /
+GlobalEd's published policies on globaled.io, with these changes:
+
+- Terms & Conditions: "Website" means globaled.io (the original said
+  www.gcledu.com). Clause 3.1 about customer accounts is kept, as accounts
+  are planned.
+- Privacy Policy: added clauses on what this website collects, the service
+  providers that process it, overseas storage, cookies, security measures,
+  correction/deletion requests, children, and contact details (2.6, 3.3–3.4,
+  4.3, 5.2–5.4, 6.3, 7.3–7.4, 11, 12). The original clauses are unchanged.
+
+All three are linked in the footer and listed in the sitemap.
+
 ## Local development
 
 Requires Node.js 20.9 or newer.
@@ -80,7 +97,8 @@ npm run dev          # http://localhost:3000
 
 ## Environment variables
 
-See `.env.example` for the full list with comments.
+Copy `.env.example` to `.env` and fill it in — the template (with comments
+for every variable) is committed; `.env` itself is never committed.
 
 | Variable | Required | Purpose |
 |---|---|---|
@@ -92,7 +110,7 @@ See `.env.example` for the full list with comments.
 | `RESEND_FROM_EMAIL`, `COMPANY_NOTIFY_EMAIL` | For email | Sender, and where new-lead alerts and contact messages are emailed. The sender must be on a domain verified in Resend, or Resend only delivers to the account owner. |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | In production | Upstash Redis for rate limiting (set automatically by the Vercel integration) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | In production | Cloudflare Turnstile keys |
-| `NEXT_PUBLIC_SITE_URL` | In production | Public URL used in the sitemap, robots.txt and metadata |
+| `NEXT_PUBLIC_SITE_URL` | In production | Public URL used in the sitemap, robots.txt, metadata and links in admin emails |
 | `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | Seed only | First master admin account |
 
 In local development, Turnstile falls back to Cloudflare's always-pass test
@@ -160,3 +178,53 @@ request. Database content is still cached, so pages stay fast.
 - HSTS makes browsers require HTTPS on `globaled.io` **and all its
   subdomains** for two years. Before switching, confirm that every subdomain in
   use (for example `mail.`, `webmail.`, `cpanel.`) works over HTTPS.
+
+## Change log
+
+### Security and platform (Sept 2026)
+
+1. **Dependencies upgraded:** Next.js 16, React 19.3, Prisma 7 (driver
+   adapter, `prisma.config.ts`), latest Zod, React Hook Form, Tailwind, etc.;
+   `npm audit` clean. Middleware renamed to `src/proxy.ts` (Next 16).
+2. **Rate limiting** with Upstash Redis on the public forms, admin login,
+   uploads and admin changes (limits in the Security table above).
+3. **Cloudflare Turnstile** bot check on the contact and consultation forms,
+   verified server-side.
+4. **Plain-text-only public forms:** HTML/script input, unknown fields and
+   invalid pick-list values are rejected; visitor text is escaped in emails.
+5. **Upload sanitizer:** JPG, WebP and SVG only (no PNG), type detected from
+   the file bytes, images re-encoded to strip metadata, SVGs cleaned.
+6. **8-hour admin sessions**, counted from sign-in.
+7. **Deleted admins lose access immediately;** permission changes apply on
+   the next request.
+8. **Security headers:** HSTS, X-Frame-Options, X-Content-Type-Options,
+   Referrer-Policy, Permissions-Policy and a nonce-based CSP.
+9. **JSON-LD output encoded** so content can't break out of its script tag.
+10. **robots.txt and sitemap.xml public;** the admin panel is excluded and
+    `noindex`.
+
+### Admin and content (Sept 2026)
+
+1. **Catch-all 404:** every unknown URL shows the branded 404 page with a
+   real 404 status (the old loading skeleton made them return 200).
+2. **Legal pages:** Privacy Policy, Terms & Conditions and Return and Refund
+   Policy (see "Legal pages" above), linked in the footer and sitemap.
+3. **New-lead alerts:** each consultation / IELTS booking is emailed to
+   `COMPANY_NOTIFY_EMAIL`; the admin sidebar shows live counts of new leads
+   and messages.
+4. **Contact messages saved** to the database (`ContactMessage` model,
+   migration `20260923172253_contact_messages`) and managed under Admin →
+   Messages, with a new "Contact Messages" permission for editors.
+5. **Rich text editor** (Tiptap) for blog content; HTML is sanitized on save
+   and on display; older plain-text posts still work.
+6. **Valid dates only:** no impossible or future blog dates, event dates must
+   match their Upcoming / Previous status, IELTS bookings within 12 months.
+7. **Common error handling** for every admin API route and page (invalid
+   JSON, oversized requests, deleted items, expired sessions, server errors).
+8. **Duplicate protection** for blogs, destinations, courses, events, IELTS
+   content, reviews and admins: same slug, name/title or email (ignoring case
+   and spacing), repeated list entries, and double-clicked submits.
+
+Also fixed along the way: dashboard cards now respect editor permissions,
+the IELTS form shows its list errors, blog pages use their intended reading
+width, and `.env.example` is committed with every variable documented.

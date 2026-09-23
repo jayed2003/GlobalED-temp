@@ -1,10 +1,16 @@
 /**
  * Legal pages: Privacy Policy, Terms & Conditions, Return and Refund Policy.
  *
- * Text is taken from the company's current policies on globaled.io
+ * Based on the company's published policies on globaled.io
  * (/privacy-policy-2/, /terms-and-conditions/, /return-and-refund-policy/),
- * issued by Global Citizen Limited / GlobalEd. Keep wording changes in sync
- * with management — these are the company's legal terms, not website copy.
+ * issued by Global Citizen Limited / GlobalEd. Changes from the originals:
+ *   - Terms: "Website" now means globaled.io (was www.gcledu.com).
+ *   - Privacy Policy: added clauses describing what this website actually
+ *     collects and who processes it (2.6, 3.3-3.4, 4.3, 5.2-5.4, 6.3,
+ *     7.3-7.4) plus sections 11 (Children) and 12 (Contact Us). Existing
+ *     clauses and their numbers are unchanged.
+ * Keep wording changes in sync with management — these are the company's
+ * legal terms, not website copy.
  */
 
 export type LegalBlock = { p: string } | { list: string[] } | { subheading: string };
@@ -30,7 +36,7 @@ export const legalLinks = [
 
 export const privacyPolicy: LegalDocument = {
   title: "Privacy Policy",
-  lastUpdated: "2025-09-15",
+  lastUpdated: "2026-09-24",
   sections: [
     {
       heading: "1. Introduction",
@@ -48,6 +54,14 @@ export const privacyPolicy: LegalDocument = {
         { p: "2.3. We retain personal data only as long as necessary for the fulfillment of those purposes." },
         { p: "2.4. Information will be collected by lawful and fair means, and, where appropriate, with the knowledge or consent of the individual concerned." },
         { p: "2.5. Collected personal data should be relevant to the purposes for which it is to be used, and to the extent necessary, accurate, complete, and kept up-to-date." },
+        { p: "2.6. Through this website we collect:" },
+        {
+          list: [
+            "Free consultation and IELTS booking forms: your name, phone number, email address, nearest branch, preferred study destination, study level, IELTS status, funding plan, course of interest, preferred test date, and any message you write.",
+            "Contact form: your name, email address, subject and message.",
+            "Technical information such as your IP address and browser type, used briefly to keep the website secure and to prevent spam and abuse.",
+          ],
+        },
       ],
     },
     {
@@ -55,6 +69,8 @@ export const privacyPolicy: LegalDocument = {
       blocks: [
         { p: "3.1. We use personal information to provide and improve our services, communicate updates, respond to inquiries, and ensure smooth operation of our website." },
         { p: "3.2. Personal information will not be used for purposes other than those stated without your consent, unless required by law." },
+        { p: "3.3. When you submit a form, we save your details so our counsellors can contact you, and we send you a confirmation email. Our staff are notified of new enquiries by email." },
+        { p: "3.4. We use IP addresses and automated checks (see 5.2) only to limit repeated submissions and to block spam and automated abuse of our forms." },
       ],
     },
     {
@@ -62,6 +78,7 @@ export const privacyPolicy: LegalDocument = {
       blocks: [
         { p: "4.1. Global Citizen Limited / GlobalEd will take appropriate security measures to protect personal information from loss, theft, unauthorized access, disclosure, copying, use, or modification." },
         { p: "4.2. Despite reasonable measures, we cannot guarantee absolute security of data transmitted over the Internet." },
+        { p: "4.3. Our measures include encrypted connections (HTTPS) for the whole website, access to enquiries restricted to authorised staff accounts with time-limited sign-in sessions, and automated protection against spam and abuse." },
       ],
     },
     {
@@ -75,6 +92,19 @@ export const privacyPolicy: LegalDocument = {
             "To protect rights, property, or safety of Global Citizen Limited / GlobalEd and its users.",
           ],
         },
+        { p: "5.2. The trusted service providers that help us run this website, and process data only on our behalf, are:" },
+        {
+          list: [
+            "Vercel — website hosting;",
+            "Neon — secure database storage for enquiries;",
+            "Resend — sending confirmation and notification emails;",
+            "Cloudflare Turnstile — checking that form submissions come from a real person;",
+            "Upstash — short-lived counters used to limit repeated submissions;",
+            "Google Maps — the maps on our Contact page are provided by Google under Google’s own privacy policy.",
+          ],
+        },
+        { p: "5.3. If you become our student and ask us to apply to universities, test centres or other institutions on your behalf, we will share the information and documents needed for that application with your consent." },
+        { p: "5.4. Some of our service providers store and process data on servers outside Bangladesh, including in Singapore and the United States. We choose providers that protect data with industry-standard security." },
       ],
     },
     {
@@ -82,6 +112,7 @@ export const privacyPolicy: LegalDocument = {
       blocks: [
         { p: "6.1. Individuals may request access to the personal data we hold about them by contacting us at info@globaled.io or +8801955-544772." },
         { p: "6.2. We will provide access in a timely manner, subject to legal and privacy constraints." },
+        { p: "6.3. You may also ask us to correct inaccurate information, to delete your information, or to stop contacting you, using the same contact details." },
       ],
     },
     {
@@ -89,6 +120,8 @@ export const privacyPolicy: LegalDocument = {
       blocks: [
         { p: "7.1. We may collect non-personal information such as browser type, operating system, IP address, and usage patterns to improve our website and services." },
         { p: "7.2. Cookies may be used to enhance your browsing experience." },
+        { p: "7.3. This website does not use advertising cookies. Cloudflare Turnstile and embedded Google Maps may set their own cookies or use similar technology in order to work." },
+        { p: "7.4. The staff administration area uses a secure session cookie for sign-in only." },
       ],
     },
     {
@@ -110,12 +143,24 @@ export const privacyPolicy: LegalDocument = {
         { p: "10.1. This Privacy Policy is governed by the laws of Bangladesh. Any disputes shall be subject to the exclusive jurisdiction of the Bangladeshi courts." },
       ],
     },
+    {
+      heading: "11. Children’s Privacy",
+      blocks: [
+        { p: "11.1. Many of our students are completing school. If you are under 18, please make sure a parent or guardian knows about and agrees to you sharing your details with us." },
+      ],
+    },
+    {
+      heading: "12. Contact Us",
+      blocks: [
+        { p: "12.1. For any questions about this Privacy Policy or your personal information, contact Global Citizen Limited / GlobalEd at info@globaled.io, call +8801955-544772, or visit our head office at 69/E Panthapath, Dhaka-1205." },
+      ],
+    },
   ],
 };
 
 export const termsAndConditions: LegalDocument = {
   title: "Terms & Conditions",
-  lastUpdated: "2025-09-15",
+  lastUpdated: "2026-09-24",
   sections: [
     {
       heading: "1. Definitions",
@@ -129,8 +174,7 @@ export const termsAndConditions: LegalDocument = {
             "“Online Course” means the delivery by us of an online course pursuant to which you learn course materials remotely.",
             "“Services” means the provision of the Online Course and/or the Taught Course and/or the Course Materials together with such other services as agreed from time to time and purchased by you through the Website or by telephone.",
             "“Taught Course” means a course taught by us in a classroom setting to which you attend in person.",
-            // As published on globaled.io — confirm with management whether this should now be globaled.io.
-            "“Website” means www.gcledu.com",
+            "“Website” means globaled.io",
             "“You” means the individual purchasing the Services.",
           ],
         },
