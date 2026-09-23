@@ -3,18 +3,29 @@ import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import AdminTable from "@/components/admin/AdminTable";
 import UnreadName from "@/components/admin/UnreadName";
+import type { Prisma } from "@/generated/prisma/client";
 import { leadStatusOptions, statusBadgeStyles, statusLabel } from "@/lib/inbox";
+import { buildWhere, paging, parseListQuery } from "@/lib/admin-list/core";
+import { leadsList } from "@/lib/admin-list/sections";
+import { formatDhakaDate, listProps, type SearchParams } from "@/lib/admin-list/page";
 
 const formTypeLabels: Record<string, string> = { GENERAL: "Consultation", IELTS: "IELTS Booking" };
 
-export default async function AdminLeadsPage() {
+export default async function AdminLeadsPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await requirePermission("LEADS");
   if (!session) redirect("/admin");
 
-  const leads = await prisma.lead.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { destination: true, course: true },
-  });
+  const query = parseListQuery(leadsList, await searchParams);
+  const where = buildWhere(leadsList, query) as Prisma.LeadWhereInput;
+  const [leads, total] = await Promise.all([
+    prisma.lead.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: { destination: true, course: true },
+      ...paging(leadsList, query),
+    }),
+    prisma.lead.count({ where }),
+  ]);
 
   const rows = leads.map((l) => ({
     id: l.id,
@@ -27,7 +38,7 @@ export default async function AdminLeadsPage() {
       <span key="status" className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadgeStyles[l.status]}`}>
         {statusLabel(leadStatusOptions, l.status)}
       </span>,
-      l.createdAt.toLocaleDateString("en-GB"),
+      formatDhakaDate(l.createdAt),
     ],
     editHref: `/admin/leads/${l.id}`,
     deleteEndpoint: `/api/admin/leads/${l.id}`,
@@ -38,8 +49,10 @@ export default async function AdminLeadsPage() {
     <AdminTable
       title="Leads"
       editLabel="View"
-      columnHeaders={["Name", "Phone", "Type", "Destination / Course", "Status", "Received"]}
       rows={rows}
+      total={total}
+      exportHref="/api/admin/leads/export"
+      {...listProps(leadsList, query)}
     />
   );
 }
