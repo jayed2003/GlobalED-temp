@@ -9,7 +9,9 @@ import { createAdminUserSchema } from "@/lib/validation/admin-user";
 export const POST = adminRoute({ adminOnly: true }, async ({ request }) => {
   const data = await readJson(request, createAdminUserSchema);
 
-  const existing = await prisma.adminUser.findUnique({ where: { email: data.email } });
+  // Emails are stored lowercase (see admin-user.ts); insensitive match also
+  // catches any older mixed-case row.
+  const existing = await prisma.adminUser.findFirst({ where: { email: { equals: data.email, mode: "insensitive" } } });
   if (existing) throw new ApiError(409, "An admin with this email already exists", "email");
 
   const passwordHash = await bcrypt.hash(data.password, 10);

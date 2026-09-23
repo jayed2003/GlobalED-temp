@@ -6,7 +6,8 @@ export const adminPermissionValues = ["DESTINATIONS", "COURSES", "BLOGS", "EVENT
 // seeded master ADMIN account keeps its role forever (see the API routes).
 const baseFields = {
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Enter a valid email address"),
+  // Stored lowercase so the same address can't be added twice in different case.
+  email: z.string().trim().toLowerCase().email("Enter a valid email address"),
   permissions: z.array(z.enum(adminPermissionValues)),
 };
 

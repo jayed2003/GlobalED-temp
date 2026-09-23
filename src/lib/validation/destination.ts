@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { noDuplicates } from "./normalize";
 
 export const universitySchema = z.object({
   name: z.string().min(1, "University name is required"),
@@ -20,13 +21,28 @@ export const destinationSchema = z.object({
   heroImage: z.string().min(1, "Hero image is required"),
   flagImage: z.string().min(1, "Flag image is required"),
   overview: z.string().min(1, "Overview is required"),
-  whyStudyHere: z.array(z.string().min(1, "Cannot be empty")).min(1, "Add at least one point"),
+  whyStudyHere: z
+    .array(z.string().min(1, "Cannot be empty"))
+    .min(1, "Add at least one point")
+    .superRefine(noDuplicates((s: string) => s, "point")),
   tuitionRange: z.string().min(1, "Tuition range is required"),
   livingCost: z.string().min(1, "Living cost is required"),
-  scholarships: z.array(z.string().min(1, "Cannot be empty")).min(1, "Add at least one scholarship"),
-  visaInfo: z.array(z.string().min(1, "Cannot be empty")).min(1, "Add at least one visa info point"),
-  popularUniversities: z.array(universitySchema).min(1, "Add at least one university"),
-  faqs: z.array(destinationFaqSchema).min(1, "Add at least one FAQ"),
+  scholarships: z
+    .array(z.string().min(1, "Cannot be empty"))
+    .min(1, "Add at least one scholarship")
+    .superRefine(noDuplicates((s: string) => s, "scholarship")),
+  visaInfo: z
+    .array(z.string().min(1, "Cannot be empty"))
+    .min(1, "Add at least one visa info point")
+    .superRefine(noDuplicates((s: string) => s, "point")),
+  popularUniversities: z
+    .array(universitySchema)
+    .min(1, "Add at least one university")
+    .superRefine(noDuplicates((u: { name: string }) => u.name, "university")),
+  faqs: z
+    .array(destinationFaqSchema)
+    .min(1, "Add at least one FAQ")
+    .superRefine(noDuplicates((f: { q: string }) => f.q, "question")),
 });
 
 export type DestinationFormValues = z.infer<typeof destinationSchema>;

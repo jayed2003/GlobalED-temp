@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
+import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { destinationSchema } from "@/lib/validation/destination";
 
 export const POST = adminRoute({ permission: "DESTINATIONS" }, async ({ request }) => {
@@ -9,6 +10,13 @@ export const POST = adminRoute({ permission: "DESTINATIONS" }, async ({ request 
 
   const existing = await prisma.destination.findUnique({ where: { slug: data.slug } });
   if (existing) throw new ApiError(409, "A destination with this slug already exists", "slug");
+
+  const others = await prisma.destination.findMany({ select: { id: true, name: true } });
+  assertNotDuplicate(
+    others.map((r) => ({ id: r.id, value: r.name })),
+    data.name,
+    { message: `A destination called "${data.name.trim()}" already exists`, field: "name" },
+  );
 
   const count = await prisma.destination.count();
 

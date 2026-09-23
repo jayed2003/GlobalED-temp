@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
-import { showServerError } from "@/components/admin/form-errors";
+import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
@@ -52,7 +52,7 @@ export default function IeltsContentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit, onInvalidForm(setStatus))} noValidate className="space-y-5">
       <Section title="What is IELTS?">
         <FormField id="wi-title" label="Title" required error={errors.whatIsIelts?.title?.message}>
           <Input id="wi-title" {...register("whatIsIelts.title")} />
@@ -63,8 +63,8 @@ export default function IeltsContentForm({
         <Controller
           control={control}
           name="whatIsIelts.points"
-          render={({ field }) => (
-            <RepeatableFieldList label="Key Points" value={field.value} onChange={field.onChange} />
+          render={({ field, fieldState }) => (
+            <RepeatableFieldList label="Key Points" value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
           )}
         />
       </Section>
@@ -79,11 +79,12 @@ export default function IeltsContentForm({
         <Controller
           control={control}
           name="whyIelts.reasons"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <ObjectFieldArray
               label="Reasons"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
               emptyItem={{ title: "", description: "" }}
               renderRow={(item, update) => (
                 <div className="space-y-2">
@@ -111,11 +112,12 @@ export default function IeltsContentForm({
         <Controller
           control={control}
           name="whyGlobaled.usps"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <ObjectFieldArray
               label="USPs"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
               emptyItem={{ title: "", description: "" }}
               renderRow={(item, update) => (
                 <div className="space-y-2">
@@ -134,11 +136,12 @@ export default function IeltsContentForm({
         <Controller
           control={control}
           name="whyGlobaled.freeServices"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <ObjectFieldArray
               label="Free Services"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
               emptyItem={{ title: "", description: "", points: [], ctaLabel: "" }}
               renderRow={(item, update) => (
                 <div className="space-y-3">
@@ -176,11 +179,12 @@ export default function IeltsContentForm({
         <Controller
           control={control}
           name="preparation.skillAreas"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <ObjectFieldArray
               label="Skill Areas"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
               emptyItem={{ skill: "", points: [] }}
               renderRow={(item, update) => (
                 <div className="space-y-3">
@@ -215,15 +219,15 @@ export default function IeltsContentForm({
         <Controller
           control={control}
           name="progressTracker.trackItems"
-          render={({ field }) => (
-            <RepeatableFieldList label="What We Track" value={field.value} onChange={field.onChange} />
+          render={({ field, fieldState }) => (
+            <RepeatableFieldList label="What We Track" value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
           )}
         />
         <Controller
           control={control}
           name="progressTracker.benefits"
-          render={({ field }) => (
-            <RepeatableFieldList label="Benefits" value={field.value} onChange={field.onChange} />
+          render={({ field, fieldState }) => (
+            <RepeatableFieldList label="Benefits" value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
           )}
         />
       </Section>
@@ -238,11 +242,12 @@ export default function IeltsContentForm({
         <Controller
           control={control}
           name="successStories.achievements"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <ObjectFieldArray
               label="Achievements"
               value={field.value}
               onChange={field.onChange}
+              error={fieldState.error?.message}
               emptyItem={{ band: "", outcome: "" }}
               renderRow={(item, update) => (
                 <div className="grid gap-2 sm:grid-cols-2">
@@ -256,8 +261,8 @@ export default function IeltsContentForm({
         <Controller
           control={control}
           name="successStories.quotes"
-          render={({ field }) => (
-            <RepeatableFieldList label="Student Quotes" value={field.value} onChange={field.onChange} />
+          render={({ field, fieldState }) => (
+            <RepeatableFieldList label="Student Quotes" value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
           )}
         />
       </Section>

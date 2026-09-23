@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
-import { showServerError } from "@/components/admin/form-errors";
+import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
@@ -36,6 +36,9 @@ export default function CourseForm({
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  // Stays true after a successful save so the button can't be clicked again
+  // while the page navigates away (prevents duplicate records).
+  const [saved, setSaved] = useState(false);
 
   const {
     setError,
@@ -55,12 +58,13 @@ export default function CourseForm({
       json: data,
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
+    setSaved(true);
     router.push("/admin/courses");
     router.refresh();
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit, onInvalidForm(setStatus))} noValidate className="space-y-8">
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField id="c-slug" label="Slug" required error={errors.slug?.message}>
           <Input id="c-slug" placeholder="ielts-regular" {...register("slug")} />
@@ -125,7 +129,7 @@ export default function CourseForm({
         </FormField>
       </div>
 
-      <SubmitButton loading={isSubmitting}>
+      <SubmitButton loading={isSubmitting || saved}>
         <Save size={18} aria-hidden />
         {mode === "create" ? "Create Course" : "Save Changes"}
       </SubmitButton>

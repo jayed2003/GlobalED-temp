@@ -20,7 +20,7 @@ export const PATCH = adminRoute<Params>({ adminOnly: true }, async ({ request, s
     throw new ApiError(403, "Only the master admin can edit their own account");
   }
 
-  const existing = await prisma.adminUser.findUnique({ where: { email: data.email } });
+  const existing = await prisma.adminUser.findFirst({ where: { email: { equals: data.email, mode: "insensitive" } } });
   if (existing && existing.id !== id) throw new ApiError(409, "An admin with this email already exists", "email");
 
   const updateData: Prisma.AdminUserUpdateInput = {

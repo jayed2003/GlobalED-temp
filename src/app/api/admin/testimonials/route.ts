@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
+import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { cleanText, testimonialSchema } from "@/lib/validation/testimonial";
 
 async function orderTakenBy(sortOrder: number, excludeId?: string) {
@@ -13,6 +14,16 @@ async function orderTakenBy(sortOrder: number, excludeId?: string) {
 
 export const POST = adminRoute({ permission: "TESTIMONIALS" }, async ({ request }) => {
   const data = await readJson(request, testimonialSchema);
+
+  const reviews = await prisma.testimonial.findMany({ select: { id: true, studentName: true, university: true } });
+  assertNotDuplicate(
+    reviews.map((r) => ({ id: r.id, value: `${r.studentName}|${r.university}` })),
+    `${cleanText(data.studentName)}|${cleanText(data.university)}`,
+    {
+      message: `There is already a review from ${cleanText(data.studentName)} (${cleanText(data.university)})`,
+      field: "studentName",
+    },
+  );
 
   const taken = await orderTakenBy(data.sortOrder);
   if (taken) {

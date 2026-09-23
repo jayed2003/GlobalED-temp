@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
-import { showServerError } from "@/components/admin/form-errors";
+import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
@@ -46,6 +46,9 @@ export default function AdminUserForm({
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  // Stays true after a successful save so the button can't be clicked again
+  // while the page navigates away (prevents duplicate records).
+  const [saved, setSaved] = useState(false);
 
   const {
     setError,
@@ -65,12 +68,13 @@ export default function AdminUserForm({
       json: data,
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
+    setSaved(true);
     router.push("/admin/admins");
     router.refresh();
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, onInvalidForm(setStatus))} noValidate className="space-y-6">
       {isMasterAccount && (
         <p className="rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700">
           This is the master admin account. It has full access to everything and only it can edit itself.
@@ -138,7 +142,7 @@ export default function AdminUserForm({
         />
       )}
 
-      <SubmitButton loading={isSubmitting}>
+      <SubmitButton loading={isSubmitting || saved}>
         <Save size={18} aria-hidden />
         {mode === "create" ? "Create Admin" : "Save Changes"}
       </SubmitButton>

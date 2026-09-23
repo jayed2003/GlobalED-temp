@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
-import { showServerError } from "@/components/admin/form-errors";
+import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
@@ -35,6 +35,9 @@ export default function EventForm({
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  // Stays true after a successful save so the button can't be clicked again
+  // while the page navigates away (prevents duplicate records).
+  const [saved, setSaved] = useState(false);
 
   const {
     setError,
@@ -54,12 +57,13 @@ export default function EventForm({
       json: data,
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
+    setSaved(true);
     router.push("/admin/events");
     router.refresh();
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit, onInvalidForm(setStatus))} noValidate className="space-y-8">
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField id="e-slug" label="Slug" required error={errors.slug?.message}>
           <Input id="e-slug" placeholder="global-education-expo-2026" {...register("slug")} />
@@ -113,7 +117,7 @@ export default function EventForm({
         )}
       />
 
-      <SubmitButton loading={isSubmitting}>
+      <SubmitButton loading={isSubmitting || saved}>
         <Save size={18} aria-hidden />
         {mode === "create" ? "Create Event" : "Save Changes"}
       </SubmitButton>

@@ -45,7 +45,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         ]);
         if (!limit.success) throw new LoginRateLimitedError();
 
-        const user = await prisma.adminUser.findUnique({ where: { email } });
+        // Case-insensitive: emails are stored lowercase, people type them however.
+        const user = await prisma.adminUser.findFirst({ where: { email: { equals: email.trim(), mode: "insensitive" } } });
         if (!user) return null;
 
         const valid = await bcrypt.compare(password, user.passwordHash);

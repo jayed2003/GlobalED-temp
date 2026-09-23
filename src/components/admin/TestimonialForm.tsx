@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
-import { showServerError } from "@/components/admin/form-errors";
+import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
@@ -25,6 +25,9 @@ export default function TestimonialForm({
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  // Stays true after a successful save so the button can't be clicked again
+  // while the page navigates away (prevents duplicate records).
+  const [saved, setSaved] = useState(false);
 
   // Every number from 0 up to one past the highest used, plus this review's own current value.
   const ownOrder = defaultValues.sortOrder;
@@ -53,12 +56,13 @@ export default function TestimonialForm({
       json: data,
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
+    setSaved(true);
     router.push("/admin/testimonials");
     router.refresh();
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, onInvalidForm(setStatus))} noValidate className="space-y-6">
       <Controller
         control={control}
         name="reviewImage"
@@ -108,7 +112,7 @@ export default function TestimonialForm({
         </p>
       </FormField>
 
-      <SubmitButton loading={isSubmitting}>
+      <SubmitButton loading={isSubmitting || saved}>
         <Save size={18} aria-hidden />
         {mode === "create" ? "Add Review" : "Save Changes"}
       </SubmitButton>

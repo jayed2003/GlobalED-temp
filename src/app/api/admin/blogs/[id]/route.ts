@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
+import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { blogSchema } from "@/lib/validation/blog";
 import { blogCategoryToEnum } from "@/lib/content/blog";
 
@@ -12,6 +13,13 @@ export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ reques
 
   const existing = await prisma.blogPost.findUnique({ where: { slug: data.slug } });
   if (existing && existing.id !== id) throw new ApiError(409, "A post with this slug already exists", "slug");
+
+  const others = await prisma.blogPost.findMany({ select: { id: true, title: true } });
+  assertNotDuplicate(
+    others.map((r) => ({ id: r.id, value: r.title })),
+    data.title,
+    { excludeId: id, message: `A post titled "${data.title.trim()}" already exists`, field: "title" },
+  );
 
   await prisma.blogPost.update({
     where: { id },

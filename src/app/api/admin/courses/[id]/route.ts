@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
+import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { courseSchema } from "@/lib/validation/course";
 import { courseCategoryToEnum } from "@/lib/content/courses";
 
@@ -12,6 +13,13 @@ export const PATCH = adminRoute<Params>({ permission: "COURSES" }, async ({ requ
 
   const existing = await prisma.course.findUnique({ where: { slug: data.slug } });
   if (existing && existing.id !== id) throw new ApiError(409, "A course with this slug already exists", "slug");
+
+  const others = await prisma.course.findMany({ select: { id: true, title: true } });
+  assertNotDuplicate(
+    others.map((r) => ({ id: r.id, value: r.title })),
+    data.title,
+    { excludeId: id, message: `A course called "${data.title.trim()}" already exists`, field: "title" },
+  );
 
   await prisma.course.update({
     where: { id },
