@@ -32,8 +32,25 @@ export const blogSchema = z
   publishDate: z.string().trim(),
   publishTime: z.string().trim(),
   featured: z.boolean(),
+
+  // SEO (optional — empty falls back to the title, excerpt and cover image)
+  focusKeyword: z.string().trim().max(100, "Keep the focus keyword under 100 characters"),
+  seoTitle: z.string().trim().max(70, "Keep the SEO title under 70 characters (search engines show about 60)"),
+  metaDescription: z
+    .string()
+    .trim()
+    .max(200, "Keep the meta description under 200 characters (search engines show about 156)"),
+  ogImage: z
+    .string()
+    .trim()
+    .max(500)
+    .refine((url) => !/\.svg(\?|$)/i.test(url), "Social networks don't show SVG images — upload a JPG or WebP"),
+  ogImageAlt: imageAlt(false),
 })
   .superRefine((post, ctx) => {
+    if (post.ogImage && !post.ogImageAlt) {
+      ctx.addIssue({ code: "custom", path: ["ogImageAlt"], message: "Describe the image (alt text) for visitors who can't see it" });
+    }
     if (post.publishMode !== "schedule") return;
     const issue = (path: "publishDate" | "publishTime", message: string) =>
       ctx.addIssue({ code: "custom", path: [path], message });

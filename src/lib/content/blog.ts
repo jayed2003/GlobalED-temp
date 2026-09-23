@@ -31,6 +31,10 @@ function mapPost(p: BlogPostRow): BlogPost {
     publishedAt: dhakaParts(p.publishedAt).date,
     publishedAtIso: p.publishedAt.toISOString(),
     featured: p.featured,
+    seoTitle: p.seoTitle,
+    metaDescription: p.metaDescription,
+    ogImage: p.ogImage,
+    ogImageAlt: p.ogImageAlt,
   };
 }
 

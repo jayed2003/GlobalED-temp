@@ -33,10 +33,11 @@ export async function generateMetadata({
   if (!post) return {};
   return pageMetadata({
     path: `/blogs/${post.slug}`,
-    title: post.title,
-    description: post.excerpt,
-    image: post.coverImage,
-    imageAlt: post.coverImageAlt,
+    // The admin's SEO fields, when set, replace the title / excerpt / cover.
+    title: post.seoTitle ? { absolute: post.seoTitle } : post.title,
+    description: post.metaDescription || post.excerpt,
+    image: post.ogImage || post.coverImage,
+    imageAlt: post.ogImage ? post.ogImageAlt : post.coverImageAlt,
     type: "article",
     publishedTime: post.publishedAtIso ?? post.publishedAt,
   });

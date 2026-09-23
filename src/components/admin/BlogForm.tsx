@@ -13,6 +13,7 @@ import RichTextEditor from "@/components/admin/RichTextEditor";
 import { blogSchema, type BlogFormValues } from "@/lib/validation/blog";
 import { todayInDhaka } from "@/lib/validation/dates";
 import PublishSettings from "@/components/admin/PublishSettings";
+import SeoPanel from "@/components/admin/SeoPanel";
 
 const emptyValues: BlogFormValues = {
   slug: "",
@@ -27,6 +28,11 @@ const emptyValues: BlogFormValues = {
   publishDate: todayInDhaka(),
   publishTime: "",
   featured: false,
+  focusKeyword: "",
+  seoTitle: "",
+  metaDescription: "",
+  ogImage: "",
+  ogImageAlt: "",
 };
 
 export default function BlogForm({
@@ -34,12 +40,15 @@ export default function BlogForm({
   postId,
   defaultValues,
   currentPublish,
+  siteUrl,
 }: {
   mode: "create" | "edit";
   postId?: string;
   defaultValues?: BlogFormValues;
   /** Editing: the post's current publish time (for the "Keep" option). */
   currentPublish?: { label: string; scheduled: boolean };
+  /** Public site URL for the search preview (only the server knows the production URL). */
+  siteUrl: string;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -139,6 +148,8 @@ export default function BlogForm({
           )}
         />
       </FormField>
+
+      <SeoPanel control={control} register={register} errors={errors} siteUrl={siteUrl} />
 
       <label className="flex items-center gap-2.5 text-sm text-neutral-700">
         <input type="checkbox" className="h-4 w-4 rounded border-neutral-300 accent-primary-700" {...register("featured")} />

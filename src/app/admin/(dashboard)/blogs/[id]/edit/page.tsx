@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import BlogForm from "@/components/admin/BlogForm";
+import { SITE_URL } from "@/lib/site-url";
 import { blogCategoryFromEnum } from "@/lib/content/blog";
 import { dhakaParts, formatDhakaDateTime, isInFuture } from "@/lib/validation/dates";
 
@@ -19,10 +20,11 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
   return (
     <div>
       <h1 className="font-heading text-2xl font-bold text-primary-900">Edit {post.title}</h1>
-      <div className="mt-6 max-w-2xl">
+      <div className="mt-6 max-w-5xl">
         <BlogForm
           mode="edit"
           postId={post.id}
+          siteUrl={SITE_URL}
           currentPublish={{
             scheduled,
             label: `${scheduled ? "Scheduled for" : "Published"} ${formatDhakaDateTime(post.publishedAt)}`,
@@ -40,6 +42,11 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
             publishDate: publishParts.date,
             publishTime: publishParts.time,
             featured: post.featured,
+            focusKeyword: post.focusKeyword,
+            seoTitle: post.seoTitle,
+            metaDescription: post.metaDescription,
+            ogImage: post.ogImage,
+            ogImageAlt: post.ogImageAlt,
           }}
         />
       </div>

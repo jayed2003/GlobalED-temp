@@ -14,3 +14,20 @@ export function publishTimestamp(
   if (!current) throw new ApiError(400, 'Choose "Publish now" or schedule a date and time', "publishMode");
   return current;
 }
+
+/** The post's SEO columns (alt text is dropped when there's no OG image). */
+export function seoFields(post: {
+  focusKeyword: string;
+  seoTitle: string;
+  metaDescription: string;
+  ogImage: string;
+  ogImageAlt: string;
+}) {
+  return {
+    focusKeyword: post.focusKeyword,
+    seoTitle: post.seoTitle,
+    metaDescription: post.metaDescription,
+    ogImage: post.ogImage,
+    ogImageAlt: post.ogImage ? post.ogImageAlt : "",
+  };
+}
