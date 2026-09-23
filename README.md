@@ -60,8 +60,7 @@ src/
 content in `src/data/legal.ts`. They follow Global Citizen Limited /
 GlobalEd's published policies on globaled.io, with these changes:
 
-- Terms & Conditions: "Website" means globaled.io (the original said
-  www.gcledu.com). Clause 3.1 about customer accounts is kept, as accounts
+- Terms & Conditions: "Website" means globaled.io. Clause 3.1 about customer accounts is kept, as accounts
   are planned.
 - Privacy Policy: added clauses on what this website collects, the service
   providers that process it, overseas storage, cookies, security measures,
