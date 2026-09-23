@@ -77,16 +77,18 @@ export default function OurOrganizationPage() {
                 key={org.name}
                 className="rounded-xl border border-neutral-200 bg-white p-6 text-center shadow-sm"
               >
-                <div className="relative mx-auto h-20 w-40">
-                  <Image
-                    src={org.logo}
-                    alt={`${org.name} logo`}
-                    fill
-                    className="object-contain"
-                    sizes="160px"
-                  />
-                </div>
-                <h3 className="mt-4 font-heading text-lg font-semibold text-primary-900">
+                {org.logo && (
+                  <div className="relative mx-auto mb-4 h-20 w-40">
+                    <Image
+                      src={org.logo}
+                      alt={`${org.name} logo`}
+                      fill
+                      className="object-contain"
+                      sizes="160px"
+                    />
+                  </div>
+                )}
+                <h3 className="font-heading text-lg font-semibold text-primary-900">
                   {org.name}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-neutral-600">{org.description}</p>

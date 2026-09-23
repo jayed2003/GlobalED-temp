@@ -23,7 +23,7 @@ export const organization: Organization = {
       name: "Global Citizen Limited (GCL)",
       description:
         "Our parent organization — British Council authorized for IELTS registration and testing.",
-      logo: "/images/logos/sister-gcl.svg",
+      // No logo file yet (sister-gcl.svg never existed, so the page showed a broken image).
     },
     {
       name: "GlobalEd Language Club",

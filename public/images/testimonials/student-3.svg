@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#082844"/><stop offset="1" stop-color="#5d90b8"/></linearGradient></defs>
-<rect width="200" height="200" fill="url(#g)"/>
-<circle cx="100" cy="80" r="34" fill="rgba(255,255,255,0.28)"/>
-<ellipse cx="100" cy="204" rx="72" ry="84" fill="rgba(255,255,255,0.28)"/>
-<text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" font-family="Segoe UI, Arial, sans-serif" font-size="56.00000000000001" font-weight="700" fill="rgba(255,255,255,0.85)">SH</text>
-</svg>

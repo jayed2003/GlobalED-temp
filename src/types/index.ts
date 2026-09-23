@@ -235,7 +235,8 @@ export interface TimelineEntry {
 export interface SisterOrganization {
   name: string;
   description: string;
-  logo: string;
+  /** Optional — the card shows just the name until a logo file is added. */
+  logo?: string;
 }
 
 export interface BoardMember {
