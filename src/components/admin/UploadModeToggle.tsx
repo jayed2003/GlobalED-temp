@@ -12,11 +12,9 @@ const HINTS: Record<UploadMode, string> = {
 export default function UploadModeToggle({
   value,
   onChange,
-  compact = false,
 }: {
   value: UploadMode;
   onChange: (mode: UploadMode) => void;
-  compact?: boolean;
 }) {
   return (
     <div>
@@ -26,8 +24,6 @@ export default function UploadModeToggle({
             key={mode}
             type="button"
             aria-pressed={value === mode}
-            // Keep editor focus/selection when used inside the rich text toolbar.
-            onMouseDown={(e) => e.preventDefault()}
             onClick={() => onChange(mode)}
             className={cn(
               "rounded-md px-3 py-1 text-xs font-semibold transition-colors",
@@ -38,7 +34,7 @@ export default function UploadModeToggle({
           </button>
         ))}
       </div>
-      {!compact && <p className="mt-1 text-xs text-neutral-500">{HINTS[value]}</p>}
+      <p className="mt-1 text-xs text-neutral-500">{HINTS[value]}</p>
     </div>
   );
 }
