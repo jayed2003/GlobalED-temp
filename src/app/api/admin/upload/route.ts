@@ -6,7 +6,8 @@ import { sanitizeImageUpload, UploadRejectedError } from "@/lib/upload-sanitize"
 import { ORIGINAL_UPLOAD_PREFIX, type UploadMode } from "@/lib/images";
 import { checkRateLimit, tooManyRequests } from "@/lib/rate-limit";
 
-// sharp and DOMPurify (jsdom) need the Node.js runtime.
+// sharp and DOMPurify (jsdom) need the Node.js runtime. Keep isomorphic-dompurify
+// at 2.26.0: newer jsdom versions fail to load on Vercel (see README).
 export const runtime = "nodejs";
 
 const MAX_SIZE = 5 * 1024 * 1024;

@@ -75,9 +75,14 @@ All three are linked in the footer and listed in the sitemap.
 ## Local development
 
 Requires **Node.js 24** — pinned in `package.json` (`engines`), which is also
-what Vercel runs. The HTML/SVG sanitizer (`isomorphic-dompurify` → jsdom)
-needs Node 20.19+, 22.12+ or 24; on older versions blog pages and image
-uploads fail with `ERR_REQUIRE_ESM`.
+what Vercel runs.
+
+> **Keep `isomorphic-dompurify` at exactly 2.26.0.** It provides the DOM for
+> the blog HTML and SVG upload sanitizers. Later versions use jsdom 27+,
+> whose dependencies are ESM-only; Vercel functions can't `require()` them,
+> so blog post pages, blog saving and image uploads crash with
+> `ERR_REQUIRE_ESM` / `FUNCTION_INVOCATION_FAILED`. DOMPurify itself (the
+> actual sanitizer) still updates normally within 3.x.
 
 ```bash
 npm install          # also generates the Prisma client
