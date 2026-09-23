@@ -71,24 +71,26 @@ model AdminUser {
 }
 
 model Destination {
-  id           String                   @id @default(cuid())
-  slug         String                   @unique
+  id           String                  @id @default(cuid())
+  slug         String                  @unique
   name         String
   tagline      String
   heroImage    String
+  heroImageAlt String                  @default("")
   flagImage    String
-  overview     String                   @db.Text
+  flagImageAlt String                  @default("")
+  overview     String                  @db.Text
   whyStudyHere String[]
   tuitionRange String
   livingCost   String
   scholarships String[]
   visaInfo     String[]
-  sortOrder    Int                      @default(0)
+  sortOrder    Int                     @default(0)
   universities DestinationUniversity[]
   faqs         DestinationFaq[]
   leads        Lead[]
-  createdAt    DateTime                 @default(now())
-  updatedAt    DateTime                 @updatedAt
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
 }
 
 model DestinationUniversity {
@@ -115,6 +117,7 @@ model Course {
   title       String
   category    CourseCategory
   image       String
+  imageAlt    String                   @default("")
   overview    String                   @db.Text
   curriculum  String[]
   duration    String
@@ -129,30 +132,30 @@ model Course {
 }
 
 model IeltsContent {
-  id                          String                   @id @default("main")
-  whatIsIeltsTitle            String
-  whatIsIeltsBody             String                   @db.Text
-  whatIsIeltsPoints           String[]
-  whyIeltsTitle               String
-  whyIeltsBody                String                   @db.Text
-  whyIeltsReasons             Json
-  whyGlobaledTitle            String
-  whyGlobaledBody             String                   @db.Text
-  whyGlobaledUsps             Json
-  whyGlobaledFreeServices     Json
-  preparationTitle            String
-  preparationBody             String                   @db.Text
-  preparationSkillAreas       Json
-  preparationCourses          IeltsPreparationCourse[]
-  progressTrackerTitle        String
-  progressTrackerBody         String                   @db.Text
-  progressTrackerTrackItems   String[]
-  progressTrackerBenefits     String[]
-  successStoriesTitle         String
-  successStoriesBody          String                   @db.Text
-  successStoriesAchievements  Json
-  successStoriesQuotes        String[]
-  updatedAt                   DateTime                 @updatedAt
+  id                         String                   @id @default("main")
+  whatIsIeltsTitle           String
+  whatIsIeltsBody            String                   @db.Text
+  whatIsIeltsPoints          String[]
+  whyIeltsTitle              String
+  whyIeltsBody               String                   @db.Text
+  whyIeltsReasons            Json
+  whyGlobaledTitle           String
+  whyGlobaledBody            String                   @db.Text
+  whyGlobaledUsps            Json
+  whyGlobaledFreeServices    Json
+  preparationTitle           String
+  preparationBody            String                   @db.Text
+  preparationSkillAreas      Json
+  preparationCourses         IeltsPreparationCourse[]
+  progressTrackerTitle       String
+  progressTrackerBody        String                   @db.Text
+  progressTrackerTrackItems  String[]
+  progressTrackerBenefits    String[]
+  successStoriesTitle        String
+  successStoriesBody         String                   @db.Text
+  successStoriesAchievements Json
+  successStoriesQuotes       String[]
+  updatedAt                  DateTime                 @updatedAt
 }
 
 model IeltsPreparationCourse {
@@ -167,33 +170,37 @@ model IeltsPreparationCourse {
 }
 
 model BlogPost {
-  id          String       @id @default(cuid())
-  slug        String       @unique
-  title       String
-  category    BlogCategory
-  coverImage  String
-  excerpt     String       @db.Text
-  content     String       @db.Text
-  author      String
-  publishedAt DateTime
-  featured    Boolean      @default(false)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id            String       @id @default(cuid())
+  slug          String       @unique
+  title         String
+  category      BlogCategory
+  coverImage    String
+  coverImageAlt String       @default("")
+  excerpt       String       @db.Text
+  content       String       @db.Text
+  author        String
+  publishedAt   DateTime
+  featured      Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model EventItem {
-  id          String      @id @default(cuid())
-  slug        String      @unique
-  title       String
-  status      EventStatus
-  date        DateTime
-  time        String
-  venue       String
-  bannerImage String
-  description String      @db.Text
-  gallery     String[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id             String      @id @default(cuid())
+  slug           String      @unique
+  title          String
+  status         EventStatus
+  date           DateTime
+  time           String
+  venue          String
+  bannerImage    String
+  bannerImageAlt String      @default("")
+  description    String      @db.Text
+  gallery        String[]
+  // Alt text for each gallery photo, same order as `gallery`.
+  galleryAlts    String[]    @default([])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }
 
 model Lead {
@@ -214,19 +221,22 @@ model Lead {
   preferredDate    DateTime?
   message          String?      @db.Text
   status           LeadStatus   @default(NEW)
+  // Set the first time an admin opens the lead; null = unread (the "New" badge).
+  readAt           DateTime?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 }
 
 model Testimonial {
-  id          String   @id @default(cuid())
-  studentName String
-  reviewImage String
-  university  String
-  country     String?
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  studentName    String
+  reviewImage    String
+  reviewImageAlt String   @default("")
+  university     String
+  country        String?
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 // Messages sent through the public Contact form (managed under Admin → Messages).
@@ -237,6 +247,8 @@ model ContactMessage {
   subject   String
   message   String               @db.Text
   status    ContactMessageStatus @default(NEW)
+  // Set the first time an admin opens the message; null = unread.
+  readAt    DateTime?
   createdAt DateTime             @default(now())
   updatedAt DateTime             @updatedAt
 
