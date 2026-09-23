@@ -4,6 +4,7 @@ import { ArrowLeft, Reply } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import StatusControl from "@/components/admin/StatusControl";
+import ReadStateControl from "@/components/admin/ReadStateControl";
 import { messageStatusOptions } from "@/lib/inbox";
 
 export default async function AdminMessageDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -38,6 +39,7 @@ export default async function AdminMessageDetailPage({ params }: { params: Promi
           status={message.status}
           options={messageStatusOptions}
         />
+        <ReadStateControl endpoint={`/api/admin/messages/${message.id}`} read={!!message.readAt} />
         <a
           href={replyHref}
           className="inline-flex items-center gap-2 rounded-lg bg-primary-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-800"

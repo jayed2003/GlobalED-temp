@@ -1,13 +1,18 @@
-/** Status labels and badge styles for the admin inboxes (leads and contact messages). */
+/**
+ * Status labels and badge styles for the admin inboxes (leads and contact
+ * messages). The stored value NEW is shown as "Pending" (not yet contacted /
+ * replied): "New" is reserved for the unread badge, which disappears once an
+ * admin opens the item.
+ */
 
 export const leadStatusOptions = [
-  { value: "NEW", label: "New" },
+  { value: "NEW", label: "Pending" },
   { value: "CONTACTED", label: "Contacted" },
   { value: "CLOSED", label: "Closed" },
 ];
 
 export const messageStatusOptions = [
-  { value: "NEW", label: "New" },
+  { value: "NEW", label: "Pending" },
   { value: "REPLIED", label: "Replied" },
   { value: "CLOSED", label: "Closed" },
 ];

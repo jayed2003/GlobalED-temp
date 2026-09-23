@@ -17,12 +17,12 @@ export default async function AdminDashboardPage() {
     { permission: "BLOGS", label: "Blog Posts", href: "/admin/blogs", count: () => prisma.blogPost.count() },
     { permission: "EVENTS", label: "Events", href: "/admin/events", count: () => prisma.eventItem.count() },
     { permission: "TESTIMONIALS", label: "Reviews", href: "/admin/testimonials", count: () => prisma.testimonial.count() },
-    { permission: "LEADS", label: "New Leads", href: "/admin/leads", count: () => prisma.lead.count({ where: { status: "NEW" } }) },
+    { permission: "LEADS", label: "Unread Leads", href: "/admin/leads", count: () => prisma.lead.count({ where: { readAt: null } }) },
     {
       permission: "MESSAGES",
-      label: "New Messages",
+      label: "Unread Messages",
       href: "/admin/messages",
-      count: () => prisma.contactMessage.count({ where: { status: "NEW" } }),
+      count: () => prisma.contactMessage.count({ where: { readAt: null } }),
     },
   ];
   const visible = sections.filter((s) => can(s.permission));

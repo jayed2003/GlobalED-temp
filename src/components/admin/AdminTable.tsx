@@ -13,6 +13,8 @@ export interface AdminTableRow {
   editHref: string;
   deleteEndpoint: string;
   label: string;
+  /** Unread inbox item: shown in bold. */
+  unread?: boolean;
 }
 
 export default function AdminTable({
@@ -84,7 +86,10 @@ export default function AdminTable({
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
+              <tr
+                key={row.id}
+                className={`border-b border-neutral-100 last:border-0 hover:bg-neutral-50 ${row.unread ? "font-semibold" : ""}`}
+              >
                 {row.cells.map((cell, index) => (
                   <td key={index} className="px-4 py-3 text-neutral-700">
                     {cell}

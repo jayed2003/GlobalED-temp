@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import AdminTable from "@/components/admin/AdminTable";
+import UnreadName from "@/components/admin/UnreadName";
 import { leadStatusOptions, statusBadgeStyles, statusLabel } from "@/lib/inbox";
 
 const formTypeLabels: Record<string, string> = { GENERAL: "Consultation", IELTS: "IELTS Booking" };
@@ -17,8 +18,9 @@ export default async function AdminLeadsPage() {
 
   const rows = leads.map((l) => ({
     id: l.id,
+    unread: !l.readAt,
     cells: [
-      l.name,
+      <UnreadName key="name" name={l.name} unread={!l.readAt} />,
       l.phone,
       formTypeLabels[l.formType],
       l.destination?.name ?? l.course?.title ?? l.destinationOther ?? "—",

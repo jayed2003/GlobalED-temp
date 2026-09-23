@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import StatusControl from "@/components/admin/StatusControl";
+import ReadStateControl from "@/components/admin/ReadStateControl";
 import { leadStatusOptions } from "@/lib/inbox";
 
 const formTypeLabels: Record<string, string> = { GENERAL: "Free Consultation", IELTS: "IELTS Booking" };
@@ -62,8 +63,9 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
         </div>
       )}
 
-      <div className="mt-5 rounded-xl border border-neutral-200 bg-white p-6">
+      <div className="mt-5 flex flex-wrap items-end justify-between gap-4 rounded-xl border border-neutral-200 bg-white p-6">
         <StatusControl endpoint={`/api/admin/leads/${lead.id}`} status={lead.status} options={leadStatusOptions} />
+        <ReadStateControl endpoint={`/api/admin/leads/${lead.id}`} read={!!lead.readAt} />
       </div>
     </div>
   );
