@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import type { Course, CourseCategory } from "@/types";
-import type { Course as CourseRow, CourseCategory as CourseCategoryEnum } from "@prisma/client";
+import type { Course as CourseRow, CourseCategory as CourseCategoryEnum } from "@/generated/prisma/client";
 
 const categoryToEnum: Record<CourseCategory, CourseCategoryEnum> = {
   ielts: "IELTS",

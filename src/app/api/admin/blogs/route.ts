@@ -35,6 +35,6 @@ export async function POST(request: Request) {
     },
   });
 
-  revalidateTag("blog-posts");
+  revalidateTag("blog-posts", { expire: 0 });
   return NextResponse.json({ id: created.id }, { status: 201 });
 }

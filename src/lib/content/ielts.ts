@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import type { IeltsContent, IeltsUsp, IeltsFreeService, IeltsSkillArea, IeltsAchievement } from "@/types";
-import type { IeltsContent as IeltsContentRow } from "@prisma/client";
+import type { IeltsContent as IeltsContentRow } from "@/generated/prisma/client";
 
 export function mapIeltsContent(row: IeltsContentRow, courseSlugs: string[]): IeltsContent {
   return {

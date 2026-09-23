@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { requireAdmin } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { updateAdminUserSchema } from "@/lib/validation/admin-user";

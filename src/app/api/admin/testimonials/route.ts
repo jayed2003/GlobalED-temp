@@ -40,6 +40,6 @@ export async function POST(request: Request) {
     },
   });
 
-  revalidateTag("testimonials");
+  revalidateTag("testimonials", { expire: 0 });
   return NextResponse.json({ id: created.id }, { status: 201 });
 }

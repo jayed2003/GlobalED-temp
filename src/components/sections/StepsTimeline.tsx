@@ -65,9 +65,11 @@ function StepNode({
     if (!node) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setActive(true);
-      onActivate(index);
-      return;
+      const f = requestAnimationFrame(() => {
+        setActive(true);
+        onActivate(index);
+      });
+      return () => cancelAnimationFrame(f);
     }
 
     const observer = new IntersectionObserver(

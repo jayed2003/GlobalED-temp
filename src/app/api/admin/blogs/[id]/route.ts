@@ -37,7 +37,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     },
   });
 
-  revalidateTag("blog-posts");
+  revalidateTag("blog-posts", { expire: 0 });
   return NextResponse.json({ ok: true });
 }
 
@@ -48,6 +48,6 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   const { id } = await params;
   await prisma.blogPost.delete({ where: { id } });
 
-  revalidateTag("blog-posts");
+  revalidateTag("blog-posts", { expire: 0 });
   return NextResponse.json({ ok: true });
 }

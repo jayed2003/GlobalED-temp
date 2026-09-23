@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import type { Destination } from "@/types";
-import type { Destination as DestinationRow, DestinationUniversity, DestinationFaq } from "@prisma/client";
+import type { Destination as DestinationRow, DestinationUniversity, DestinationFaq } from "@/generated/prisma/client";
 
 type DestinationWithRelations = DestinationRow & {
   universities: DestinationUniversity[];

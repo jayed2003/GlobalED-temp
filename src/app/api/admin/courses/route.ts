@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     },
   });
 
-  revalidateTag("courses");
-  revalidateTag("ielts-content");
+  revalidateTag("courses", { expire: 0 });
+  revalidateTag("ielts-content", { expire: 0 });
   return NextResponse.json({ id: created.id }, { status: 201 });
 }

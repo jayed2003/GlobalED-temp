@@ -28,8 +28,8 @@ export default function CountUp({
     if (!node) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDisplay(end);
-      return;
+      const f = requestAnimationFrame(() => setDisplay(end));
+      return () => cancelAnimationFrame(f);
     }
 
     let frame = 0;

@@ -42,7 +42,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     },
   });
 
-  revalidateTag("testimonials");
+  revalidateTag("testimonials", { expire: 0 });
   return NextResponse.json({ ok: true });
 }
 
@@ -53,6 +53,6 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   const { id } = await params;
   await prisma.testimonial.delete({ where: { id } });
 
-  revalidateTag("testimonials");
+  revalidateTag("testimonials", { expire: 0 });
   return NextResponse.json({ ok: true });
 }

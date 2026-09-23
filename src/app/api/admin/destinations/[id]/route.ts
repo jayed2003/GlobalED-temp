@@ -46,7 +46,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     },
   });
 
-  revalidateTag("destinations");
+  revalidateTag("destinations", { expire: 0 });
   return NextResponse.json({ ok: true });
 }
 
@@ -57,6 +57,6 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   const { id } = await params;
   await prisma.destination.delete({ where: { id } });
 
-  revalidateTag("destinations");
+  revalidateTag("destinations", { expire: 0 });
   return NextResponse.json({ ok: true });
 }

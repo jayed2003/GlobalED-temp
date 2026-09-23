@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import type { EventItem } from "@/types";
-import type { EventItem as EventRow, EventStatus as EventStatusEnum } from "@prisma/client";
+import type { EventItem as EventRow, EventStatus as EventStatusEnum } from "@/generated/prisma/client";
 
 type EventStatus = EventItem["status"];
 

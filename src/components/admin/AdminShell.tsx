@@ -10,7 +10,7 @@ import {
   Users,
   Star,
 } from "lucide-react";
-import type { AdminPermission } from "@prisma/client";
+import type { AdminPermission } from "@/generated/prisma/client";
 import SignOutButton from "@/components/admin/SignOutButton";
 
 const navItems: {

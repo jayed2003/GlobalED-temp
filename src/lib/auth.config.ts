@@ -1,5 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
-import type { AdminPermission } from "@prisma/client";
+import type { AdminPermission } from "@/generated/prisma/client";
 
 /**
  * Edge-safe base config (no providers that touch Prisma/bcrypt) — this is

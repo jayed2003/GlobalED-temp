@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import { requirePermission } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { ieltsContentSchema } from "@/lib/validation/ielts";
@@ -56,7 +56,7 @@ export async function PATCH(request: Request) {
       .filter((op): op is NonNullable<typeof op> => op !== null),
   ]);
 
-  revalidateTag("ielts-content");
-  revalidateTag("courses");
+  revalidateTag("ielts-content", { expire: 0 });
+  revalidateTag("courses", { expire: 0 });
   return NextResponse.json({ ok: true });
 }

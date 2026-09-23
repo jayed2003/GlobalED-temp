@@ -1,4 +1,6 @@
-import { PrismaClient, CourseCategory, BlogCategory, EventStatus, Prisma } from "@prisma/client";
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient, CourseCategory, BlogCategory, EventStatus, Prisma } from "../src/generated/prisma/client";
 import bcrypt from "bcryptjs";
 import { destinations } from "../src/data/destinations";
 import { courses } from "../src/data/courses";
@@ -7,7 +9,8 @@ import { posts } from "../src/data/posts";
 import { events } from "../src/data/events";
 import { testimonials } from "../src/data/testimonials";
 
-const prisma = new PrismaClient();
+// Prisma 7 no longer loads .env or connects without a driver adapter.
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 
 const courseCategoryMap: Record<string, CourseCategory> = {
   ielts: CourseCategory.IELTS,

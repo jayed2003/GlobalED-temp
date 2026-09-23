@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import type { BlogPost, BlogCategory } from "@/types";
-import type { BlogPost as BlogPostRow, BlogCategory as BlogCategoryEnum } from "@prisma/client";
+import type { BlogPost as BlogPostRow, BlogCategory as BlogCategoryEnum } from "@/generated/prisma/client";
 
 const categoryToEnum: Record<BlogCategory, BlogCategoryEnum> = {
   "country-wise": "COUNTRY_WISE",

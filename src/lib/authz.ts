@@ -1,4 +1,4 @@
-import type { AdminPermission } from "@prisma/client";
+import type { AdminPermission } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 
 /** Returns the session if signed in, otherwise null (any admin role). */
