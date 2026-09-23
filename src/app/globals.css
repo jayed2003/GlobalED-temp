@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* `prose` styles for blog post bodies (rich text) and the admin editor. */
+@plugin "@tailwindcss/typography";
 
 @theme {
   /* Fonts — brand guideline: DM Sans (headings/brand), Arial (body — system

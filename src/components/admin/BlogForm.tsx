@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
 import { FormField, FormStatus, Input, Select, SubmitButton, Textarea } from "@/components/forms/primitives";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import { blogSchema, type BlogFormValues } from "@/lib/validation/blog";
 import { EARLIEST_CONTENT_DATE, todayInDhaka } from "@/lib/validation/dates";
 
@@ -108,7 +109,19 @@ export default function BlogForm({
       </FormField>
 
       <FormField id="b-content" label="Content" required error={errors.content?.message}>
-        <Textarea id="b-content" rows={10} placeholder="Separate paragraphs with a blank line." {...register("content")} />
+        <Controller
+          control={control}
+          name="content"
+          render={({ field }) => (
+            <RichTextEditor
+              id="b-content"
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              invalid={!!errors.content}
+            />
+          )}
+        />
       </FormField>
 
       <label className="flex items-center gap-2.5 text-sm text-neutral-700">

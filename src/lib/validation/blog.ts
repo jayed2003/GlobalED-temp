@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { htmlToText } from "@/lib/rich-text";
 import { dateField, EARLIEST_CONTENT_DATE, todayInDhaka } from "./dates";
 
 export const blogSchema = z.object({
@@ -10,7 +11,12 @@ export const blogSchema = z.object({
   category: z.enum(["country-wise", "scholarships", "ielts", "english"]),
   coverImage: z.string().min(1, "Cover image is required"),
   excerpt: z.string().min(1, "Excerpt is required"),
-  content: z.string().min(1, "Content is required"),
+  // HTML from the rich text editor. "Required" means some actual text — an
+  // empty editor still produces markup like <p></p>.
+  content: z
+    .string()
+    .max(200_000, "The post is too long")
+    .refine((html) => htmlToText(html).length > 0, "Content is required"),
   author: z.string().min(1, "Author is required"),
   // Posts go live as soon as they're saved (there's no scheduling), so the
   // publish date can't be in the future.
