@@ -118,7 +118,7 @@ for every variable) is committed; `.env` itself is never committed.
 | `RESEND_FROM_EMAIL`, `COMPANY_NOTIFY_EMAIL` | For email | Sender, and where new-lead alerts and contact messages are emailed. The sender must be on a domain verified in Resend, or Resend only delivers to the account owner. |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | In production | Upstash Redis for rate limiting (set automatically by the Vercel integration) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | In production | Cloudflare Turnstile keys |
-| `NEXT_PUBLIC_SITE_URL` | In production | Public URL used in the sitemap, robots.txt, metadata and links in admin emails |
+| `NEXT_PUBLIC_SITE_URL` | In production | Public URL for canonical links, share metadata, the sitemap, robots.txt and links in admin emails. If unset, Vercel's production URL is used, then `https://globaled.io` |
 | `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | Seed only | First master admin account |
 
 In local development, Turnstile falls back to Cloudflare's always-pass test
@@ -133,15 +133,29 @@ needed to run the site.
 - **Sessions last 8 hours from login**, however active the admin is.
 - Deleting an admin, or changing their permissions, takes effect on their next
   request.
-- Image uploads accept **JPG, WebP and SVG only** (max 5 MB). JPG and WebP are
-  re-encoded to strip metadata such as GPS location. SVGs are cleaned of
-  scripts and external links.
+- **Every list** (destinations, courses, blogs, events, reviews, leads,
+  messages, admins) has a search box, a filter under each column, a date
+  filter (last hour / 24 hours / 7 days / custom range), row checkboxes with
+  "select all" and "Delete selected". Filters live in the URL, so a filtered
+  view can be bookmarked or shared. Leads, messages and reviews show 10 per
+  page; Leads has **Download CSV** (all leads matching the current filters,
+  opens correctly in Excel, Bangla included).
+- **Image uploads** accept **JPG, WebP and SVG only** (max 5 MB), and every
+  image needs **alt text** (a short description for screen readers and
+  search engines). Choose **Optimized** (default: resized to fit 1920px,
+  compressed, served in the best size/format for each visitor) or
+  **Original** (full size and quality, served exactly as uploaded). Metadata
+  such as GPS location is always stripped; SVGs are cleaned of scripts.
 - **Leads and Messages:** consultation / IELTS bookings and contact-form
   messages are saved and listed here. Each new lead is also emailed to
-  `COMPANY_NOTIFY_EMAIL`. The sidebar shows how many are still New (refreshed
-  every minute); set an item to Contacted / Replied / Closed to clear it.
+  `COMPANY_NOTIFY_EMAIL`. A red **New** badge (and the sidebar count) shows
+  what nobody has opened yet — it goes away once you open the item, and
+  "Mark as unread" brings it back. The status (Pending / Contacted or
+  Replied / Closed) is set separately.
 - **Blog posts** are written in a rich text editor (headings, lists, links,
-  images). The HTML is sanitized on save and on display.
+  images with alt text) and can be written in **Bangla** — it's shown in a
+  proper Bengali font and marked as Bangla for browsers and search engines.
+  The HTML is sanitized on save and on display.
 - **Content rules:** duplicate names/titles/slugs and repeated list entries
   are refused; dates must be real and sensible (no future blog dates; an
   event's date must match its Upcoming / Previous status).
@@ -157,7 +171,7 @@ needed to run the site.
 | Input validation | Public forms accept plain-text strings only. HTML, script links, unknown fields and invalid dropdown values are rejected on the client and the server. Visitor text is escaped in emails. |
 | Security headers | HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and a strict per-request nonce-based Content-Security-Policy (set in `src/proxy.ts`). |
 | Structured data | JSON-LD output is encoded so content can't break out of its `<script>` tag. |
-| Search engines | `robots.txt` and `sitemap.xml` are public. The admin panel is excluded from the sitemap and marked `noindex`. Unknown URLs return a real 404. |
+| Search engines | `robots.txt` and `sitemap.xml` are public. The admin panel is excluded from the sitemap and marked `noindex`. Unknown URLs return a real 404. Every page has a canonical URL and Open Graph / Twitter share metadata (`src/lib/seo.ts`); the default share image is `/share-image.png`. |
 | Admin API | Every admin route shares one wrapper (`src/lib/api/admin-route.ts`): permission check, JSON-only bodies up to 1 MB, schema validation, and consistent JSON errors. |
 
 Because the CSP nonce is new on every request, all pages are rendered per
@@ -236,3 +250,32 @@ request. Database content is still cached, so pages stay fast.
 Also fixed along the way: dashboard cards now respect editor permissions,
 the IELTS form shows its list errors, blog pages use their intended reading
 width, and `.env.example` is committed with every variable documented.
+
+### Admin tools, images and SEO (Sept 2026)
+
+1. **Seed protection:** the destructive seed refuses to run in production or on
+   any database with content (override only by typing the database host);
+   `SEED_ADMIN_ONLY=1` creates the admin without deleting anything.
+2. **One lead schema:** the booking form and `/api/leads` validate with the
+   same `leadSchema` object (and the contact form with `contactSchema`).
+3. **Unused images removed:** 28 files nothing referenced; fixed a broken
+   sister-organization logo. Placeholders still shown on the site (course
+   images, blog covers, event images, 2 reviews, team photos) remain until
+   real photos are uploaded.
+4. **Admin list search and filters:** global search, per-column filters, date
+   filters and select-all/bulk delete on every list.
+5. **Pagination:** 10 per page on leads, messages and reviews.
+6. **Lead CSV download** that follows the active filters.
+7. **Read/unread:** the New badge goes away once a lead or message is opened.
+8. **GlobalEd logo** on the admin login page and sidebar (logo files also
+   shrunk from ~1.3 MB to ~30 KB each).
+9. **Image optimization:** Optimized (default) / Original per upload; images
+   in blog posts are served through Next.js image optimization too.
+10. **Share image and metadata:** 1200×630 `/share-image.png` plus full Open
+    Graph / Twitter tags on every page.
+11. **Canonical URLs** on every page (without query strings).
+12. **Bangla blog posts:** Noto Sans Bengali font and `lang="bn"` marking.
+13. **Alt text** required for every content image, editable in the editor.
+
+Database migration `20260923193802_leads_read_and_image_alts` (additive;
+already applied to production) adds read/unread and the alt-text columns.
