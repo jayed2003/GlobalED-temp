@@ -16,10 +16,14 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
+// next-auth/jwt only re-exports this interface, so augmenting it there has no
+// effect — it has to be merged where it is declared.
+declare module "@auth/core/jwt" {
   interface JWT {
-    id: string;
-    role: "ADMIN" | "EDITOR";
-    permissions: AdminPermission[];
+    id?: string;
+    role?: "ADMIN" | "EDITOR";
+    permissions?: AdminPermission[];
+    /** Epoch ms of sign-in; the session ends 8h after this regardless of activity. */
+    loginAt?: number;
   }
 }

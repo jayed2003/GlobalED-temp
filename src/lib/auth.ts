@@ -1,12 +1,25 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { authConfig } from "@/lib/auth.config";
 import { prisma } from "@/lib/db";
 
+/** Hard limit on an admin session, counted from sign-in (not from last activity). */
+export const ADMIN_SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
+
+// One config for everything. (It used to be split into an Edge-safe
+// auth.config.ts for middleware; Next 16's proxy runs on Node.js, so the proxy
+// can use Prisma and this file directly.)
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  session: { strategy: "jwt" },
+  pages: {
+    signIn: "/admin/login",
+  },
+  session: {
+    strategy: "jwt",
+    // Cookie/JWT lifetime. Auth.js re-issues the token on each request, so on
+    // its own this would slide forward forever — the loginAt check in the jwt
+    // callback below is what makes 8 hours an absolute cap.
+    maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
+  },
   providers: [
     Credentials({
       credentials: {
@@ -34,4 +47,61 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    // Used by the proxy for every /admin route.
+    authorized({ auth, request: { nextUrl } }) {
+      const isAdminRoute = nextUrl.pathname.startsWith("/admin");
+      if (!isAdminRoute) return true;
+
+      const isLoggedIn = !!auth?.user;
+      const isLoginPage = nextUrl.pathname === "/admin/login";
+
+      if (isLoginPage) {
+        if (isLoggedIn) return Response.redirect(new URL("/admin", nextUrl));
+        return true;
+      }
+
+      return isLoggedIn;
+    },
+    async jwt({ token, user }) {
+      // Sign-in: stamp the token with who logged in and when.
+      if (user) {
+        token.id = user.id as string;
+        token.role = user.role;
+        token.permissions = user.permissions;
+        token.loginAt = Date.now();
+        return token;
+      }
+
+      // Every later request. Returning null ends the session (Auth.js clears
+      // the cookie and auth() yields no user).
+      const loginAt = typeof token.loginAt === "number" ? token.loginAt : 0;
+      if (!token.id || Date.now() - loginAt > ADMIN_SESSION_MAX_AGE_SECONDS * 1000) return null;
+
+      // Re-check the account on every request instead of trusting the token,
+      // so a deleted admin loses access immediately and role/permission
+      // changes apply on their next click.
+      const admin = await prisma.adminUser.findUnique({
+        where: { id: token.id },
+        select: { name: true, email: true, role: true, permissions: true },
+      });
+      if (!admin) return null;
+
+      token.name = admin.name;
+      token.email = admin.email;
+      token.role = admin.role;
+      token.permissions = admin.permissions;
+      return token;
+    },
+    session({ session, token }) {
+      // The jwt callback has already verified these; the fallbacks are the
+      // least-privileged values, never the most.
+      if (session.user) {
+        session.user.id = token.id ?? "";
+        session.user.role = token.role ?? "EDITOR";
+        session.user.permissions = token.permissions ?? [];
+      }
+      return session;
+    },
+  },
 });

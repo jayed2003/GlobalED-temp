@@ -1,8 +1,8 @@
-import NextAuth from "next-auth";
-import { authConfig } from "@/lib/auth.config";
+import { auth } from "@/lib/auth";
 
-// Next 16 renamed `middleware` to `proxy` (runs on the Node.js runtime).
-export const proxy = NextAuth(authConfig).auth;
+// Next 16 renamed `middleware` to `proxy`; it runs on the Node.js runtime, so
+// it uses the full Auth.js config (including the per-request DB check).
+export const proxy = auth;
 
 export const config = {
   matcher: ["/admin/:path*"],
