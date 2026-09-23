@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { leadRequestSchema } from "@/lib/validation/public-forms";
 import { prisma } from "@/lib/db";
-import { sendConsultationConfirmation } from "@/lib/email";
+import { sendConsultationConfirmation, sendNewLeadNotification } from "@/lib/email";
 import { checkRateLimits, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
 
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     if (course) courseId = course.id;
   }
 
-  await prisma.lead.create({
+  const lead = await prisma.lead.create({
     data: {
       formType: data.formType,
       name: data.name,
@@ -66,13 +66,32 @@ export async function POST(request: Request) {
       preferredDate: data.preferredDate ? new Date(data.preferredDate) : undefined,
       message: data.message || undefined,
     },
+    include: { destination: { select: { name: true } }, course: { select: { title: true } } },
   });
 
-  const emailResult = await sendConsultationConfirmation({
-    name: data.name,
-    email: data.email,
-    formType: data.formType,
-  });
+  // Student confirmation + company alert, in parallel. Either failing never
+  // affects the other or the saved lead (both helpers log and return).
+  const [confirmation] = await Promise.allSettled([
+    sendConsultationConfirmation({ name: data.name, email: data.email, formType: data.formType }),
+    sendNewLeadNotification({
+      id: lead.id,
+      formType: data.formType,
+      name: lead.name,
+      phone: lead.phone,
+      email: lead.email,
+      branch: lead.branch,
+      destination: lead.destination?.name ?? lead.destinationOther,
+      course: lead.course?.title,
+      studyLevel: lead.studyLevel,
+      ieltsStatus: lead.ieltsStatus,
+      funding: lead.funding,
+      preferredDate: data.preferredDate || null,
+      message: lead.message,
+    }),
+  ]);
 
-  return NextResponse.json({ success: true, emailSent: emailResult.sent });
+  return NextResponse.json({
+    success: true,
+    emailSent: confirmation.status === "fulfilled" && confirmation.value.sent,
+  });
 }

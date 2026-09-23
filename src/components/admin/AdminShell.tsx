@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import type { AdminPermission } from "@/generated/prisma/client";
 import SignOutButton from "@/components/admin/SignOutButton";
+import { InboxBadge, InboxPoller } from "@/components/admin/InboxBadges";
+import type { InboxCounts } from "@/lib/admin-counts";
 
 const navItems: {
   href: string;
@@ -20,6 +22,8 @@ const navItems: {
   icon: typeof LayoutDashboard;
   permission: AdminPermission | null;
   adminOnly: boolean;
+  /** Shows a live count of NEW items next to the link. */
+  badge?: keyof InboxCounts;
 }[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, permission: null, adminOnly: false },
   { href: "/admin/destinations", label: "Destinations", icon: Globe2, permission: "DESTINATIONS", adminOnly: false },
@@ -28,8 +32,8 @@ const navItems: {
   { href: "/admin/events", label: "Events", icon: CalendarDays, permission: "EVENTS", adminOnly: false },
   { href: "/admin/ielts", label: "IELTS Content", icon: BookOpenCheck, permission: "IELTS", adminOnly: false },
   { href: "/admin/testimonials", label: "Reviews", icon: Star, permission: "TESTIMONIALS", adminOnly: false },
-  { href: "/admin/leads", label: "Leads", icon: Inbox, permission: "LEADS", adminOnly: false },
-  { href: "/admin/messages", label: "Messages", icon: Mail, permission: "MESSAGES", adminOnly: false },
+  { href: "/admin/leads", label: "Leads", icon: Inbox, permission: "LEADS", adminOnly: false, badge: "leads" },
+  { href: "/admin/messages", label: "Messages", icon: Mail, permission: "MESSAGES", adminOnly: false, badge: "messages" },
   { href: "/admin/admins", label: "Manage Admins", icon: Users, permission: null, adminOnly: true },
 ];
 
@@ -37,11 +41,13 @@ export default function AdminShell({
   name,
   role,
   permissions,
+  inboxCounts,
   children,
 }: {
   name: string;
   role: "ADMIN" | "EDITOR";
   permissions: AdminPermission[];
+  inboxCounts: InboxCounts;
   children: React.ReactNode;
 }) {
   const isMaster = role === "ADMIN";
@@ -53,6 +59,7 @@ export default function AdminShell({
 
   return (
     <div className="flex min-h-screen bg-neutral-50">
+      <InboxPoller initial={inboxCounts} />
       <aside className="hidden w-64 shrink-0 border-r border-neutral-200 bg-white sm:block">
         <div className="border-b border-neutral-200 px-5 py-5">
           <p className="font-heading text-lg font-bold text-primary-900">GlobalEd Admin</p>
@@ -66,6 +73,7 @@ export default function AdminShell({
             >
               <item.icon size={18} aria-hidden />
               {item.label}
+              {item.badge && <InboxBadge kind={item.badge} initial={inboxCounts[item.badge]} />}
             </Link>
           ))}
         </nav>
