@@ -4,19 +4,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
 import { FormField, FormStatus, Input, Select, SubmitButton, Textarea } from "@/components/forms/primitives";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import GalleryUploadField from "@/components/admin/GalleryUploadField";
+import { addYears, EARLIEST_CONTENT_DATE, todayInDhaka } from "@/lib/validation/dates";
 import { eventSchema, type EventFormValues } from "@/lib/validation/event";
 
 const emptyValues: EventFormValues = {
   slug: "",
   title: "",
   status: "upcoming",
-  date: new Date().toISOString().split("T")[0],
+  date: todayInDhaka(),
   time: "",
   venue: "",
   bannerImage: "",
@@ -49,6 +50,8 @@ export default function EventForm({
     resolver: zodResolver(eventSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
+  const eventStatus = useWatch({ control, name: "status" });
+  const today = todayInDhaka();
 
   const onSubmit = async (data: EventFormValues) => {
     setStatus(null);
@@ -81,7 +84,14 @@ export default function EventForm({
           </Select>
         </FormField>
         <FormField id="e-date" label="Date" required error={errors.date?.message}>
-          <Input id="e-date" type="date" {...register("date")} />
+          <Input
+            id="e-date"
+            type="date"
+            // The date picker only offers dates that match the chosen status.
+            min={eventStatus === "upcoming" ? today : EARLIEST_CONTENT_DATE}
+            max={eventStatus === "upcoming" ? addYears(today, 3) : today}
+            {...register("date")}
+          />
         </FormField>
         <FormField id="e-time" label="Time" required error={errors.time?.message}>
           <Input id="e-time" placeholder="10:00 AM – 5:00 PM" {...register("time")} />

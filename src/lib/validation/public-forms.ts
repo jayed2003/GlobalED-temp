@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { branches } from "@/data/branches";
+import { addYears, isRealDate, todayInDhaka } from "./dates";
 
 /**
  * Validation for the public (unauthenticated) forms — consultation / IELTS
@@ -76,12 +77,24 @@ function slug(message: string, required: boolean) {
     .refine((v) => (v === "" ? !required : SLUG_PATTERN.test(v)), message);
 }
 
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+// Preferred IELTS test date: a real date from today up to a year ahead.
 function isoDate(message: string, required: boolean) {
   return z
     .string()
     .trim()
-    .refine((v) => (v === "" ? !required : DATE_PATTERN.test(v) && !Number.isNaN(Date.parse(v))), message);
+    .superRefine((v, ctx) => {
+      if (v === "") {
+        if (required) ctx.addIssue({ code: "custom", message });
+        return;
+      }
+      if (!isRealDate(v)) {
+        ctx.addIssue({ code: "custom", message: "Enter a real date." });
+        return;
+      }
+      const today = todayInDhaka();
+      if (v < today) ctx.addIssue({ code: "custom", message: "Please choose today or a later date." });
+      else if (v > addYears(today, 1)) ctx.addIssue({ code: "custom", message: "Please choose a date within the next 12 months." });
+    });
 }
 
 const branchNames = branches.map((b) => b.name);

@@ -10,6 +10,7 @@ import { Save } from "lucide-react";
 import { FormField, FormStatus, Input, Select, SubmitButton, Textarea } from "@/components/forms/primitives";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import { blogSchema, type BlogFormValues } from "@/lib/validation/blog";
+import { EARLIEST_CONTENT_DATE, todayInDhaka } from "@/lib/validation/dates";
 
 const emptyValues: BlogFormValues = {
   slug: "",
@@ -19,7 +20,7 @@ const emptyValues: BlogFormValues = {
   excerpt: "",
   content: "",
   author: "",
-  publishedAt: new Date().toISOString().split("T")[0],
+  publishedAt: todayInDhaka(),
   featured: false,
 };
 
@@ -85,7 +86,7 @@ export default function BlogForm({
           <Input id="b-author" {...register("author")} />
         </FormField>
         <FormField id="b-date" label="Published Date" required error={errors.publishedAt?.message}>
-          <Input id="b-date" type="date" {...register("publishedAt")} />
+          <Input id="b-date" type="date" min={EARLIEST_CONTENT_DATE} max={todayInDhaka()} {...register("publishedAt")} />
         </FormField>
       </div>
 

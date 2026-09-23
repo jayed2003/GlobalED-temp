@@ -9,6 +9,7 @@ import { branches } from "@/data/branches";
 import type { Destination, Course } from "@/types";
 import { submitLeadForm } from "@/lib/formSubmit";
 import { leadFields, phoneRegex } from "@/lib/validation/public-forms";
+import { addYears, todayInDhaka } from "@/lib/validation/dates";
 import { buttonClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { FormField, FormStatus, Honeypot, Input, Select, SubmitButton, Textarea } from "./primitives";
@@ -302,7 +303,8 @@ export default function ConsultationForm({
                   <Input
                     id="c-date"
                     type="date"
-                    min={new Date().toISOString().split("T")[0]}
+                    min={todayInDhaka()}
+                    max={addYears(todayInDhaka(), 1)}
                     aria-invalid={!!errors.preferredDate}
                     {...register("preferredDate")}
                   />
