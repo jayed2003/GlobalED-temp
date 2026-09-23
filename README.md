@@ -5,9 +5,10 @@ and study-abroad consultancy. The site's main job is lead generation: free
 consultation bookings, IELTS test bookings and contact enquiries.
 
 - **Public site:** home, 13 study destinations, IELTS pages, services, courses,
-  about, blogs, events, FAQs, contact, and the consultation / IELTS booking form.
+  about, blogs, events, FAQs, contact, the consultation / IELTS booking form,
+  and the Privacy Policy and Terms & Conditions.
 - **Admin panel** (`/admin`): manage destinations, courses, blogs, events, IELTS
-  content, reviews and leads, plus admin accounts.
+  content, reviews, leads and contact messages, plus admin accounts.
 
 ## Tech stack
 
@@ -37,7 +38,8 @@ src/
   data/                 content that is still hard-coded (see below)
   lib/content/          cached database reads used by the public pages
   lib/validation/       Zod schemas (shared by forms and API routes)
-  lib/                  auth, db, email, rate limiting, Turnstile, upload sanitizer
+  lib/api/              admin API wrapper (auth, JSON parsing, error responses)
+  lib/                  auth, db, email, rate limiting, Turnstile, upload and HTML sanitizers
   proxy.ts              request proxy: admin login gate, admin rate limit, CSP
   generated/prisma/     Prisma client (generated on install, not committed)
 ```
@@ -47,8 +49,9 @@ src/
 - **Editable in the admin panel (database):** destinations, courses, blogs,
   events, IELTS page content and reviews. Edits show on the site immediately.
 - **Hard-coded in `src/data/`:** services, team, organization history,
-  branches, FAQs, phone / email / WhatsApp, homepage stats and navigation
-  labels. Changing these means editing the file and redeploying.
+  branches, FAQs, phone / email / WhatsApp, homepage stats, navigation labels
+  and the legal pages (`legal.ts`). Changing these means editing the file and
+  redeploying.
 
 ## Local development
 
@@ -85,8 +88,8 @@ See `.env.example` for the full list with comments.
 | `DIRECT_URL` | Yes | Direct Postgres connection, used by Prisma migrations |
 | `AUTH_SECRET` | Yes | Signs admin session tokens |
 | `BLOB_READ_WRITE_TOKEN` | Yes | Vercel Blob store for uploads (must be a public store) |
-| `RESEND_API_KEY` | For email | Without it, emails are skipped but leads still save |
-| `RESEND_FROM_EMAIL`, `COMPANY_NOTIFY_EMAIL` | For email | Sender, and where contact enquiries go |
+| `RESEND_API_KEY` | For email | Without it, emails are skipped but leads and messages still save |
+| `RESEND_FROM_EMAIL`, `COMPANY_NOTIFY_EMAIL` | For email | Sender, and where new-lead alerts and contact messages are emailed. The sender must be on a domain verified in Resend, or Resend only delivers to the account owner. |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | In production | Upstash Redis for rate limiting (set automatically by the Vercel integration) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | In production | Cloudflare Turnstile keys |
 | `NEXT_PUBLIC_SITE_URL` | In production | Public URL used in the sitemap, robots.txt and metadata |
@@ -107,6 +110,17 @@ needed to run the site.
 - Image uploads accept **JPG, WebP and SVG only** (max 5 MB). JPG and WebP are
   re-encoded to strip metadata such as GPS location. SVGs are cleaned of
   scripts and external links.
+- **Leads and Messages:** consultation / IELTS bookings and contact-form
+  messages are saved and listed here. Each new lead is also emailed to
+  `COMPANY_NOTIFY_EMAIL`. The sidebar shows how many are still New (refreshed
+  every minute); set an item to Contacted / Replied / Closed to clear it.
+- **Blog posts** are written in a rich text editor (headings, lists, links,
+  images). The HTML is sanitized on save and on display.
+- **Content rules:** duplicate names/titles/slugs and repeated list entries
+  are refused; dates must be real and sensible (no future blog dates; an
+  event's date must match its Upcoming / Previous status).
+- Errors are shown as plain messages on the form; an expired session sends
+  you back to the login page.
 
 ## Security
 
@@ -117,7 +131,8 @@ needed to run the site.
 | Input validation | Public forms accept plain-text strings only. HTML, script links, unknown fields and invalid dropdown values are rejected on the client and the server. Visitor text is escaped in emails. |
 | Security headers | HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and a strict per-request nonce-based Content-Security-Policy (set in `src/proxy.ts`). |
 | Structured data | JSON-LD output is encoded so content can't break out of its `<script>` tag. |
-| Search engines | `robots.txt` and `sitemap.xml` are public. The admin panel is excluded from the sitemap and marked `noindex`. |
+| Search engines | `robots.txt` and `sitemap.xml` are public. The admin panel is excluded from the sitemap and marked `noindex`. Unknown URLs return a real 404. |
+| Admin API | Every admin route shares one wrapper (`src/lib/api/admin-route.ts`): permission check, JSON-only bodies up to 1 MB, schema validation, and consistent JSON errors. |
 
 Because the CSP nonce is new on every request, all pages are rendered per
 request. Database content is still cached, so pages stay fast.
