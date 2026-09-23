@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
+import JsonLd from "@/components/ui/JsonLd";
 
 export interface BreadcrumbItem {
   label: string;
@@ -52,10 +53,7 @@ export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
           })}
         </ol>
       </nav>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
     </>
   );
 }
