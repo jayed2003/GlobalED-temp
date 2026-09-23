@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Raleway } from "next/font/google";
+import { connection } from "next/server";
 import "./globals.css";
 
 // Brand guideline: DM Sans (headings/brand), Arial (body — system font, no
@@ -52,11 +53,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Render every page per request: the CSP nonce set in src/proxy.ts is new
+  // on each request, and Next.js can only stamp it onto its scripts at render
+  // time (prebuilt static HTML would carry no nonce and be blocked). Content
+  // is still served from the unstable_cache data cache, so this stays fast.
+  await connection();
+
   return (
     <html lang="en" className={`${dmSans.variable} ${raleway.variable}`}>
       <body className="antialiased">{children}</body>
