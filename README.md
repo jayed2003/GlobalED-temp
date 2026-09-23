@@ -40,7 +40,10 @@ src/
   lib/content/          cached database reads used by the public pages
   lib/validation/       Zod schemas (shared by forms and API routes)
   lib/api/              admin API wrapper (auth, JSON parsing, error responses)
-  lib/                  auth, db, email, rate limiting, Turnstile, upload and HTML sanitizers
+  lib/admin-list/       admin list search, filters, date ranges and paging
+  lib/                  auth, db, email, rate limiting, Turnstile, upload and HTML
+                        sanitizers, page SEO metadata (seo.ts), blog SEO analysis
+                        (seo-analysis.ts)
   proxy.ts              request proxy: admin login gate, admin rate limit, CSP
   generated/prisma/     Prisma client (generated on install, not committed)
 ```
@@ -144,7 +147,8 @@ needed to run the site.
   image needs **alt text** (a short description for screen readers and
   search engines). Choose **Optimized** (default: resized to fit 1920px,
   compressed, served in the best size/format for each visitor) or
-  **Original** (full size and quality, served exactly as uploaded). Metadata
+  **Original** (full size and quality, served exactly as uploaded). Images
+  inserted into a blog post and blog OG images are always optimized. Metadata
   such as GPS location is always stripped; SVGs are cleaned of scripts.
 - **Leads and Messages:** consultation / IELTS bookings and contact-form
   messages are saved and listed here. Each new lead is also emailed to
@@ -155,7 +159,9 @@ needed to run the site.
 - **Blog posts** are written in a rich text editor (headings, lists, links,
   images with alt text) and can be written in **Bangla** — it's shown in a
   proper Bengali font and marked as Bangla for browsers and search engines.
-  The HTML is sanitized on save and on display.
+  The HTML is sanitized on save and on display. The cover image has a large
+  16:9 preview (the shape it's shown in on the site); you can drop an image
+  onto it.
 - **Publishing a blog post:** *Publish now*, or *Schedule for later* with a
   date and time (Bangladesh time, up to a year ahead; past dates and times
   can't be picked). A scheduled post is hidden from the site, blog list and
@@ -207,6 +213,12 @@ request. Database content is still cached, so pages stay fast.
    changing them**, with the build cache turned off.
 4. Recommended: put Vercel Functions, Upstash and Neon in the same region
    (Singapore) to keep database and Redis calls fast.
+5. **Database changes are not applied by the build.** Run
+   `npx prisma migrate deploy` against the production database before (or
+   right after) deploying code that needs a new migration. Every migration in
+   `prisma/migrations/` so far is already applied to production, and all of
+   them only add columns or tables, so the live site keeps working in
+   between.
 
 ### Going live on globaled.io
 
@@ -215,6 +227,21 @@ request. Database content is still cached, so pages stay fast.
 - HSTS makes browsers require HTTPS on `globaled.io` **and all its
   subdomains** for two years. Before switching, confirm that every subdomain in
   use (for example `mail.`, `webmail.`, `cpanel.`) works over HTTPS.
+
+### Still to do before launch
+
+- **Email:** verify a sending domain in Resend and set `RESEND_FROM_EMAIL` to
+  an address on it. Until then Resend only delivers to the account owner, so
+  lead alerts don't reach `COMPANY_NOTIFY_EMAIL`.
+- **Real photos:** course images, blog covers, event images, two reviews and
+  the team photos (`src/data/team.ts`) are still placeholders.
+- **Events:** "Global Education Expo 2026 — Dhaka" (12 Sept) and "Free IELTS
+  Mock Test Day" (20 Sept) are in the past but still marked Upcoming — edit
+  them to Previous in the admin panel.
+- **Existing blog posts:** fill in their SEO fields (focus keyword, meta
+  description, OG image) — the old sample covers are SVGs, which social
+  networks don't show, so shares use the default GlobalEd card until an OG
+  image or a JPG/WebP cover is uploaded.
 
 ## Change log
 
@@ -254,8 +281,9 @@ request. Database content is still cached, so pages stay fast.
    Messages, with a new "Contact Messages" permission for editors.
 5. **Rich text editor** (Tiptap) for blog content; HTML is sanitized on save
    and on display; older plain-text posts still work.
-6. **Valid dates only:** no impossible or future blog dates, event dates must
-   match their Upcoming / Previous status, IELTS bookings within 12 months.
+6. **Valid dates only:** no impossible dates, event dates must match their
+   Upcoming / Previous status, IELTS bookings within 12 months. (Blog dates
+   were later replaced by scheduled publishing — see below.)
 7. **Common error handling** for every admin API route and page (invalid
    JSON, oversized requests, deleted items, expired sessions, server errors).
 8. **Duplicate protection** for blogs, destinations, courses, events, IELTS
