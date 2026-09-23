@@ -86,13 +86,22 @@ npm run dev          # http://localhost:3000
 | `npm run start` | Run the production build |
 | `npm run lint` | ESLint |
 | `npx prisma migrate deploy` | Apply database migrations |
-| `npx prisma db seed` | Seed the database (read the warning below first) |
+| `SEED_ADMIN_ONLY=1 npx prisma db seed` | Create the master admin only — deletes nothing (safe on any database) |
+| `npx prisma db seed` | Full reset with sample content — empty databases only (see below) |
 
-> **Warning: the seed script deletes content.** `prisma/seed.ts` wipes all
-> leads, destinations, courses, blogs, events and reviews, then reloads the
-> sample data from `src/data/`. Only run it against an empty or throwaway
-> database, never against production. It creates the first master admin from
-> `SEED_ADMIN_*`, but never changes the password of an admin who already exists.
+> **The full seed deletes content, so it protects itself.** `prisma/seed.ts`
+> wipes all leads, destinations, courses, blogs, events and reviews, then
+> reloads the sample data from `src/data/`. It refuses to run:
+>
+> - in a production environment (`NODE_ENV=production` or on Vercel) — ever;
+> - on a database that already has any content, leads, contact messages or
+>   more than one admin — unless you set `SEED_CONFIRM_RESET` to that
+>   database's exact host name (the script prints it).
+>
+> To create the first master admin on a real database, use
+> `SEED_ADMIN_ONLY=1 npx prisma db seed`. An existing admin is left unchanged
+> unless you also set `SEED_ADMIN_RESET_PASSWORD=1` (resets its password to
+> `SEED_ADMIN_PASSWORD` — useful if you're locked out).
 
 ## Environment variables
 

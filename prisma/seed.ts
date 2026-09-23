@@ -30,7 +30,111 @@ const eventStatusMap: Record<string, EventStatus> = {
   previous: EventStatus.PREVIOUS,
 };
 
+/** Host of the database this run would touch (printed in every guard message). */
+function databaseHost(): string {
+  try {
+    return new URL(process.env.DATABASE_URL ?? "").hostname || "(unknown)";
+  } catch {
+    return "(unknown)";
+  }
+}
+
+/**
+ * The full seed DELETES all leads and content before reloading sample data.
+ * Refuse unless this is clearly a throwaway database:
+ *  - never in a production environment (NODE_ENV=production, or on Vercel);
+ *  - never when the database already holds real data (any lead or contact
+ *    message, or more than one admin) — unless SEED_CONFIRM_RESET is set to
+ *    this database's exact host name, so wiping one can't happen by accident.
+ */
+async function assertSafeToReset() {
+  const host = databaseHost();
+  const hardStops: string[] = [];
+  if (process.env.NODE_ENV === "production") hardStops.push("NODE_ENV is 'production'");
+  if (process.env.VERCEL_ENV) hardStops.push(`running on Vercel (VERCEL_ENV=${process.env.VERCEL_ENV})`);
+
+  // The seed is for empty databases: any existing content counts as real data
+  // (a live site with no leads yet still has edited destinations, posts, …).
+  const [leads, messages, admins, destinations, courses, posts, events, reviews] = await Promise.all([
+    prisma.lead.count(),
+    prisma.contactMessage.count(),
+    prisma.adminUser.count(),
+    prisma.destination.count(),
+    prisma.course.count(),
+    prisma.blogPost.count(),
+    prisma.eventItem.count(),
+    prisma.testimonial.count(),
+  ]);
+  const realData = [
+    [leads, "lead(s)"],
+    [messages, "contact message(s)"],
+    [destinations, "destination(s)"],
+    [courses, "course(s)"],
+    [posts, "blog post(s)"],
+    [events, "event(s)"],
+    [reviews, "review(s)"],
+  ]
+    .filter(([n]) => (n as number) > 0)
+    .map(([n, what]) => `${n} ${what}`);
+  if (admins > 1) realData.push(`${admins} admin accounts`);
+
+  const confirmed = process.env.SEED_CONFIRM_RESET === host;
+  if (hardStops.length === 0 && (realData.length === 0 || confirmed)) return;
+
+  console.error("");
+  console.error(`✖ Refusing to reset database "${host}".`);
+  console.error("  The full seed deletes ALL leads, destinations, courses, blog posts, events and reviews.");
+  console.error("");
+  if (hardStops.length) console.error(`  Production environment: ${hardStops.join("; ")}. A reset is never allowed here.`);
+  if (realData.length) {
+    console.error(`  This database already has real data: ${realData.join(", ")}.`);
+    if (!hardStops.length) {
+      console.error(`  If you really mean to wipe it, re-run with SEED_CONFIRM_RESET=${host}`);
+    }
+  }
+  console.error("");
+  console.error("  To only create the master admin (no deletions): SEED_ADMIN_ONLY=1 npx prisma db seed");
+  console.error("");
+  process.exit(1);
+}
+
+/**
+ * Create the master admin from SEED_ADMIN_* if it doesn't exist. An existing
+ * account is left alone unless SEED_ADMIN_RESET_PASSWORD=1 (e.g. locked out).
+ */
+async function seedAdmin() {
+  const adminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  const adminName = process.env.SEED_ADMIN_NAME ?? "GlobalEd Admin";
+
+  if (!adminEmail || !adminPassword) {
+    console.warn("SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD not set — skipping admin user seed.");
+    return;
+  }
+  const passwordHash = await bcrypt.hash(adminPassword, 10);
+  const existing = await prisma.adminUser.findFirst({ where: { email: { equals: adminEmail, mode: "insensitive" } } });
+  if (!existing) {
+    await prisma.adminUser.create({ data: { name: adminName, email: adminEmail, passwordHash, role: "ADMIN" } });
+    console.log(`Created master admin: ${adminEmail}`);
+  } else if (process.env.SEED_ADMIN_RESET_PASSWORD === "1") {
+    await prisma.adminUser.update({ where: { id: existing.id }, data: { passwordHash } });
+    console.log(`Reset the password of existing admin: ${adminEmail}`);
+  } else {
+    console.log(`Admin ${adminEmail} already exists — left unchanged (SEED_ADMIN_RESET_PASSWORD=1 to reset its password).`);
+  }
+}
+
 async function main() {
+  console.log(`Seeding database "${databaseHost()}"`);
+
+  // Safe mode: only the admin account, nothing is deleted.
+  if (process.env.SEED_ADMIN_ONLY === "1") {
+    await seedAdmin();
+    return;
+  }
+
+  await assertSafeToReset();
+
   // Clear in FK-safe order so this script is safely re-runnable.
   await prisma.lead.deleteMany();
   await prisma.ieltsPreparationCourse.deleteMany();
@@ -182,24 +286,7 @@ async function main() {
   }
   console.log(`Seeded ${testimonials.length} testimonials.`);
 
-  // --- Seed admin user (upsert so re-running doesn't wipe other admins) ---
-  const adminEmail = process.env.SEED_ADMIN_EMAIL;
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
-  const adminName = process.env.SEED_ADMIN_NAME ?? "GlobalEd Admin";
-
-  if (adminEmail && adminPassword) {
-    const passwordHash = await bcrypt.hash(adminPassword, 10);
-    await prisma.adminUser.upsert({
-      where: { email: adminEmail },
-      update: {},
-      create: { name: adminName, email: adminEmail, passwordHash, role: "ADMIN" },
-    });
-    console.log(`Seeded admin user: ${adminEmail}`);
-  } else {
-    console.warn(
-      "SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD not set — skipping admin user seed. Set them in .env.local to get a working login.",
-    );
-  }
+  await seedAdmin();
 }
 
 main()
