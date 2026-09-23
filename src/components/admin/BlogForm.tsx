@@ -115,6 +115,7 @@ export default function BlogForm({
         render={({ field }) => (
           <ImageUploadField
             label="Cover Image"
+            large
             value={field.value}
             onChange={field.onChange}
             error={errors.coverImage?.message}
