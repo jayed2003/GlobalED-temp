@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
       { source: "/ielts-registration", destination: "/consultation", permanent: false },
     ];
   },
+  async headers() {
+    const noIndex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
+    return [
+      { source: "/admin", headers: noIndex },
+      { source: "/admin/:path*", headers: noIndex },
+      { source: "/api/:path*", headers: noIndex },
+    ];
+  },
   images: {
     // Some sections still use placeholder SVGs; tighten again once all real images arrive.
     dangerouslyAllowSVG: true,
