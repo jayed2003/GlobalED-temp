@@ -156,9 +156,24 @@ needed to run the site.
   images with alt text) and can be written in **Bangla** — it's shown in a
   proper Bengali font and marked as Bangla for browsers and search engines.
   The HTML is sanitized on save and on display.
+- **Publishing a blog post:** *Publish now*, or *Schedule for later* with a
+  date and time (Bangladesh time, up to a year ahead; past dates and times
+  can't be picked). A scheduled post is hidden from the site, blog list and
+  sitemap until its time, then appears on its own. Editing keeps the
+  original date unless you choose otherwise. The Blogs list marks
+  scheduled posts and can filter Published / Scheduled.
+- **Blog SEO panel** (under the content): focus keyword, SEO title (counter
+  /60), meta description (counter /156), an **OG image** for social shares
+  (JPG/WebP, 1200 × 630 recommended; falls back to the cover image) and a
+  Google-style **search preview**. Next to it, a live **SEO analysis** and
+  **Readability** score out of 100 with a checklist (keyword placement and
+  density, title/description length, word count, links, alt text; Flesch
+  reading ease, long sentences, passive voice, transition words, paragraph
+  and subheading lengths). Readability is scored for English posts only.
+  Empty SEO fields fall back to the post title, excerpt and cover.
 - **Content rules:** duplicate names/titles/slugs and repeated list entries
-  are refused; dates must be real and sensible (no future blog dates; an
-  event's date must match its Upcoming / Previous status).
+  are refused; dates must be real and sensible (no past blog publish dates;
+  an event's date must match its Upcoming / Previous status).
 - Errors are shown as plain messages on the form; an expired session sends
   you back to the login page.
 
@@ -279,3 +294,17 @@ width, and `.env.example` is committed with every variable documented.
 
 Database migration `20260923193802_leads_read_and_image_alts` (additive;
 already applied to production) adds read/unread and the alt-text columns.
+
+Follow-up to this batch:
+
+- **Scheduled publishing:** blog posts are published now or scheduled for a
+  date and time; past dates can't be chosen.
+- **Blog editor:** the Optimized / Original buttons were removed from the
+  content toolbar (images in the body are always optimized); the cover
+  image has a large 16:9 preview and drop zone.
+- **SEO panel** with OG image, search preview, and SEO / readability scores
+  (`src/lib/seo-analysis.ts`, `src/components/admin/SeoPanel.tsx`). The
+  public post uses the SEO title, meta description and OG image when set.
+
+Database migration `20260923201131_blog_seo_fields` (additive; already
+applied to production) adds the blog SEO columns.
