@@ -6,12 +6,14 @@ import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { getIeltsContent } from "@/lib/content/ielts";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/ielts",
   title: "IELTS with GlobalEd",
   description:
     "What is IELTS, why it matters, why prepare with GlobalEd, our IELTS preparation packages, and IELTS test booking for students in Bangladesh.",
-};
+});
 
 export default async function IeltsPage() {
   const ielts = await getIeltsContent();

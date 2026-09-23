@@ -6,12 +6,14 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
 import { organization } from "@/data/organization";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/about/our-organization",
   title: "Our Organization",
   description:
     "GlobalEd's story, mission, vision, and our sister educational organizations under Global Citizen Limited.",
-};
+});
 
 export default function OurOrganizationPage() {
   return (

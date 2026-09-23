@@ -6,12 +6,14 @@ import TeamCard from "@/components/cards/TeamCard";
 import Container from "@/components/layout/Container";
 import { organization } from "@/data/organization";
 import { team } from "@/data/team";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/about/our-team",
   title: "Our Team",
   description:
     "Meet GlobalEd's Board of Directors and the certified counsellors, IELTS instructors, and visa experts behind your success.",
-};
+});
 
 export default function OurTeamPage() {
   return (

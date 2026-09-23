@@ -7,12 +7,14 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { getIeltsContent } from "@/lib/content/ielts";
 import { getAllCourses } from "@/lib/content/courses";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/ielts/preparation",
   title: "IELTS Preparation",
   description:
     "IELTS preparation at GlobalEd — a skill-by-skill program plus Essential, Advanced, and Premium packages to match your goals.",
-};
+});
 
 export default async function IeltsPreparationPage() {
   const [ielts, courses] = await Promise.all([getIeltsContent(), getAllCourses()]);

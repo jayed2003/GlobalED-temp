@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import PageHero from "@/components/sections/PageHero";
 import LegalContent from "@/components/sections/LegalContent";
 import { privacyPolicy } from "@/data/legal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/privacy-policy",
   title: "Privacy Policy",
   description: "How Global Citizen Limited / GlobalEd collects, uses, shares and protects your personal information.",
-  alternates: { canonical: "/privacy-policy" },
-};
+});
 
 export default function PrivacyPolicyPage() {
   return (

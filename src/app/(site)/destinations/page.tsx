@@ -4,12 +4,14 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import DestinationCard from "@/components/cards/DestinationCard";
 import Container from "@/components/layout/Container";
 import { getAllDestinations } from "@/lib/content/destinations";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/destinations",
   title: "Study Destinations",
   description:
     "Explore 13 study abroad destinations from Bangladesh — UK, USA, Canada, Australia, New Zealand, Europe, South Korea, and Malaysia with GlobalEd's free counselling.",
-};
+});
 
 export default async function DestinationsPage() {
   const destinations = await getAllDestinations();

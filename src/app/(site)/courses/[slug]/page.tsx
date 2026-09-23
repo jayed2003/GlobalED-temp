@@ -11,8 +11,8 @@ import JsonLd from "@/components/ui/JsonLd";
 import { ButtonLink } from "@/components/ui/Button";
 import { getCourseSlugs, getCourseBySlug, getCoursesByCategory } from "@/lib/content/courses";
 import { courseCategoryLabels } from "@/lib/labels";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
+import { pageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site-url";
 
 export async function generateStaticParams() {
   const slugs = await getCourseSlugs();
@@ -27,10 +27,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const course = await getCourseBySlug(slug);
   if (!course) return {};
-  return {
+  return pageMetadata({
+    path: `/courses/${course.slug}`,
     title: course.title,
     description: course.overview,
-  };
+    image: course.image,
+    imageAlt: course.title,
+  });
 }
 
 export default async function CourseDetailPage({

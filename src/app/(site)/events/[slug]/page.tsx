@@ -10,8 +10,8 @@ import JsonLd from "@/components/ui/JsonLd";
 import { ButtonLink } from "@/components/ui/Button";
 import { getEventSlugs, getEventBySlug } from "@/lib/content/events";
 import { formatDate } from "@/lib/labels";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
+import { pageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site-url";
 
 export async function generateStaticParams() {
   const slugs = await getEventSlugs();
@@ -26,10 +26,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const event = await getEventBySlug(slug);
   if (!event) return {};
-  return {
+  return pageMetadata({
+    path: `/events/${event.slug}`,
     title: event.title,
     description: event.description,
-  };
+    image: event.bannerImage,
+    imageAlt: event.title,
+  });
 }
 
 export default async function EventDetailPage({

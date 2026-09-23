@@ -7,12 +7,14 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
 import CtaBanner from "@/components/sections/CtaBanner";
 import { organization } from "@/data/organization";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/about/our-success",
   title: "Our Success",
   description:
     "GlobalEd's track record — milestones since 2013, students placed, visa success rate, and real student success stories.",
-};
+});
 
 export default function OurSuccessPage() {
   return (

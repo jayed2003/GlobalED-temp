@@ -4,8 +4,7 @@ import { getAllDestinations } from "@/lib/content/destinations";
 import { getAllCourses } from "@/lib/content/courses";
 import { getAllPosts } from "@/lib/content/blog";
 import { getAllEvents } from "@/lib/content/events";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
+import { SITE_URL } from "@/lib/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [destinations, courses, posts, events] = await Promise.all([

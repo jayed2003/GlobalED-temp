@@ -6,12 +6,14 @@ import Container from "@/components/layout/Container";
 import { site } from "@/data/site";
 import { getAllCourses } from "@/lib/content/courses";
 import { getAllDestinations } from "@/lib/content/destinations";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/consultation",
   title: "Book Your Free Consultation",
   description:
     "Register for a free study abroad consultation with GlobalEd — expert guidance on destinations, universities, scholarships, IELTS, and visas.",
-};
+});
 
 const trustPoints = [
   "100% free — no counselling charges, ever",

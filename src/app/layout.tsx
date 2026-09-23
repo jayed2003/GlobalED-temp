@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { DM_Sans, Noto_Sans_Bengali, Raleway } from "next/font/google";
 import { connection } from "next/server";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site-url";
+import { DEFAULT_SHARE_IMAGE } from "@/lib/seo";
 
 // Brand guideline: DM Sans (headings/brand), Arial (body — system font, no
 // import needed), Raleway (secondary titles).
@@ -31,9 +33,7 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd",
-  ),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "GlobalEd | IELTS & Study Abroad Consultancy",
     template: "%s | GlobalEd",
@@ -50,17 +50,12 @@ export const metadata: Metadata = {
     title: "GlobalEd | IELTS & Study Abroad Consultancy",
     description:
       "Study abroad and IELTS preparation consultancy in Bangladesh — 13 destinations, 300+ partner universities, free counselling.",
-    images: [
-      {
-        url: "/images/og-default.svg",
-        width: 1200,
-        height: 630,
-        alt: "GlobalEd — IELTS & Study Abroad Consultancy",
-      },
-    ],
+    locale: "en_BD",
+    images: [DEFAULT_SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
+    images: [DEFAULT_SHARE_IMAGE],
   },
 };
 

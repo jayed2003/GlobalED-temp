@@ -6,6 +6,7 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
 import { services } from "@/data/services";
+import { pageMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -19,10 +20,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = services.find((s) => s.slug === slug);
   if (!service) return {};
-  return {
+  return pageMetadata({
+    path: `/services/${service.slug}`,
     title: service.title,
     description: service.shortDescription,
-  };
+  });
 }
 
 export default async function ServiceDetailPage({

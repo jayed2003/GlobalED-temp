@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { SITE_URL } from "@/lib/site-url";
 
 /**
  * Transactional email via Resend. Falls back to a no-op ("demo mode") when
@@ -89,14 +90,6 @@ export async function sendContactNotification(params: {
   }
 }
 
-/** Public base URL for links in emails (the admin link in lead alerts). */
-function siteUrl(): string | null {
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
-  // Set automatically on Vercel.
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  return null;
-}
-
 /** Alert the company inbox that a new consultation / IELTS booking lead arrived. */
 export async function sendNewLeadNotification(lead: {
   id: string;
@@ -135,8 +128,7 @@ export async function sendNewLeadNotification(lead: {
         `<tr><td style="padding:4px 12px 4px 0;color:#666">${escapeHtml(label)}</td><td style="padding:4px 0"><strong>${escapeHtml(value!)}</strong></td></tr>`,
     )
     .join("");
-  const base = siteUrl();
-  const link = base ? `<p><a href="${escapeHtml(`${base}/admin/leads/${lead.id}`)}">View this lead in the admin panel</a></p>` : "";
+  const link = `<p><a href="${escapeHtml(`${SITE_URL}/admin/leads/${lead.id}`)}">View this lead in the admin panel</a></p>`;
   const message = lead.message ? `<p><strong>Message:</strong><br>${escapeMultiline(lead.message)}</p>` : "";
 
   try {

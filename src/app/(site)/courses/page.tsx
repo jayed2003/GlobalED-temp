@@ -4,12 +4,14 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import CoursesFilter from "@/components/sections/CoursesFilter";
 import Container from "@/components/layout/Container";
 import { getAllCourses } from "@/lib/content/courses";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/courses",
   title: "Our Courses",
   description:
     "IELTS Regular, Executive, and Master Class courses, Spoken English, One-to-One coaching, Language Club, and Japanese Language at GlobalEd Bangladesh.",
-};
+});
 
 export default async function CoursesPage() {
   const courses = await getAllCourses();

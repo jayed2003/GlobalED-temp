@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import PageHero from "@/components/sections/PageHero";
 import LegalContent from "@/components/sections/LegalContent";
 import { termsAndConditions } from "@/data/legal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/terms-and-conditions",
   title: "Terms & Conditions",
   description: "The terms that apply to GlobalEd courses and services from Global Citizen Limited.",
-  alternates: { canonical: "/terms-and-conditions" },
-};
+});
 
 export default function TermsAndConditionsPage() {
   return (

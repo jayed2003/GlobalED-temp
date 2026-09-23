@@ -7,12 +7,14 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
 import { services } from "@/data/services";
 import { faqs } from "@/data/faqs";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/services",
   title: "Our Services",
   description:
     "University admission support, scholarship guidance, documentation, visa application, pre & post departure guidance, and language support from GlobalEd Bangladesh.",
-};
+});
 
 const serviceFaqs = faqs.slice(-4); // Last 4 are service-related FAQs
 

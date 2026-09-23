@@ -7,12 +7,14 @@ import ContactForm from "@/components/forms/ContactForm";
 import Container from "@/components/layout/Container";
 import { branches } from "@/data/branches";
 import { site } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/contact",
   title: "Contact Us",
   description:
     "Visit any GlobalEd branch in Dhanmondi, Banani, or Chattogram — addresses, phone numbers, Google Maps, and our enquiry form.",
-};
+});
 
 export default function ContactPage() {
   return (

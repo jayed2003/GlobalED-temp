@@ -4,12 +4,14 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import EventsTabs from "@/components/sections/EventsTabs";
 import Container from "@/components/layout/Container";
 import { getAllEvents } from "@/lib/content/events";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/events",
   title: "Events",
   description:
     "Upcoming and previous GlobalEd events — education expos, university admission days, free IELTS mock tests, and more across Bangladesh.",
-};
+});
 
 export default async function EventsPage() {
   const events = await getAllEvents();

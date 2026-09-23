@@ -4,12 +4,14 @@ import PageHero from "@/components/sections/PageHero";
 import Container from "@/components/layout/Container";
 import CtaBanner from "@/components/sections/CtaBanner";
 import { getIeltsContent } from "@/lib/content/ielts";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/ielts/what-is-ielts",
   title: "What is IELTS?",
   description:
     "Learn what IELTS is, its formats, modules, and scoring — the world's most widely accepted English proficiency test.",
-};
+});
 
 export default async function WhatIsIeltsPage() {
   const ielts = await getIeltsContent();

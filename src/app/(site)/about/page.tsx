@@ -3,12 +3,14 @@ import Link from "next/link";
 import { ArrowRight, Building2, TrendingUp, Users2 } from "lucide-react";
 import PageHero from "@/components/sections/PageHero";
 import Container from "@/components/layout/Container";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/about",
   title: "About Us",
   description:
     "Learn about GlobalEd — our history since 2013, our mission and vision, our sister educational organizations, board of directors, and the team behind thousands of study abroad successes.",
-};
+});
 
 const links = [
   {

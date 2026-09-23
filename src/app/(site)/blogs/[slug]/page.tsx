@@ -14,8 +14,8 @@ import { sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { langOf } from "@/lib/bangla";
 import { htmlToText } from "@/lib/rich-text";
 import { blogCategoryLabels, formatDate } from "@/lib/labels";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
+import { pageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site-url";
 
 export async function generateStaticParams() {
   const slugs = await getPostSlugs();
@@ -30,10 +30,15 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return {};
-  return {
+  return pageMetadata({
+    path: `/blogs/${post.slug}`,
     title: post.title,
     description: post.excerpt,
-  };
+    image: post.coverImage,
+    imageAlt: post.title,
+    type: "article",
+    publishedTime: post.publishedAt,
+  });
 }
 
 export default async function BlogDetailPage({

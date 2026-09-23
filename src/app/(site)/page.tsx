@@ -12,8 +12,16 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import JsonLd from "@/components/ui/JsonLd";
 import Reveal from "@/components/ui/Reveal";
 import { site } from "@/data/site";
+import type { Metadata } from "next";
+import { DEFAULT_TITLE, pageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site-url";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
+export const metadata: Metadata = pageMetadata({
+  path: "/",
+  title: { absolute: DEFAULT_TITLE },
+  description:
+    "GlobalEd is a trusted study abroad and IELTS preparation consultancy in Bangladesh, guiding students to top destinations including the UK, USA, Canada, Australia, and Europe.",
+});
 
 export default function Home() {
   return (

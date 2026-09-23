@@ -110,7 +110,7 @@ export const config = {
     // Pages (for the CSP nonce). Skips static files, image optimization,
     // robots/sitemap and link prefetches, which don't render HTML.
     {
-      source: "/((?!api|_next/static|_next/image|images/|favicon.ico|robots.txt|sitemap.xml).*)",
+      source: "/((?!api|_next/static|_next/image|images/|favicon.ico|robots.txt|sitemap.xml|share-image.png).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },

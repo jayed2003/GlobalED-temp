@@ -4,12 +4,14 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import FaqFilter from "@/components/sections/FaqFilter";
 import Container from "@/components/layout/Container";
 import { faqs } from "@/data/faqs";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/faqs",
   title: "Frequently Asked Questions",
   description:
     "Find answers to common questions about GlobalEd's study abroad services, IELTS preparation, university admissions, visa processing, and more.",
-};
+});
 
 export default function FaqsPage() {
   return (

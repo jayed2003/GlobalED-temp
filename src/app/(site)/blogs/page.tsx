@@ -4,12 +4,14 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import BlogsFilter from "@/components/sections/BlogsFilter";
 import Container from "@/components/layout/Container";
 import { getAllPosts } from "@/lib/content/blog";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/blogs",
   title: "Blogs & News",
   description:
     "Study abroad guides, scholarship news, IELTS tips, and English learning advice from the GlobalEd team in Bangladesh.",
-};
+});
 
 export default async function BlogsPage() {
   const posts = await getAllPosts();

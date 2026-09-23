@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 import JsonLd from "@/components/ui/JsonLd";
+import { SITE_URL } from "@/lib/site-url";
 
 export interface BreadcrumbItem {
   label: string;
   href?: string;
 }
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
 
 /** Visual breadcrumb trail + BreadcrumbList JSON-LD (for inner pages). */
 export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
