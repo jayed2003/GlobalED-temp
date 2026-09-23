@@ -1,25 +1,15 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { requirePermission } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { courseSchema } from "@/lib/validation/course";
 import { courseCategoryToEnum } from "@/lib/content/courses";
 
-export async function POST(request: Request) {
-  const session = await requirePermission("COURSES");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const body = await request.json();
-  const parsed = courseSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid data" }, { status: 400 });
-  }
-  const data = parsed.data;
+export const POST = adminRoute({ permission: "COURSES" }, async ({ request }) => {
+  const data = await readJson(request, courseSchema);
 
   const existing = await prisma.course.findUnique({ where: { slug: data.slug } });
-  if (existing) {
-    return NextResponse.json({ error: "A course with this slug already exists" }, { status: 409 });
-  }
+  if (existing) throw new ApiError(409, "A course with this slug already exists", "slug");
 
   const count = await prisma.course.count();
 
@@ -42,4 +32,4 @@ export async function POST(request: Request) {
   revalidateTag("courses", { expire: 0 });
   revalidateTag("ielts-content", { expire: 0 });
   return NextResponse.json({ id: created.id }, { status: 201 });
-}
+});

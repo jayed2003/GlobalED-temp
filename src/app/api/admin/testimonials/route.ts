@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { requirePermission } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { cleanText, testimonialSchema } from "@/lib/validation/testimonial";
 
 async function orderTakenBy(sortOrder: number, excludeId?: string) {
@@ -11,22 +11,15 @@ async function orderTakenBy(sortOrder: number, excludeId?: string) {
   });
 }
 
-export async function POST(request: Request) {
-  const session = await requirePermission("TESTIMONIALS");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const body = await request.json();
-  const parsed = testimonialSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid data" }, { status: 400 });
-  }
-  const data = parsed.data;
+export const POST = adminRoute({ permission: "TESTIMONIALS" }, async ({ request }) => {
+  const data = await readJson(request, testimonialSchema);
 
   const taken = await orderTakenBy(data.sortOrder);
   if (taken) {
-    return NextResponse.json(
-      { error: `Display order ${data.sortOrder} is already used by ${taken.studentName}. Pick a free number.` },
-      { status: 409 },
+    throw new ApiError(
+      409,
+      `Display order ${data.sortOrder} is already used by ${taken.studentName}. Pick a free number.`,
+      "sortOrder",
     );
   }
 
@@ -42,4 +35,4 @@ export async function POST(request: Request) {
 
   revalidateTag("testimonials", { expire: 0 });
   return NextResponse.json({ id: created.id }, { status: 201 });
-}
+});

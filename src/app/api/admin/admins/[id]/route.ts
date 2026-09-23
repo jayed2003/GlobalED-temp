@@ -1,36 +1,27 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import type { Prisma } from "@/generated/prisma/client";
-import { requireAdmin } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { updateAdminUserSchema } from "@/lib/validation/admin-user";
+
+type Params = { id: string };
 
 // Role is immutable after creation. The master admin (role ADMIN) can only
 // ever edit their own record — no one else, including a hypothetical other
 // ADMIN row, can touch it. Editors can be freely managed by the master.
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requireAdmin();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { id } = await params;
-  const body = await request.json();
-  const parsed = updateAdminUserSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid data" }, { status: 400 });
-  }
-  const data = parsed.data;
+export const PATCH = adminRoute<Params>({ adminOnly: true }, async ({ request, session, params: { id } }) => {
+  const data = await readJson(request, updateAdminUserSchema);
 
   const target = await prisma.adminUser.findUnique({ where: { id } });
-  if (!target) return NextResponse.json({ error: "Admin not found" }, { status: 404 });
+  if (!target) throw new ApiError(404, "This admin no longer exists. Refresh the page.");
 
   if (target.role === "ADMIN" && session.user.id !== target.id) {
-    return NextResponse.json({ error: "Only the master admin can edit their own account" }, { status: 403 });
+    throw new ApiError(403, "Only the master admin can edit their own account");
   }
 
   const existing = await prisma.adminUser.findUnique({ where: { email: data.email } });
-  if (existing && existing.id !== id) {
-    return NextResponse.json({ error: "An admin with this email already exists" }, { status: 409 });
-  }
+  if (existing && existing.id !== id) throw new ApiError(409, "An admin with this email already exists", "email");
 
   const updateData: Prisma.AdminUserUpdateInput = {
     name: data.name,
@@ -44,24 +35,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   await prisma.adminUser.update({ where: { id }, data: updateData });
   return NextResponse.json({ ok: true });
-}
+});
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requireAdmin();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { id } = await params;
-  if (id === session.user.id) {
-    return NextResponse.json({ error: "You cannot delete your own account" }, { status: 400 });
-  }
+export const DELETE = adminRoute<Params>({ adminOnly: true }, async ({ session, params: { id } }) => {
+  if (id === session.user.id) throw new ApiError(400, "You cannot delete your own account");
 
   const target = await prisma.adminUser.findUnique({ where: { id } });
-  if (!target) return NextResponse.json({ error: "Admin not found" }, { status: 404 });
+  if (!target) throw new ApiError(404, "This admin no longer exists. Refresh the page.");
 
-  if (target.role === "ADMIN") {
-    return NextResponse.json({ error: "The master admin account cannot be deleted" }, { status: 400 });
-  }
+  if (target.role === "ADMIN") throw new ApiError(400, "The master admin account cannot be deleted");
 
   await prisma.adminUser.delete({ where: { id } });
   return NextResponse.json({ ok: true });
-}
+});

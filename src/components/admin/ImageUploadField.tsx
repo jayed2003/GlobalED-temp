@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { UploadCloud, Loader2 } from "lucide-react";
+import { adminRequest } from "@/lib/admin-fetch";
 
 export default function ImageUploadField({
   label,
@@ -22,21 +23,12 @@ export default function ImageUploadField({
   const handleFile = async (file: File) => {
     setUploading(true);
     setUploadError(null);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "Upload failed");
-      }
-      const { url } = await res.json();
-      onChange(url);
-    } catch (err) {
-      setUploadError(err instanceof Error ? err.message : "Upload failed");
-    } finally {
-      setUploading(false);
-    }
+    const formData = new FormData();
+    formData.append("file", file);
+    const result = await adminRequest<{ url: string }>("/api/admin/upload", { formData });
+    setUploading(false);
+    if (!result.ok) return setUploadError(result.message);
+    onChange(result.data.url);
   };
 
   return (

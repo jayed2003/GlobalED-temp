@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { adminRequest } from "@/lib/admin-fetch";
 
 const statuses = ["NEW", "CONTACTED", "CLOSED"] as const;
 const statusLabels: Record<(typeof statuses)[number], string> = {
@@ -21,20 +22,14 @@ export default function LeadStatusControl({ leadId, status }: { leadId: string; 
     setError(null);
     const previous = current;
     setCurrent(next);
-    try {
-      const res = await fetch(`/api/admin/leads/${leadId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: next }),
-      });
-      if (!res.ok) throw new Error("Failed to update");
-      router.refresh();
-    } catch {
+    const result = await adminRequest(`/api/admin/leads/${leadId}`, { method: "PATCH", json: { status: next } });
+    setSaving(false);
+    if (!result.ok) {
       setCurrent(previous);
-      setError("Could not update status. Please try again.");
-    } finally {
-      setSaving(false);
+      setError(result.message);
+      return;
     }
+    router.refresh();
   };
 
   return (

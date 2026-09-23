@@ -1,20 +1,12 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { Prisma } from "@/generated/prisma/client";
-import { requirePermission } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { adminRoute, readJson } from "@/lib/api/admin-route";
 import { ieltsContentSchema } from "@/lib/validation/ielts";
 
-export async function PATCH(request: Request) {
-  const session = await requirePermission("IELTS");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const body = await request.json();
-  const parsed = ieltsContentSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid data" }, { status: 400 });
-  }
-  const data = parsed.data;
+export const PATCH = adminRoute({ permission: "IELTS" }, async ({ request }) => {
+  const data = await readJson(request, ieltsContentSchema);
 
   const courses = await prisma.course.findMany({ where: { slug: { in: data.preparation.courseSlugs } } });
   const courseIdBySlug = new Map(courses.map((c) => [c.slug, c.id]));
@@ -59,4 +51,4 @@ export async function PATCH(request: Request) {
   revalidateTag("ielts-content", { expire: 0 });
   revalidateTag("courses", { expire: 0 });
   return NextResponse.json({ ok: true });
-}
+});

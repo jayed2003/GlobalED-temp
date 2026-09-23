@@ -16,7 +16,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export default function LoginForm() {
+export default function LoginForm({ callbackUrl = "/admin" }: { callbackUrl?: string }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
@@ -45,7 +45,7 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/admin");
+    router.push(callbackUrl);
     router.refresh();
   };
 

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { adminRequest } from "@/lib/admin-fetch";
+import { showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
@@ -34,6 +36,7 @@ export default function BlogForm({
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const {
+    setError,
     register,
     control,
     handleSubmit,
@@ -45,22 +48,13 @@ export default function BlogForm({
 
   const onSubmit = async (data: BlogFormValues) => {
     setStatus(null);
-    try {
-      const url = mode === "create" ? "/api/admin/blogs" : `/api/admin/blogs/${postId}`;
-      const res = await fetch(url, {
-        method: mode === "create" ? "POST" : "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "Something went wrong");
-      }
-      router.push("/admin/blogs");
-      router.refresh();
-    } catch (err) {
-      setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong" });
-    }
+    const result = await adminRequest(mode === "create" ? "/api/admin/blogs" : `/api/admin/blogs/${postId}`, {
+      method: mode === "create" ? "POST" : "PATCH",
+      json: data,
+    });
+    if (!result.ok) return showServerError(result, setError, setStatus);
+    router.push("/admin/blogs");
+    router.refresh();
   };
 
   return (

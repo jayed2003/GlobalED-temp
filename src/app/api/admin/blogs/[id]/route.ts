@@ -1,26 +1,17 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { requirePermission } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { blogSchema } from "@/lib/validation/blog";
 import { blogCategoryToEnum } from "@/lib/content/blog";
 
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requirePermission("BLOGS");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+type Params = { id: string };
 
-  const { id } = await params;
-  const body = await request.json();
-  const parsed = blogSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid data" }, { status: 400 });
-  }
-  const data = parsed.data;
+export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ request, params: { id } }) => {
+  const data = await readJson(request, blogSchema);
 
   const existing = await prisma.blogPost.findUnique({ where: { slug: data.slug } });
-  if (existing && existing.id !== id) {
-    return NextResponse.json({ error: "A post with this slug already exists" }, { status: 409 });
-  }
+  if (existing && existing.id !== id) throw new ApiError(409, "A post with this slug already exists", "slug");
 
   await prisma.blogPost.update({
     where: { id },
@@ -39,15 +30,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   revalidateTag("blog-posts", { expire: 0 });
   return NextResponse.json({ ok: true });
-}
+});
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requirePermission("BLOGS");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { id } = await params;
+export const DELETE = adminRoute<Params>({ permission: "BLOGS" }, async ({ params: { id } }) => {
   await prisma.blogPost.delete({ where: { id } });
 
   revalidateTag("blog-posts", { expire: 0 });
   return NextResponse.json({ ok: true });
-}
+});

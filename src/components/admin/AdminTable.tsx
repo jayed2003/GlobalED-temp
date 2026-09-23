@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import { adminRequest } from "@/lib/admin-fetch";
 
 export interface AdminTableRow {
   id: string;
@@ -38,19 +39,19 @@ export default function AdminTable({
     if (!pendingDelete) return;
     setDeleting(true);
     setError(null);
-    try {
-      const res = await fetch(pendingDelete.deleteEndpoint, { method: "DELETE" });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "Delete failed");
+    const result = await adminRequest(pendingDelete.deleteEndpoint, { method: "DELETE" });
+    setDeleting(false);
+    if (!result.ok) {
+      setError(result.message);
+      // Already gone (deleted elsewhere): close the dialog and refresh the list.
+      if (result.status === 404) {
+        setPendingDelete(null);
+        router.refresh();
       }
-      setPendingDelete(null);
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not delete. Please try again.");
-    } finally {
-      setDeleting(false);
+      return;
     }
+    setPendingDelete(null);
+    router.refresh();
   };
 
   return (

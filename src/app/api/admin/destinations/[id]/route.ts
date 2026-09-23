@@ -1,25 +1,16 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { requirePermission } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { destinationSchema } from "@/lib/validation/destination";
 
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requirePermission("DESTINATIONS");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+type Params = { id: string };
 
-  const { id } = await params;
-  const body = await request.json();
-  const parsed = destinationSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid data" }, { status: 400 });
-  }
-  const data = parsed.data;
+export const PATCH = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({ request, params: { id } }) => {
+  const data = await readJson(request, destinationSchema);
 
   const existing = await prisma.destination.findUnique({ where: { slug: data.slug } });
-  if (existing && existing.id !== id) {
-    return NextResponse.json({ error: "A destination with this slug already exists" }, { status: 409 });
-  }
+  if (existing && existing.id !== id) throw new ApiError(409, "A destination with this slug already exists", "slug");
 
   await prisma.destination.update({
     where: { id },
@@ -48,15 +39,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   revalidateTag("destinations", { expire: 0 });
   return NextResponse.json({ ok: true });
-}
+});
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requirePermission("DESTINATIONS");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { id } = await params;
+export const DELETE = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({ params: { id } }) => {
   await prisma.destination.delete({ where: { id } });
 
   revalidateTag("destinations", { expire: 0 });
   return NextResponse.json({ ok: true });
-}
+});

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { Plus, Loader2, X } from "lucide-react";
+import { adminRequest } from "@/lib/admin-fetch";
 
 export default function GalleryUploadField({
   label,
@@ -20,21 +21,12 @@ export default function GalleryUploadField({
   const handleFile = async (file: File) => {
     setUploading(true);
     setError(null);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "Upload failed");
-      }
-      const { url } = await res.json();
-      onChange([...value, url]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
-    } finally {
-      setUploading(false);
-    }
+    const formData = new FormData();
+    formData.append("file", file);
+    const result = await adminRequest<{ url: string }>("/api/admin/upload", { formData });
+    setUploading(false);
+    if (!result.ok) return setError(result.message);
+    onChange([...value, result.data.url]);
   };
 
   const remove = (index: number) => onChange(value.filter((_, i) => i !== index));

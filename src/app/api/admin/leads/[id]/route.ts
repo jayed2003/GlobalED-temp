@@ -1,32 +1,21 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requirePermission } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { adminRoute, readJson } from "@/lib/api/admin-route";
+
+type Params = { id: string };
 
 const updateSchema = z.object({
-  status: z.enum(["NEW", "CONTACTED", "CLOSED"]),
+  status: z.enum(["NEW", "CONTACTED", "CLOSED"], "Invalid status"),
 });
 
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requirePermission("LEADS");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { id } = await params;
-  const body = await request.json();
-  const parsed = updateSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid status" }, { status: 400 });
-  }
-
-  await prisma.lead.update({ where: { id }, data: { status: parsed.data.status } });
+export const PATCH = adminRoute<Params>({ permission: "LEADS" }, async ({ request, params: { id } }) => {
+  const { status } = await readJson(request, updateSchema);
+  await prisma.lead.update({ where: { id }, data: { status } });
   return NextResponse.json({ ok: true });
-}
+});
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await requirePermission("LEADS");
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { id } = await params;
+export const DELETE = adminRoute<Params>({ permission: "LEADS" }, async ({ params: { id } }) => {
   await prisma.lead.delete({ where: { id } });
   return NextResponse.json({ ok: true });
-}
+});
