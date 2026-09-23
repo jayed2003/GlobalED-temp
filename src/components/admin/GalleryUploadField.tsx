@@ -68,7 +68,7 @@ export default function GalleryUploadField({
         <input
           ref={inputRef}
           type="file"
-          accept="image/png,image/jpeg,image/webp,image/svg+xml"
+          accept="image/jpeg,image/webp,image/svg+xml"
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
@@ -76,6 +76,7 @@ export default function GalleryUploadField({
           }}
         />
       </div>
+      <p className="mt-1.5 text-xs text-neutral-500">JPG, WebP or SVG, max 5 MB each</p>
       {error && <p className="mt-1.5 text-xs font-medium text-red-600">{error}</p>}
     </div>
   );
