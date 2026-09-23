@@ -81,7 +81,7 @@ export default function ContactForm() {
       </FormField>
 
       <FormField id="ct-message" label="Message" required error={errors.message?.message}>
-        <Textarea id="ct-message" placeholder="Write your messageâ€¦" aria-invalid={!!errors.message} {...register("message")} />
+        <Textarea id="ct-message" placeholder="Write your message…" aria-invalid={!!errors.message} {...register("message")} />
       </FormField>
 
       <TurnstileWidget action="contact" resetKey={turnstileReset} onToken={setTurnstileToken} />
