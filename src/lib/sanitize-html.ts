@@ -1,5 +1,6 @@
 import DOMPurify from "isomorphic-dompurify";
 import { contentToHtml } from "@/lib/rich-text";
+import { isOriginalUpload } from "@/lib/images";
 
 /**
  * Server-side cleaner for blog post HTML from the rich text editor. Runs when
@@ -63,4 +64,30 @@ export function sanitizeBlogHtml(html: string): string {
   } finally {
     DOMPurify.removeHook("afterSanitizeAttributes");
   }
+}
+
+// Widths offered to the browser for images inside a post (all in Next.js's
+// default deviceSizes, and 75 is its default allowed quality).
+const BODY_IMAGE_WIDTHS = [640, 828, 1200, 1920];
+
+function nextImageUrl(src: string, width: number): string {
+  return `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=75`;
+}
+
+/**
+ * For display only (never stored): route images inside a sanitized post body
+ * through Next.js image optimization — a responsive srcset, WebP/AVIF, lazy
+ * loading. Skipped for "Original" uploads (served as uploaded) and for SVG
+ * (vector, nothing to optimize).
+ */
+export function optimizeBodyImages(html: string): string {
+  return html.replace(/<img\b([^>]*?)\ssrc="([^"]+)"([^>]*)>/g, (tag, before: string, src: string, after: string) => {
+    const decoded = src.replace(/&amp;/g, "&");
+    if (isOriginalUpload(decoded) || /\.svg(\?|$)/i.test(decoded)) return tag;
+    const srcset = BODY_IMAGE_WIDTHS.map((w) => `${nextImageUrl(decoded, w)} ${w}w`).join(", ");
+    return (
+      `<img${before} src="${nextImageUrl(decoded, 1200).replace(/&/g, "&amp;")}"` +
+      ` srcset="${srcset.replace(/&/g, "&amp;")}" sizes="(max-width: 768px) 100vw, 768px"${after}>`
+    );
+  });
 }

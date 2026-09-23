@@ -10,12 +10,13 @@ import BlogCard from "@/components/cards/BlogCard";
 import SectionHeading from "@/components/ui/SectionHeading";
 import JsonLd from "@/components/ui/JsonLd";
 import { getAllPosts, getPostSlugs, getPostBySlug } from "@/lib/content/blog";
-import { sanitizeBlogHtml } from "@/lib/sanitize-html";
+import { optimizeBodyImages, sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { langOf } from "@/lib/bangla";
 import { htmlToText } from "@/lib/rich-text";
 import { blogCategoryLabels, formatDate } from "@/lib/labels";
 import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
+import { isOriginalUpload } from "@/lib/images";
 
 export async function generateStaticParams() {
   const slugs = await getPostSlugs();
@@ -101,6 +102,7 @@ export default async function BlogDetailPage({
             <div className="relative -mt-8 aspect-video overflow-hidden rounded-2xl shadow-xl">
               <Image
                 src={post.coverImage}
+                unoptimized={isOriginalUpload(post.coverImage)}
                 alt={post.coverImageAlt ?? post.title}
                 fill
                 priority
@@ -119,7 +121,7 @@ export default async function BlogDetailPage({
             <div
               lang={langOf(htmlToText(post.content))}
               className="prose prose-neutral max-w-none prose-headings:font-heading prose-headings:text-primary-900 prose-a:text-primary-700 prose-img:rounded-xl"
-              dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(post.content) }}
+              dangerouslySetInnerHTML={{ __html: optimizeBodyImages(sanitizeBlogHtml(post.content)) }}
             />
 
             {/* Share */}

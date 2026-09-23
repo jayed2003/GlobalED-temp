@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CalendarDays, Clock } from "lucide-react";
 import type { Course } from "@/types";
 import { courseCategoryLabels } from "@/lib/labels";
+import { isOriginalUpload } from "@/lib/images";
 
 /** Course card with image, badge, schedule, and price. */
 export default function CourseCard({ course }: { course: Course }) {
@@ -14,6 +15,7 @@ export default function CourseCard({ course }: { course: Course }) {
       <div className="relative aspect-[4/3]">
         <Image
           src={course.image}
+          unoptimized={isOriginalUpload(course.image)}
           alt={course.imageAlt ?? course.title}
           fill
           className="object-cover"

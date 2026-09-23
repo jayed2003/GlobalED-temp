@@ -1,5 +1,6 @@
 import sharp from "sharp";
 import DOMPurify from "isomorphic-dompurify";
+import type { UploadMode } from "@/lib/images";
 
 /**
  * Server-side sanitizer for admin image uploads. Only JPG, WebP and SVG are
@@ -24,6 +25,15 @@ export interface SanitizedImage {
 
 type Kind = "jpeg" | "webp" | "svg";
 
+/**
+ * "optimized" (default): photos are scaled down to fit 1920×1920 and
+ *   compressed (quality 80) — right for almost everything on the site.
+ * "original": full dimensions, high quality (95) — for images where detail
+ *   matters (e.g. a certificate or a screenshot someone needs to read).
+ * Both are still re-encoded, so metadata is stripped either way.
+ */
+const OPTIMIZED_MAX_PX = 1920;
+
 const MAX_INPUT_PIXELS = 40_000_000; // ~ 7700 x 5200; blocks decompression bombs
 const MAX_SVG_BYTES = 1024 * 1024;
 const ALLOWED_MESSAGE = "Only JPG, WebP or SVG images are allowed.";
@@ -43,7 +53,7 @@ function detectKind(buf: Buffer): Kind | "png" | null {
   return null;
 }
 
-async function sanitizeRaster(buf: Buffer, kind: "jpeg" | "webp"): Promise<SanitizedImage> {
+async function sanitizeRaster(buf: Buffer, kind: "jpeg" | "webp", mode: UploadMode): Promise<SanitizedImage> {
   try {
     const image = sharp(buf, { limitInputPixels: MAX_INPUT_PIXELS, failOn: "error" });
     const meta = await image.metadata();
@@ -51,11 +61,15 @@ async function sanitizeRaster(buf: Buffer, kind: "jpeg" | "webp"): Promise<Sanit
 
     // rotate() bakes the EXIF orientation into the pixels before the metadata
     // is dropped (sharp drops all metadata unless told to keep it).
-    const pipeline = image.rotate();
+    let pipeline = image.rotate();
+    if (mode === "optimized") {
+      pipeline = pipeline.resize({ width: OPTIMIZED_MAX_PX, height: OPTIMIZED_MAX_PX, fit: "inside", withoutEnlargement: true });
+    }
+    const quality = mode === "optimized" ? 80 : 95;
     const buffer =
       kind === "jpeg"
-        ? await pipeline.jpeg({ quality: 85, mozjpeg: true }).toBuffer()
-        : await pipeline.webp({ quality: 85 }).toBuffer();
+        ? await pipeline.jpeg({ quality, mozjpeg: true }).toBuffer()
+        : await pipeline.webp({ quality }).toBuffer();
 
     return kind === "jpeg"
       ? { buffer, contentType: "image/jpeg", extension: "jpg" }
@@ -102,9 +116,9 @@ function sanitizeSvg(buf: Buffer): SanitizedImage {
 }
 
 /** Validate and clean an uploaded image. Throws UploadRejectedError with a user-facing message. */
-export async function sanitizeImageUpload(buf: Buffer): Promise<SanitizedImage> {
+export async function sanitizeImageUpload(buf: Buffer, mode: UploadMode = "optimized"): Promise<SanitizedImage> {
   const kind = detectKind(buf);
   if (kind === "png") throw new UploadRejectedError("PNG isn't allowed. Please upload a JPG, WebP or SVG instead.");
   if (!kind) throw new UploadRejectedError(ALLOWED_MESSAGE);
-  return kind === "svg" ? sanitizeSvg(buf) : sanitizeRaster(buf, kind);
+  return kind === "svg" ? sanitizeSvg(buf) : sanitizeRaster(buf, kind, mode);
 }

@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { Plus, Loader2, X } from "lucide-react";
 import { adminRequest } from "@/lib/admin-fetch";
+import { isOriginalUpload, type UploadMode } from "@/lib/images";
+import UploadModeToggle from "@/components/admin/UploadModeToggle";
 
 /** Photo gallery with one alt text per photo (`alts` is kept parallel to `value`). */
 export default function GalleryUploadField({
@@ -24,12 +26,14 @@ export default function GalleryUploadField({
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<UploadMode>("optimized");
 
   const handleFile = async (file: File) => {
     setUploading(true);
     setError(null);
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("mode", mode);
     const result = await adminRequest<{ url: string }>("/api/admin/upload", { formData });
     setUploading(false);
     if (!result.ok) return setError(result.message);
@@ -48,6 +52,9 @@ export default function GalleryUploadField({
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-primary-900">{label}</label>
+      <div className="mb-3">
+        <UploadModeToggle value={mode} onChange={setMode} />
+      </div>
       <div className="flex flex-wrap gap-3">
         {value.map((url, index) => (
           <div key={url} className="w-40">
@@ -58,7 +65,7 @@ export default function GalleryUploadField({
                 fill
                 className="object-cover"
                 sizes="160px"
-                unoptimized={url.startsWith("http")}
+                unoptimized={isOriginalUpload(url)}
               />
               <button
                 type="button"

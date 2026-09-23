@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { adminRoute, ApiError } from "@/lib/api/admin-route";
 import { sanitizeImageUpload, UploadRejectedError } from "@/lib/upload-sanitize";
+import { ORIGINAL_UPLOAD_PREFIX, type UploadMode } from "@/lib/images";
 import { checkRateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 // sharp and DOMPurify (jsdom) need the Node.js runtime.
@@ -16,6 +17,7 @@ export const POST = adminRoute({ anyAdmin: true }, async ({ request, session }) 
 
   const formData = await request.formData().catch(() => null);
   const file = formData?.get("file");
+  const mode: UploadMode = formData?.get("mode") === "original" ? "original" : "optimized";
   if (!(file instanceof File)) throw new ApiError(400, "No file provided");
   if (file.size > MAX_SIZE) throw new ApiError(413, "File too large (max 5 MB)");
 
@@ -23,14 +25,17 @@ export const POST = adminRoute({ anyAdmin: true }, async ({ request, session }) 
   // the type from the bytes and re-encodes / cleans the image.
   let image;
   try {
-    image = await sanitizeImageUpload(Buffer.from(await file.arrayBuffer()));
+    image = await sanitizeImageUpload(Buffer.from(await file.arrayBuffer()), mode);
   } catch (err) {
     if (err instanceof UploadRejectedError) throw new ApiError(400, err.message);
     throw err;
   }
 
-  // Server-generated name — never the uploader's file name.
-  const blob = await put(`uploads/${randomUUID()}.${image.extension}`, image.buffer, {
+  // Server-generated name — never the uploader's file name. The prefix records
+  // the mode: "orig-" files are served as-is, others through Next.js image
+  // optimization (see src/lib/images.ts).
+  const prefix = mode === "original" ? ORIGINAL_UPLOAD_PREFIX : "opt-";
+  const blob = await put(`uploads/${prefix}${randomUUID()}.${image.extension}`, image.buffer, {
     access: "public",
     contentType: image.contentType,
   });

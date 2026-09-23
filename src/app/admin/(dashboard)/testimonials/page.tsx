@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import AdminTable from "@/components/admin/AdminTable";
+import { isOriginalUpload } from "@/lib/images";
 
 export default async function AdminTestimonialsPage() {
   const session = await requirePermission("TESTIMONIALS");
@@ -16,7 +17,7 @@ export default async function AdminTestimonialsPage() {
     id: t.id,
     cells: [
       <span key="img" className="relative block h-12 w-12 overflow-hidden rounded-md bg-neutral-100">
-        <Image src={t.reviewImage} alt={t.reviewImageAlt || `Review from ${t.studentName}`} fill className="object-cover" sizes="48px" unoptimized />
+        <Image src={t.reviewImage} alt={t.reviewImageAlt || `Review from ${t.studentName}`} fill className="object-cover" sizes="48px" unoptimized={isOriginalUpload(t.reviewImage)} />
       </span>,
       t.studentName,
       t.university,

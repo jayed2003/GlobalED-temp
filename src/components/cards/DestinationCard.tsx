@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Destination } from "@/types";
+import { isOriginalUpload } from "@/lib/images";
 
 /** Country card with image, tagline, and hover zoom (IECC pattern). */
 export default function DestinationCard({ destination }: { destination: Destination }) {
@@ -13,6 +14,7 @@ export default function DestinationCard({ destination }: { destination: Destinat
       <div className="relative aspect-[3/2]">
         <Image
           src={destination.heroImage}
+          unoptimized={isOriginalUpload(destination.heroImage)}
           alt={destination.heroImageAlt ?? `Study in ${destination.name}`}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"

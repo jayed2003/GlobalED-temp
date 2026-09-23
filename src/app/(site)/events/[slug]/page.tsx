@@ -12,6 +12,7 @@ import { getEventSlugs, getEventBySlug } from "@/lib/content/events";
 import { formatDate } from "@/lib/labels";
 import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
+import { isOriginalUpload } from "@/lib/images";
 
 export async function generateStaticParams() {
   const slugs = await getEventSlugs();
@@ -70,6 +71,7 @@ export default async function EventDetailPage({
         <div className="absolute inset-0">
           <Image
             src={event.bannerImage}
+            unoptimized={isOriginalUpload(event.bannerImage)}
             alt={event.bannerImageAlt ?? event.title}
             fill
             priority
@@ -146,6 +148,7 @@ export default async function EventDetailPage({
                 >
                   <Image
                     src={image}
+                    unoptimized={isOriginalUpload(image)}
                     alt={event.galleryAlts?.[index] ?? `${event.title} — photo ${index + 1}`}
                     fill
                     className="object-cover"

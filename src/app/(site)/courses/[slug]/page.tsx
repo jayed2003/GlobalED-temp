@@ -13,6 +13,7 @@ import { getCourseSlugs, getCourseBySlug, getCoursesByCategory } from "@/lib/con
 import { courseCategoryLabels } from "@/lib/labels";
 import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
+import { isOriginalUpload } from "@/lib/images";
 
 export async function generateStaticParams() {
   const slugs = await getCourseSlugs();
@@ -90,6 +91,7 @@ export default async function CourseDetailPage({
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10">
             <Image
               src={course.image}
+              unoptimized={isOriginalUpload(course.image)}
               alt={course.imageAlt ?? course.title}
               fill
               priority

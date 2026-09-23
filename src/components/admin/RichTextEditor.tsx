@@ -25,6 +25,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { adminRequest } from "@/lib/admin-fetch";
+import type { UploadMode } from "@/lib/images";
+import UploadModeToggle from "@/components/admin/UploadModeToggle";
 import { contentToHtml } from "@/lib/rich-text";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +52,7 @@ export default function RichTextEditor({
 }) {
   const [uploading, setUploading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [imageMode, setImageMode] = useState<UploadMode>("optimized");
   const fileInput = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
@@ -91,6 +94,7 @@ export default function RichTextEditor({
     setImageError(null);
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("mode", imageMode);
     const result = await adminRequest<{ url: string }>("/api/admin/upload", { formData });
     setUploading(false);
     if (!result.ok) return setImageError(result.message);
@@ -128,6 +132,8 @@ export default function RichTextEditor({
           uploading={uploading}
           onLink={setLink}
           onImage={() => fileInput.current?.click()}
+          imageMode={imageMode}
+          onImageMode={setImageMode}
         />
       )}
       <EditorContent editor={editor} />
@@ -153,11 +159,15 @@ function Toolbar({
   uploading,
   onLink,
   onImage,
+  imageMode,
+  onImageMode,
 }: {
   editor: Editor;
   uploading: boolean;
   onLink: () => void;
   onImage: () => void;
+  imageMode: UploadMode;
+  onImageMode: (mode: UploadMode) => void;
 }) {
   // Re-render the toolbar when the selection's formatting changes.
   const state = useEditorState({
@@ -249,6 +259,10 @@ function Toolbar({
           ))}
         </div>
       ))}
+      <div className="ml-auto flex items-center gap-1.5 pl-1 text-xs text-neutral-500">
+        New images:
+        <UploadModeToggle value={imageMode} onChange={onImageMode} compact />
+      </div>
     </div>
   );
 }

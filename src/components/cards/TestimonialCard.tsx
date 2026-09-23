@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Testimonial } from "@/types";
+import { isOriginalUpload } from "@/lib/images";
 
 /** Student review card: full-width landscape review image, then name + university. */
 export default function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
@@ -10,6 +11,7 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
       <div className="relative aspect-video w-full bg-neutral-50">
         <Image
           src={testimonial.reviewImage}
+          unoptimized={isOriginalUpload(testimonial.reviewImage)}
           alt={testimonial.reviewImageAlt ?? `Review from ${testimonial.studentName}, studying at ${testimonial.university}`}
           fill
           className="object-cover"

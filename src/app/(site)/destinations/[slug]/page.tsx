@@ -20,6 +20,7 @@ import JsonLd from "@/components/ui/JsonLd";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { getAllDestinations, getDestinationSlugs, getDestinationBySlug } from "@/lib/content/destinations";
 import { pageMetadata } from "@/lib/seo";
+import { isOriginalUpload } from "@/lib/images";
 
 export async function generateStaticParams() {
   const slugs = await getDestinationSlugs();
@@ -74,6 +75,7 @@ export default async function DestinationDetailPage({
         <div className="absolute inset-0">
           <Image
             src={destination.heroImage}
+            unoptimized={isOriginalUpload(destination.heroImage)}
             alt={destination.heroImageAlt ?? `Study in ${destination.name}`}
             fill
             priority

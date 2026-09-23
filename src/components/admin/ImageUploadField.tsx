@@ -5,6 +5,8 @@ import Image from "next/image";
 import { UploadCloud, Loader2 } from "lucide-react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 import { adminRequest } from "@/lib/admin-fetch";
+import { isOriginalUpload, type UploadMode } from "@/lib/images";
+import UploadModeToggle from "@/components/admin/UploadModeToggle";
 
 /** Alt-text input shown under the image (bound with react-hook-form's register). */
 interface AltField {
@@ -31,12 +33,14 @@ export default function ImageUploadField({
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [mode, setMode] = useState<UploadMode>("optimized");
 
   const handleFile = async (file: File) => {
     setUploading(true);
     setUploadError(null);
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("mode", mode);
     const result = await adminRequest<{ url: string }>("/api/admin/upload", { formData });
     setUploading(false);
     if (!result.ok) return setUploadError(result.message);
@@ -49,12 +53,13 @@ export default function ImageUploadField({
       <div className="flex items-center gap-4">
         <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50">
           {value ? (
-            <Image src={value} alt={`Preview: ${label}`} fill className="object-cover" sizes="128px" unoptimized={value.startsWith("http")} />
+            <Image src={value} alt={`Preview: ${label}`} fill className="object-cover" sizes="128px" unoptimized={isOriginalUpload(value)} />
           ) : (
             <div className="flex h-full items-center justify-center text-xs text-neutral-400">No image</div>
           )}
         </div>
-        <div>
+        <div className="space-y-2">
+          <UploadModeToggle value={mode} onChange={setMode} />
           <input
             ref={inputRef}
             type="file"

@@ -4,6 +4,7 @@ import { CalendarDays } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { blogCategoryLabels, formatDate } from "@/lib/labels";
 import { langOf } from "@/lib/bangla";
+import { isOriginalUpload } from "@/lib/images";
 
 /** Blog card with cover, category badge, date, and excerpt. */
 export default function BlogCard({ post }: { post: BlogPost }) {
@@ -15,6 +16,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
       <div className="relative aspect-video">
         <Image
           src={post.coverImage}
+          unoptimized={isOriginalUpload(post.coverImage)}
           alt={post.coverImageAlt ?? post.title}
           fill
           className="object-cover"
