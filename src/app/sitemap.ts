@@ -41,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Legal pages: public and indexable, but rarely updated.
-  const legalRoutes = ["/privacy-policy", "/terms-and-conditions"].map((path) => ({
+  const legalRoutes = ["/privacy-policy", "/terms-and-conditions", "/return-and-refund-policy"].map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified: new Date(),
     changeFrequency: "yearly" as const,

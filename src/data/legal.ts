@@ -1,206 +1,297 @@
 /**
- * Privacy Policy and Terms & Conditions content.
+ * Legal pages: Privacy Policy, Terms & Conditions, Return and Refund Policy.
  *
- * DRAFT — written to match what this website actually does (forms, database,
- * email, bot checks, hosting). It is not legal advice: GlobalEd management
- * (and ideally a lawyer familiar with Bangladeshi law) must review it before
- * launch — in particular the legal entity name, retention period, and the
- * fees/refunds wording.
+ * Text is taken from the company's current policies on globaled.io
+ * (/privacy-policy-2/, /terms-and-conditions/, /return-and-refund-policy/),
+ * issued by Global Citizen Limited / GlobalEd. Keep wording changes in sync
+ * with management — these are the company's legal terms, not website copy.
  */
 
-import { site } from "./site";
-import { branches } from "./branches";
+export type LegalBlock = { p: string } | { list: string[] } | { subheading: string };
 
 export interface LegalSection {
   heading: string;
-  paragraphs?: string[];
-  list?: string[];
-  /** Shown after the list. */
-  note?: string;
+  blocks: LegalBlock[];
 }
 
 export interface LegalDocument {
   title: string;
-  intro: string;
+  /** Optional lead paragraph above the first section. */
+  intro?: string;
   lastUpdated: string; // YYYY-MM-DD
   sections: LegalSection[];
 }
 
-const headOffice = branches[0];
-const contactLine = `Email ${site.email}, call ${site.phone}, or visit our head office at ${headOffice.address}.`;
+export const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms & Conditions", href: "/terms-and-conditions" },
+  { label: "Return and Refund Policy", href: "/return-and-refund-policy" },
+];
 
 export const privacyPolicy: LegalDocument = {
   title: "Privacy Policy",
-  intro: `This policy explains what personal information ${site.brandName} collects through this website, why we collect it, who we share it with, and the choices you have.`,
-  lastUpdated: "2026-09-23",
+  lastUpdated: "2025-09-15",
   sections: [
     {
-      heading: "Information we collect",
-      paragraphs: ["We only collect information you choose to give us through our forms, plus limited technical data needed to keep the website secure."],
-      list: [
-        "Free consultation and IELTS booking forms: your name, phone number, email address, nearest branch, preferred study destination, study level, IELTS status, funding plan, course of interest, preferred test date, and any message you write.",
-        "Contact form: your name, email address, subject and message.",
-        "Technical data: your IP address and basic browser information, used briefly to block spam and abuse (see “Security and spam protection” below).",
+      heading: "1. Introduction",
+      blocks: [
+        {
+          p: "Your privacy is important to us. This Privacy Policy explains how Global Citizen Limited / GlobalEd collects, uses, shares, and protects your personal information when you use our website, services, or interact with us.",
+        },
       ],
     },
     {
-      heading: "How we use your information",
-      list: [
-        "To contact you about your enquiry and provide study abroad counselling, IELTS preparation and test booking services.",
-        "To send you a confirmation email after you submit a form.",
-        "To keep internal records of enquiries so our counsellors can follow up and serve you better.",
-        "To protect the website from spam, automated abuse and attacks.",
-      ],
-      note: "We do not sell your personal information, and we do not use it for third-party advertising.",
-    },
-    {
-      heading: "Who we share it with",
-      paragraphs: [
-        "Your information is seen only by authorised GlobalEd staff. To run this website we use a small number of service providers who process data on our behalf and only as needed to provide their service:",
-      ],
-      list: [
-        "Vercel — website hosting.",
-        "Neon — secure database storage for form submissions.",
-        "Resend — sending confirmation and notification emails.",
-        "Cloudflare Turnstile — checking that form submissions come from a real person.",
-        "Upstash — short-lived counters (keyed by IP address) used to limit repeated submissions.",
-        "Google Maps — the maps on our Contact page are loaded from Google, which may collect data under Google’s own privacy policy.",
+      heading: "2. Information Collection",
+      blocks: [
+        { p: "2.1. Before or at the time of collecting personal information, we will identify the purposes for which information is being collected." },
+        { p: "2.2. We collect personal information only to fulfill the purposes specified by us and for other compatible purposes, unless we obtain consent from the individual or as required by law." },
+        { p: "2.3. We retain personal data only as long as necessary for the fulfillment of those purposes." },
+        { p: "2.4. Information will be collected by lawful and fair means, and, where appropriate, with the knowledge or consent of the individual concerned." },
+        { p: "2.5. Collected personal data should be relevant to the purposes for which it is to be used, and to the extent necessary, accurate, complete, and kept up-to-date." },
       ],
     },
     {
-      heading: "Universities and partners",
-      paragraphs: [
-        "If you become our student and ask us to apply to universities, test centres or other institutions on your behalf, we will share the information and documents needed for that application, with your agreement.",
+      heading: "3. Use of Information",
+      blocks: [
+        { p: "3.1. We use personal information to provide and improve our services, communicate updates, respond to inquiries, and ensure smooth operation of our website." },
+        { p: "3.2. Personal information will not be used for purposes other than those stated without your consent, unless required by law." },
       ],
     },
     {
-      heading: "Cookies",
-      paragraphs: [
-        "This website does not use advertising or analytics tracking cookies. Cloudflare Turnstile and embedded Google Maps may set their own cookies or use similar technology to work. The admin area uses a secure session cookie for staff sign-in only.",
+      heading: "4. Information Protection",
+      blocks: [
+        { p: "4.1. Global Citizen Limited / GlobalEd will take appropriate security measures to protect personal information from loss, theft, unauthorized access, disclosure, copying, use, or modification." },
+        { p: "4.2. Despite reasonable measures, we cannot guarantee absolute security of data transmitted over the Internet." },
       ],
     },
     {
-      heading: "Security and spam protection",
-      paragraphs: [
-        "All traffic to this website is encrypted (HTTPS). Form submissions are checked by Cloudflare Turnstile and limited per IP address to prevent spam. Access to stored enquiries is restricted to staff accounts with time-limited sessions.",
+      heading: "5. Sharing of Information",
+      blocks: [
+        { p: "5.1. Personal data will not be sold, rented, or disclosed to third parties without your consent, except:" },
+        {
+          list: [
+            "Where required by law;",
+            "To trusted service providers assisting in delivering our services;",
+            "To protect rights, property, or safety of Global Citizen Limited / GlobalEd and its users.",
+          ],
+        },
       ],
     },
     {
-      heading: "How long we keep it",
-      paragraphs: [
-        "We keep enquiry records for as long as needed to handle your enquiry and provide our services, and to meet any legal obligations. After that we delete or anonymise them. You can ask us to delete your information sooner (see below).",
+      heading: "6. Access to Personal Data",
+      blocks: [
+        { p: "6.1. Individuals may request access to the personal data we hold about them by contacting us at info@globaled.io or +8801955-544772." },
+        { p: "6.2. We will provide access in a timely manner, subject to legal and privacy constraints." },
       ],
     },
     {
-      heading: "Where your data is stored",
-      paragraphs: [
-        "Our service providers store and process data on servers outside Bangladesh, including in Singapore and the United States. We choose providers that protect data with industry-standard security.",
+      heading: "7. Cookies and Tracking",
+      blocks: [
+        { p: "7.1. We may collect non-personal information such as browser type, operating system, IP address, and usage patterns to improve our website and services." },
+        { p: "7.2. Cookies may be used to enhance your browsing experience." },
       ],
     },
     {
-      heading: "Your choices and rights",
-      list: [
-        "Ask for a copy of the information we hold about you.",
-        "Ask us to correct information that is wrong.",
-        "Ask us to delete your information, or to stop contacting you.",
-      ],
-      note: `To make a request, contact us: ${contactLine}`,
-    },
-    {
-      heading: "Children",
-      paragraphs: [
-        "Many of our students are completing school. If you are under 18, please make sure a parent or guardian knows and agrees before you submit your details.",
+      heading: "8. Third-Party Links",
+      blocks: [
+        { p: "8.1. Our website may contain links to third-party websites. Global Citizen Limited / GlobalEd is not responsible for the privacy practices or content of third-party websites." },
       ],
     },
     {
-      heading: "Changes to this policy",
-      paragraphs: [
-        "We may update this policy from time to time. The “Last updated” date at the top shows when it last changed.",
+      heading: "9. Updates to Privacy Policy",
+      blocks: [
+        { p: "9.1. We may update this Privacy Policy from time to time without prior notice." },
+        { p: "9.2. By continuing to use our website or services, you agree to the updated Privacy Policy." },
       ],
     },
     {
-      heading: "Contact us",
-      paragraphs: [`Questions about this policy or your information? ${contactLine}`],
+      heading: "10. Governing Law",
+      blocks: [
+        { p: "10.1. This Privacy Policy is governed by the laws of Bangladesh. Any disputes shall be subject to the exclusive jurisdiction of the Bangladeshi courts." },
+      ],
     },
   ],
 };
 
 export const termsAndConditions: LegalDocument = {
   title: "Terms & Conditions",
-  intro: `These terms apply to your use of the ${site.brandName} website and to enquiries you make through it. By using the website you agree to them.`,
-  lastUpdated: "2026-09-23",
+  lastUpdated: "2025-09-15",
   sections: [
     {
-      heading: "Our services",
-      paragraphs: [
-        `${site.brandName} provides study abroad counselling, university admission and visa application support, and IELTS and language preparation courses. The specific services, fees and schedule for your case are confirmed with you in writing before you enrol.`,
+      heading: "1. Definitions",
+      blocks: [
+        {
+          list: [
+            "“Confidential Information” means information provided by one party to the other in written, graphic, recorded, machine-readable or other form concerning the business, clients, suppliers, finances and other areas of the other party’s business or products, including, without limitation, Course Materials, but does not include information in the public domain other than through the default of the disclosing party, information required to be disclosed by any court or regulatory authority, or any information already in the possession or control of the disclosing party.",
+            "“Course Materials” means the information provided by Global Citizen Limited or its sub-brand GlobalEd to accompany a course provided as part of the Services in hard copy or electronic form.",
+            "“Fees” means the fees paid by you to Global Citizen Limited / GlobalEd for the Services.",
+            "“Intellectual Property Rights” means copyright, rights in or relating to databases, patent rights, performers’ rights, designs and registered designs, trademarks, rights in or relating to Confidential Information and other intellectual property rights (registered or unregistered) throughout the world.",
+            "“Online Course” means the delivery by us of an online course pursuant to which you learn course materials remotely.",
+            "“Services” means the provision of the Online Course and/or the Taught Course and/or the Course Materials together with such other services as agreed from time to time and purchased by you through the Website or by telephone.",
+            "“Taught Course” means a course taught by us in a classroom setting to which you attend in person.",
+            // As published on globaled.io — confirm with management whether this should now be globaled.io.
+            "“Website” means www.gcledu.com",
+            "“You” means the individual purchasing the Services.",
+          ],
+        },
       ],
     },
     {
-      heading: "No guarantee of outcomes",
-      paragraphs: [
-        "Admission decisions, scholarships, visas and test scores are decided by universities, embassies, immigration authorities and test providers — not by us. We give our best professional guidance, but we cannot guarantee any admission, scholarship, visa or IELTS band score.",
+      heading: "2. The Services",
+      blocks: [
+        { p: "2.1. A description of the Services together with the dates on which the Services will begin are available on our Website. We will provide the Services with reasonable care and skill in accordance with the description set out on the Website." },
+        { p: "2.2. We reserve the right to vary or withdraw any of the Services described on the Website without notice." },
+        { p: "2.3. We expect you to confirm that the Services you are purchasing will meet your needs. We do not guarantee that you will obtain a particular result, professional qualification, or employment opportunity from your purchase and completion of any Services." },
       ],
     },
     {
-      heading: "Your responsibilities",
-      list: [
-        "Give us accurate and complete information, and tell us promptly if anything changes.",
-        "Provide only genuine documents. We will not submit documents we believe to be false or altered, and we may stop working with anyone who provides them.",
-        "Keep to deadlines and appointments we agree with you.",
+      heading: "3. Ordering Services",
+      blocks: [
+        { subheading: "Purchasing Services via the Website" },
+        { p: "3.1. To purchase any of the Services online you must register for an account via the Website. If you already have an account, you may log in using your username and password." },
+        { subheading: "Purchasing Services via Telephone" },
+        { p: "3.2. To purchase a Service by phone, please call +8801955-544772. You do not need an account to purchase by phone but must register to access any Online Course." },
+        { p: "3.3. When you place an order via the Website or telephone, you are offering to purchase the Services under these Terms. Global Citizen Limited / GlobalEd reserves the right to cancel or decline your order until it has been confirmed." },
+        { p: "3.4. We will confirm receipt of your order by email." },
+        { p: "3.5. A legally binding agreement exists once we:" },
+        { list: ["(a) accept your order by sending a confirmation email, and", "(b) receive payment of the Fees in accordance with Clause 5 below."] },
+        { p: "3.6. Multiple courses in a single order will be treated as separate offers." },
+        { p: "3.7. Global Citizen Limited / GlobalEd is not responsible for booking exams with any professional body; it is your responsibility to book any required exam." },
       ],
     },
     {
-      heading: "Fees and refunds",
-      paragraphs: [
-        "Consultations booked through this website are free. Course and service fees are those published or agreed with you at enrolment. Fees charged by third parties — such as application, test, visa and tuition fees — are paid to them and are subject to their own refund rules. Our refund terms for courses and services are provided at enrolment.",
+      heading: "4. Cancellation and Refund",
+      blocks: [
+        { p: "4.1. Once you have accessed or started using an Online Course, you cannot cancel your order." },
+        { p: "4.2. Refunds (if applicable) will be processed within 7–10 working days after a valid claim." },
+        { p: "4.3. Any variation or cancellation of Services is at the sole discretion of Global Citizen Limited / GlobalEd." },
       ],
     },
     {
-      heading: "Information on this website",
-      paragraphs: [
-        "Information about destinations, universities, tuition, living costs, scholarships and visa rules is provided for general guidance. These change often, so please confirm the current details with us or the official source before making decisions.",
+      heading: "5. Fees",
+      blocks: [
+        { p: "5.1. Fees are as listed on the Website or communicated by phone at the time of order." },
+        { p: "5.2. Unless specified, Fees include VAT and delivery costs of Course Materials." },
+        { p: "5.3. Fees do not include amounts payable to professional bodies for registration/exams." },
+        { p: "5.4. Payment must be completed before attending a Taught Course or accessing an Online Course." },
+        { p: "5.5. Any bank or card charges are your responsibility." },
+        { p: "5.6. You are responsible for any costs incurred for attending Courses or accessing Online Courses." },
       ],
     },
     {
-      heading: "Acceptable use",
-      list: [
-        "Do not submit false, misleading or offensive information through our forms.",
-        "Do not send spam, or use automated tools to submit forms or collect content from the website.",
-        "Do not try to gain unauthorised access to the website, its admin area or its data, or interfere with how it works.",
+      heading: "6. Liability",
+      blocks: [
+        { p: "6.1. Services are not investment advice." },
+        { p: "6.2. Global Citizen Limited / GlobalEd and its trainers are not liable for inaccurate information, data loss, or indirect/special/consequential losses." },
+        { p: "6.3. Except as expressly stated, no other warranties apply, including fitness for purpose or satisfactory quality." },
+        { p: "6.4. Liability is limited to Fees received for the relevant Service." },
+        { p: "6.5. Liability for death, personal injury due to negligence, or fraudulent misrepresentation is not limited." },
+        { p: "6.6. Claims must be brought within six months after Services have ended." },
       ],
     },
     {
-      heading: "Intellectual property",
-      paragraphs: [
-        `The ${site.brandName} name, logo, text, images and design on this website belong to ${site.brandName} or are used with permission. You may view and share pages for personal use, but you may not copy or reuse them commercially without our written permission.`,
+      heading: "7. Intellectual Property",
+      blocks: [
+        { p: "7.1. All Intellectual Property Rights in Course Materials, Online Courses, and trainer content remain with Global Citizen Limited / GlobalEd." },
+        { p: "7.2. You may not: copy, distribute, modify, or use Course Materials for other courses without written permission." },
+        { p: "7.3. You are granted a limited, non-transferable license to use Course Materials solely for completing the purchased course." },
       ],
     },
     {
-      heading: "Links to other websites",
-      paragraphs: [
-        "Our website links to external sites such as universities, test providers and social media. We are not responsible for their content or privacy practices.",
+      heading: "8. Confidentiality",
+      blocks: [
+        { p: "8.1. Both parties shall keep Confidential Information strictly confidential." },
+        { p: "8.2. Disclosure is permitted only to legal or professional advisors." },
+        { p: "8.3. Confidentiality obligations survive termination." },
       ],
     },
     {
-      heading: "Limitation of liability",
-      paragraphs: [
-        "We work hard to keep this website accurate and available, but we cannot promise it will always be error-free or uninterrupted. To the extent permitted by law, we are not liable for losses arising from use of this website or reliance on its general information.",
+      heading: "9. Termination",
+      blocks: [
+        { p: "9.1. Global Citizen Limited / GlobalEd may terminate Services immediately if you:" },
+        {
+          list: [
+            "Fail to pay Fees;",
+            "Act aggressively, bully, or harass staff or other students;",
+            "Commit fraud, plagiarism, or criminal offences;",
+            "Intentionally damage property;",
+            "Are intoxicated on premises.",
+          ],
+        },
+        { p: "9.2. Clauses on Liability, Intellectual Property, and Confidentiality survive termination." },
       ],
     },
     {
-      heading: "Privacy",
-      paragraphs: ["How we handle your personal information is explained in our Privacy Policy."],
+      heading: "10. Assignment",
+      blocks: [
+        { p: "Services are personal to you and cannot be transferred. We may assign Terms to another company without notice." },
+      ],
     },
     {
-      heading: "Governing law",
-      paragraphs: ["These terms are governed by the laws of Bangladesh, and the courts of Dhaka have jurisdiction over any dispute."],
+      heading: "11. Entire Agreement",
+      blocks: [
+        { p: "These Terms, together with the Website Disclaimer and Course-specific Terms, form the entire agreement." },
+      ],
     },
     {
-      heading: "Changes and contact",
-      paragraphs: [
-        "We may update these terms from time to time; the “Last updated” date shows when they last changed.",
-        `Questions? ${contactLine}`,
+      heading: "12. Force Majeure",
+      blocks: [
+        { p: "Global Citizen Limited / GlobalEd is not liable for events beyond reasonable control (natural disasters, strikes, pandemics, government orders)." },
+      ],
+    },
+    {
+      heading: "13. Data Protection",
+      blocks: [
+        { p: "13.1. We collect and use your information to provide Services." },
+        { p: "13.2. Personal data may include contact details and demographics." },
+        { p: "13.3. We will protect your data but cannot guarantee complete security." },
+        { p: "13.4. You may update your information by contacting us at info@globaled.io" },
+      ],
+    },
+    {
+      heading: "14. Law and Jurisdiction",
+      blocks: [
+        { p: "These Terms are governed by Bangladeshi laws, and parties submit to the exclusive jurisdiction of Bangladeshi courts." },
+      ],
+    },
+  ],
+};
+
+export const returnAndRefundPolicy: LegalDocument = {
+  title: "Return and Refund Policy",
+  intro:
+    "We at Global Citizen Limited / GlobalEd want you to be completely satisfied with any service or course you purchase from us. If you have any questions, concerns, or problems, please let us know by emailing us at support@globaled.io.",
+  lastUpdated: "2025-10-23",
+  sections: [
+    {
+      heading: "Refunds for GlobalEd Courses & Services",
+      blocks: [
+        {
+          list: [
+            "When you purchase one of our online courses or services and are unable to access or follow the course due to technical issues on our end, we will issue you a refund.",
+            "If you have already accessed and completed sections of the course, refunds will no longer be available.",
+            "However, if you are not happy with the service, please reach out to us—we would love to know how we can improve. Simply replying to your purchase confirmation email is sufficient.",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "Refund Conditions",
+      blocks: [
+        {
+          list: [
+            "Refunds apply only to the initial purchase or subscription term.",
+            "After approving the refund request, the refund will be processed within 7–10 working days.",
+            "Refund requests must be submitted within 7 days of purchase.",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "Non-Refundable Services",
+      blocks: [
+        { list: ["Completed course modules or downloadable materials.", "Customized services, consultation, or projects delivered."] },
+        { p: "We value your satisfaction and aim to provide the best possible learning and service experience at GlobalEd." },
       ],
     },
   ],

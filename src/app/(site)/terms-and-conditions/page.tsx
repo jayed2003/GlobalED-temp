@@ -5,7 +5,7 @@ import { termsAndConditions } from "@/data/legal";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions",
-  description: "The terms that apply to using the GlobalEd website and our study abroad and IELTS services.",
+  description: "The terms that apply to GlobalEd courses and services from Global Citizen Limited.",
   alternates: { canonical: "/terms-and-conditions" },
 };
 
@@ -17,7 +17,7 @@ export default function TermsAndConditionsPage() {
         description="The terms for using our website and services."
         breadcrumb={[{ label: termsAndConditions.title }]}
       />
-      <LegalContent doc={termsAndConditions} related={{ label: "Privacy Policy", href: "/privacy-policy" }} />
+      <LegalContent doc={termsAndConditions} currentHref="/terms-and-conditions" />
     </>
   );
 }

@@ -5,7 +5,7 @@ import { privacyPolicy } from "@/data/legal";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "How GlobalEd collects, uses and protects the personal information you share through our website.",
+  description: "How Global Citizen Limited / GlobalEd collects, uses, shares and protects your personal information.",
   alternates: { canonical: "/privacy-policy" },
 };
 
@@ -17,7 +17,7 @@ export default function PrivacyPolicyPage() {
         description="What we collect, why, and the choices you have."
         breadcrumb={[{ label: privacyPolicy.title }]}
       />
-      <LegalContent doc={privacyPolicy} related={{ label: "Terms & Conditions", href: "/terms-and-conditions" }} />
+      <LegalContent doc={privacyPolicy} currentHref="/privacy-policy" />
     </>
   );
 }

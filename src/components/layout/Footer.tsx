@@ -12,6 +12,7 @@ import { services } from "@/data/services";
 import { branches } from "@/data/branches";
 import { getAllDestinations } from "@/lib/content/destinations";
 import { getAllCourses } from "@/lib/content/courses";
+import { legalLinks } from "@/data/legal";
 import Container from "./Container";
 
 const socials = [
@@ -177,13 +178,12 @@ export default async function Footer() {
       <div className="border-t border-primary-800">
         <Container className="flex flex-col items-center justify-between gap-3 py-5 text-xs text-primary-300 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.brandName}. All rights reserved.</p>
-          <div className="flex items-center gap-5">
-            <Link href="/privacy-policy" className="transition-colors hover:text-accent-300">
-              Privacy Policy
-            </Link>
-            <Link href="/terms-and-conditions" className="transition-colors hover:text-accent-300">
-              Terms &amp; Conditions
-            </Link>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            {legalLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="transition-colors hover:text-accent-300">
+                {link.label}
+              </Link>
+            ))}
           </div>
         </Container>
       </div>
