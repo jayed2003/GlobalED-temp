@@ -7,6 +7,7 @@ import {
   CalendarDays,
   BookOpenCheck,
   Inbox,
+  Mail,
   Users,
   Star,
 } from "lucide-react";
@@ -28,6 +29,7 @@ const navItems: {
   { href: "/admin/ielts", label: "IELTS Content", icon: BookOpenCheck, permission: "IELTS", adminOnly: false },
   { href: "/admin/testimonials", label: "Reviews", icon: Star, permission: "TESTIMONIALS", adminOnly: false },
   { href: "/admin/leads", label: "Leads", icon: Inbox, permission: "LEADS", adminOnly: false },
+  { href: "/admin/messages", label: "Messages", icon: Mail, permission: "MESSAGES", adminOnly: false },
   { href: "/admin/admins", label: "Manage Admins", icon: Users, permission: null, adminOnly: true },
 ];
 

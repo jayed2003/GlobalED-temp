@@ -11,19 +11,10 @@ import { FormField, FormStatus, Input, SubmitButton } from "@/components/forms/p
 import {
   createAdminUserSchema,
   updateAdminUserSchema,
+  adminPermissionLabels,
   adminPermissionValues,
   type CreateAdminUserFormValues,
 } from "@/lib/validation/admin-user";
-
-const permissionLabels: Record<(typeof adminPermissionValues)[number], string> = {
-  DESTINATIONS: "Destinations",
-  COURSES: "Courses",
-  BLOGS: "Blogs",
-  EVENTS: "Events",
-  IELTS: "IELTS Content",
-  LEADS: "Leads",
-  TESTIMONIALS: "Reviews",
-};
 
 const emptyValues: CreateAdminUserFormValues = {
   name: "",
@@ -128,7 +119,7 @@ export default function AdminUserForm({
                         );
                       }}
                     />
-                    {permissionLabels[perm]}
+                    {adminPermissionLabels[perm]}
                   </label>
                 ))}
               </div>

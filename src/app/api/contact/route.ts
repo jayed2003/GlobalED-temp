@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
 import { sendContactNotification } from "@/lib/email";
 import { contactRequestSchema } from "@/lib/validation/public-forms";
 import { checkRateLimits, getClientIp, tooManyRequests } from "@/lib/rate-limit";
@@ -29,6 +30,19 @@ export async function POST(request: Request) {
 
   if (!(await verifyTurnstile(data.turnstileToken, ip, "contact"))) {
     return NextResponse.json({ error: TURNSTILE_FAILED }, { status: 400 });
+  }
+
+  // Saved first, so the message reaches Admin → Messages even if email fails.
+  try {
+    await prisma.contactMessage.create({
+      data: { name: data.name, email: data.email, subject: data.subject, message: data.message },
+    });
+  } catch (err) {
+    console.error("[contact] could not save message", err);
+    return NextResponse.json(
+      { error: "Sorry, we couldn't send your message right now. Please try again or call us." },
+      { status: 500 },
+    );
   }
 
   const result = await sendContactNotification(data);

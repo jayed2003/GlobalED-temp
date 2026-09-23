@@ -1,6 +1,27 @@
 import { z } from "zod";
 
-export const adminPermissionValues = ["DESTINATIONS", "COURSES", "BLOGS", "EVENTS", "IELTS", "LEADS", "TESTIMONIALS"] as const;
+export const adminPermissionValues = [
+  "DESTINATIONS",
+  "COURSES",
+  "BLOGS",
+  "EVENTS",
+  "IELTS",
+  "LEADS",
+  "MESSAGES",
+  "TESTIMONIALS",
+] as const;
+
+/** Display names for permissions (admin form checkboxes and the admins list). */
+export const adminPermissionLabels: Record<(typeof adminPermissionValues)[number], string> = {
+  DESTINATIONS: "Destinations",
+  COURSES: "Courses",
+  BLOGS: "Blogs",
+  EVENTS: "Events",
+  IELTS: "IELTS Content",
+  LEADS: "Leads",
+  MESSAGES: "Contact Messages",
+  TESTIMONIALS: "Reviews",
+};
 
 // Role is never user-editable: create always makes an EDITOR, and the one
 // seeded master ADMIN account keeps its role forever (see the API routes).

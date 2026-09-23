@@ -20,6 +20,7 @@ enum AdminPermission {
   IELTS
   LEADS
   TESTIMONIALS
+  MESSAGES
 }
 
 enum CourseCategory {
@@ -48,6 +49,12 @@ enum LeadFormType {
 enum LeadStatus {
   NEW
   CONTACTED
+  CLOSED
+}
+
+enum ContactMessageStatus {
+  NEW
+  REPLIED
   CLOSED
 }
 
@@ -220,4 +227,18 @@ model Testimonial {
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Messages sent through the public Contact form (managed under Admin → Messages).
+model ContactMessage {
+  id        String               @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String               @db.Text
+  status    ContactMessageStatus @default(NEW)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@index([status, createdAt])
 }

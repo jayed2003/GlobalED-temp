@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
-import LeadStatusControl from "@/components/admin/LeadStatusControl";
+import StatusControl from "@/components/admin/StatusControl";
+import { leadStatusOptions } from "@/lib/inbox";
 
 const formTypeLabels: Record<string, string> = { GENERAL: "Free Consultation", IELTS: "IELTS Booking" };
 
@@ -62,7 +63,7 @@ export default async function AdminLeadDetailPage({ params }: { params: Promise<
       )}
 
       <div className="mt-5 rounded-xl border border-neutral-200 bg-white p-6">
-        <LeadStatusControl leadId={lead.id} status={lead.status} />
+        <StatusControl endpoint={`/api/admin/leads/${lead.id}`} status={lead.status} options={leadStatusOptions} />
       </div>
     </div>
   );

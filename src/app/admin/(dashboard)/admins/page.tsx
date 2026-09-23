@@ -2,16 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/authz";
 import AdminTable from "@/components/admin/AdminTable";
-
-const permissionLabels: Record<string, string> = {
-  DESTINATIONS: "Destinations",
-  COURSES: "Courses",
-  BLOGS: "Blogs",
-  EVENTS: "Events",
-  IELTS: "IELTS",
-  LEADS: "Leads",
-  TESTIMONIALS: "Reviews",
-};
+import { adminPermissionLabels } from "@/lib/validation/admin-user";
 
 export default async function AdminAdminsPage() {
   const session = await requireAdmin();
@@ -35,7 +26,7 @@ export default async function AdminAdminsPage() {
       a.role === "ADMIN" ? (
         "All"
       ) : a.permissions.length > 0 ? (
-        <span key="permissions" className="text-neutral-500">{a.permissions.map((p) => permissionLabels[p]).join(", ")}</span>
+        <span key="permissions" className="text-neutral-500">{a.permissions.map((p) => adminPermissionLabels[p]).join(", ")}</span>
       ) : (
         <span key="permissions" className="text-neutral-400">None</span>
       ),

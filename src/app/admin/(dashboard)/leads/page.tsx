@@ -2,13 +2,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import AdminTable from "@/components/admin/AdminTable";
+import { leadStatusOptions, statusBadgeStyles, statusLabel } from "@/lib/inbox";
 
-const statusLabels: Record<string, string> = { NEW: "New", CONTACTED: "Contacted", CLOSED: "Closed" };
-const statusStyles: Record<string, string> = {
-  NEW: "bg-amber-50 text-amber-700",
-  CONTACTED: "bg-blue-50 text-blue-700",
-  CLOSED: "bg-neutral-100 text-neutral-500",
-};
 const formTypeLabels: Record<string, string> = { GENERAL: "Consultation", IELTS: "IELTS Booking" };
 
 export default async function AdminLeadsPage() {
@@ -27,8 +22,8 @@ export default async function AdminLeadsPage() {
       l.phone,
       formTypeLabels[l.formType],
       l.destination?.name ?? l.course?.title ?? l.destinationOther ?? "—",
-      <span key="status" className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyles[l.status]}`}>
-        {statusLabels[l.status]}
+      <span key="status" className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadgeStyles[l.status]}`}>
+        {statusLabel(leadStatusOptions, l.status)}
       </span>,
       l.createdAt.toLocaleDateString("en-GB"),
     ],
