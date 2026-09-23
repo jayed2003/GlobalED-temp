@@ -170,19 +170,25 @@ model IeltsPreparationCourse {
 }
 
 model BlogPost {
-  id            String       @id @default(cuid())
-  slug          String       @unique
-  title         String
-  category      BlogCategory
-  coverImage    String
-  coverImageAlt String       @default("")
-  excerpt       String       @db.Text
-  content       String       @db.Text
-  author        String
-  publishedAt   DateTime
-  featured      Boolean      @default(false)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id              String       @id @default(cuid())
+  slug            String       @unique
+  title           String
+  category        BlogCategory
+  coverImage      String
+  coverImageAlt   String       @default("")
+  excerpt         String       @db.Text
+  content         String       @db.Text
+  author          String
+  publishedAt     DateTime
+  // SEO (all optional; empty = fall back to title / excerpt / cover image)
+  focusKeyword    String       @default("")
+  seoTitle        String       @default("")
+  metaDescription String       @default("")
+  ogImage         String       @default("")
+  ogImageAlt      String       @default("")
+  featured        Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
 model EventItem {
