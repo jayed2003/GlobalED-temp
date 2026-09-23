@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { FormField, FormStatus, Honeypot, Input, Select, SubmitButton, Textarea } from "./primitives";
 import FormProgress from "./FormProgress";
 import FormSuccess from "./FormSuccess";
+import TurnstileWidget from "./TurnstileWidget";
 
 // Field rules are shared with /api/leads (see src/lib/validation/public-forms.ts).
 const baseFields = {
@@ -115,6 +116,8 @@ export default function ConsultationForm({
   const [stepIndex, setStepIndex] = useState(0);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [shake, setShake] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileReset, setTurnstileReset] = useState(0);
   const stepRef = useRef<HTMLDivElement>(null);
   const hasNavigated = useRef(false);
   const isIelts = context === "ielts";
@@ -172,11 +175,18 @@ export default function ConsultationForm({
       setSuccess("Thank you! Our counsellor will contact you within 24 hours.");
       return;
     }
+    if (!turnstileToken) {
+      setStatus({ type: "error", message: "Please complete the security check above the button." });
+      return;
+    }
     const payload: Record<string, string> = {
       formType: isIelts ? "IELTS" : "GENERAL",
       ...Object.fromEntries(Object.entries(data).map(([key, value]) => [key, String(value ?? "")])),
+      turnstileToken,
     };
     const result = await submitLeadForm(payload);
+    // Tokens are single-use: get a fresh challenge whatever the outcome.
+    setTurnstileReset((n) => n + 1);
     if (result.success) {
       setSuccess(result.message);
       reset();
@@ -403,6 +413,8 @@ export default function ConsultationForm({
                 </p>
               )}
             </div>
+
+            <TurnstileWidget action="lead" resetKey={turnstileReset} onToken={setTurnstileToken} />
           </div>
         )}
       </div>

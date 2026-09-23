@@ -112,6 +112,9 @@ export const contactFields = {
   company: z.string().max(200),
 };
 
+// Cloudflare Turnstile response token (verified server-side in the API route).
+const turnstileToken = z.string().max(2048).default("");
+
 /**
  * What /api/leads accepts: a flat object of strings and nothing else
  * (strictObject rejects unknown keys; every field is z.string()).
@@ -132,6 +135,7 @@ export const leadRequestSchema = z
     message: leadFields.message.default(""),
     consent: z.literal("true", "Please agree to be contacted"),
     company: leadFields.company.default(""),
+    turnstileToken: turnstileToken,
   })
   .superRefine((data, ctx) => {
     // Same required fields the client enforces per flow.
@@ -154,4 +158,5 @@ export const contactRequestSchema = z.strictObject({
   subject: contactFields.subject,
   message: contactFields.message,
   company: contactFields.company.default(""),
+  turnstileToken: turnstileToken,
 });

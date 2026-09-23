@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Send } from "lucide-react";
 import { submitLeadForm } from "@/lib/formSubmit";
 import { contactFields } from "@/lib/validation/public-forms";
+import TurnstileWidget from "./TurnstileWidget";
 import { FormField, FormStatus, Honeypot, Input, SubmitButton, Textarea } from "./primitives";
 
 // Field rules are shared with /api/contact (see src/lib/validation/public-forms.ts).
@@ -20,6 +21,8 @@ type FormData = z.infer<typeof schema>;
 /** General enquiry form on the contact page. */
 export default function ContactForm() {
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileReset, setTurnstileReset] = useState(0);
 
   const {
     register,
@@ -37,13 +40,20 @@ export default function ContactForm() {
       setStatus({ type: "success", message: "Thank you for contacting GlobalEd. We will respond as soon as possible." });
       return;
     }
+    if (!turnstileToken) {
+      setStatus({ type: "error", message: "Please complete the security check above the button." });
+      return;
+    }
     const result = await submitLeadForm({
       name: data.name,
       email: data.email,
       subject: data.subject,
       message: data.message,
       company: "",
+      turnstileToken,
     });
+    // Tokens are single-use: get a fresh challenge whatever the outcome.
+    setTurnstileReset((n) => n + 1);
     setStatus({
       type: result.success ? "success" : "error",
       message: result.success
@@ -73,6 +83,8 @@ export default function ContactForm() {
       <FormField id="ct-message" label="Message" required error={errors.message?.message}>
         <Textarea id="ct-message" placeholder="Write your messageâ€¦" aria-invalid={!!errors.message} {...register("message")} />
       </FormField>
+
+      <TurnstileWidget action="contact" resetKey={turnstileReset} onToken={setTurnstileToken} />
 
       <SubmitButton loading={isSubmitting}>
         <Send size={18} aria-hidden />

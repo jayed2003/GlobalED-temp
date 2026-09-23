@@ -3,6 +3,9 @@ import { leadRequestSchema } from "@/lib/validation/public-forms";
 import { prisma } from "@/lib/db";
 import { sendConsultationConfirmation } from "@/lib/email";
 import { checkRateLimits, getClientIp, tooManyRequests } from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
+
+const TURNSTILE_FAILED = "The security check didn't go through. Please complete it again and resubmit.";
 
 export async function POST(request: Request) {
   const ip = getClientIp(request.headers);
@@ -25,6 +28,10 @@ export async function POST(request: Request) {
   // Honeypot filled — bot. Silently report success without saving/emailing.
   if (data.company) {
     return NextResponse.json({ success: true });
+  }
+
+  if (!(await verifyTurnstile(data.turnstileToken, ip, "lead"))) {
+    return NextResponse.json({ error: TURNSTILE_FAILED }, { status: 400 });
   }
 
   let destinationId: string | undefined;
