@@ -8,42 +8,40 @@ import { Send, BookOpenCheck, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide
 import { branches } from "@/data/branches";
 import type { Destination, Course } from "@/types";
 import { submitLeadForm } from "@/lib/formSubmit";
+import { leadFields, phoneRegex } from "@/lib/validation/public-forms";
 import { buttonClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { FormField, FormStatus, Honeypot, Input, Select, SubmitButton, Textarea } from "./primitives";
 import FormProgress from "./FormProgress";
 import FormSuccess from "./FormSuccess";
 
-const phoneRegex = /^(\+?880|0)1[3-9]\d{8}$/;
-
+// Field rules are shared with /api/leads (see src/lib/validation/public-forms.ts).
 const baseFields = {
-  name: z.string().min(2, "Please enter your full name").max(100),
-  phone: z.string().regex(phoneRegex, "Enter a valid BD number (e.g. 017XXXXXXXX)"),
-  email: z.string().email("Enter a valid email address"),
-  branch: z.string().min(1, "Please choose your nearest branch"),
-  message: z.string().max(1000, "Message must be under 1000 characters").default(""),
+  name: leadFields.name,
+  phone: leadFields.phone,
+  email: leadFields.email,
+  branch: leadFields.branch,
+  message: leadFields.message.default(""),
   consent: z.boolean().refine((v) => v === true, "Please agree to be contacted"),
-  company: z.string().default(""),
+  company: leadFields.company.default(""),
+  ieltsStatus: leadFields.ieltsStatus.default(""),
+  funding: leadFields.funding.default(""),
 };
 
 const generalSchema = z.object({
   ...baseFields,
-  destination: z.string().min(1, "Please choose a destination"),
-  studyLevel: z.string().min(1, "Please choose your study level"),
-  ieltsStatus: z.string().default(""),
-  funding: z.string().default(""),
-  course: z.string().default(""),
-  preferredDate: z.string().default(""),
+  destination: leadFields.destination(true),
+  studyLevel: leadFields.studyLevel(true),
+  course: leadFields.course(false).default(""),
+  preferredDate: leadFields.preferredDate(false).default(""),
 });
 
 const ieltsSchema = z.object({
   ...baseFields,
-  destination: z.string().default(""),
-  studyLevel: z.string().default(""),
-  ieltsStatus: z.string().default(""),
-  funding: z.string().default(""),
-  course: z.string().min(1, "Please choose a course"),
-  preferredDate: z.string().min(1, "Please pick a preferred date"),
+  destination: leadFields.destination(false).default(""),
+  studyLevel: leadFields.studyLevel(false).default(""),
+  course: leadFields.course(true),
+  preferredDate: leadFields.preferredDate(true),
 });
 
 type FormData = {
@@ -175,7 +173,6 @@ export default function ConsultationForm({
       return;
     }
     const payload: Record<string, string> = {
-      form: isIelts ? "IELTS Registration" : "Free Consultation",
       formType: isIelts ? "IELTS" : "GENERAL",
       ...Object.fromEntries(Object.entries(data).map(([key, value]) => [key, String(value ?? "")])),
     };

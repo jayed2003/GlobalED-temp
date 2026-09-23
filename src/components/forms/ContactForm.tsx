@@ -6,14 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Send } from "lucide-react";
 import { submitLeadForm } from "@/lib/formSubmit";
+import { contactFields } from "@/lib/validation/public-forms";
 import { FormField, FormStatus, Honeypot, Input, SubmitButton, Textarea } from "./primitives";
 
+// Field rules are shared with /api/contact (see src/lib/validation/public-forms.ts).
 const schema = z.object({
-  name: z.string().min(2, "Please enter your name").max(100),
-  email: z.string().email("Enter a valid email address"),
-  subject: z.string().min(2, "Please enter a subject").max(200),
-  message: z.string().min(10, "Please write a short message").max(1000),
-  company: z.string().optional(),
+  ...contactFields,
+  company: contactFields.company.optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -39,8 +38,10 @@ export default function ContactForm() {
       return;
     }
     const result = await submitLeadForm({
-      form: "Contact Enquiry",
-      ...data,
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+      message: data.message,
       company: "",
     });
     setStatus({

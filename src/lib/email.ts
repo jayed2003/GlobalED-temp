@@ -14,6 +14,24 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "GlobalEd <onboarding@resend.dev>";
 const COMPANY_EMAIL = process.env.COMPANY_NOTIFY_EMAIL ?? "info@globaled.io";
 
+/**
+ * Escape visitor-supplied text before it goes into an email's HTML body, so a
+ * submitted "<img src=x onerror=...>" shows up as text instead of markup.
+ */
+export function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** escapeHtml + keep the visitor's line breaks. */
+function escapeMultiline(value: string): string {
+  return escapeHtml(value).replace(/\r?\n/g, "<br>");
+}
+
 export async function sendConsultationConfirmation(params: {
   name: string;
   email: string;
@@ -28,7 +46,7 @@ export async function sendConsultationConfirmation(params: {
         params.formType === "IELTS"
           ? "Your IELTS booking request — GlobalEd"
           : "Your free consultation request — GlobalEd",
-      html: `<p>Hi ${params.name},</p><p>Thank you for ${
+      html: `<p>Hi ${escapeHtml(params.name)},</p><p>Thank you for ${
         params.formType === "IELTS"
           ? "booking your IELTS test/course"
           : "requesting a free consultation"
@@ -58,7 +76,7 @@ export async function sendContactNotification(params: {
       to: COMPANY_EMAIL,
       replyTo: params.email,
       subject: `Contact form: ${params.subject}`,
-      html: `<p><strong>From:</strong> ${params.name} (${params.email})</p><p>${params.message}</p>`,
+      html: `<p><strong>From:</strong> ${escapeHtml(params.name)} (${escapeHtml(params.email)})</p><p>${escapeMultiline(params.message)}</p>`,
     });
     if (error) {
       console.error("Resend rejected the contact notification", error);
