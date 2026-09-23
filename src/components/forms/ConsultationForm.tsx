@@ -3,12 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Send, BookOpenCheck, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { branches } from "@/data/branches";
 import type { Destination, Course } from "@/types";
 import { submitLeadForm } from "@/lib/formSubmit";
-import { leadFields, phoneRegex } from "@/lib/validation/public-forms";
+import { leadSchema, phoneRegex } from "@/lib/validation/public-forms";
 import { addYears, todayInDhaka } from "@/lib/validation/dates";
 import { buttonClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -17,36 +16,9 @@ import FormProgress from "./FormProgress";
 import FormSuccess from "./FormSuccess";
 import TurnstileWidget from "./TurnstileWidget";
 
-// Field rules are shared with /api/leads (see src/lib/validation/public-forms.ts).
-const baseFields = {
-  name: leadFields.name,
-  phone: leadFields.phone,
-  email: leadFields.email,
-  branch: leadFields.branch,
-  message: leadFields.message.default(""),
-  consent: z.boolean().refine((v) => v === true, "Please agree to be contacted"),
-  company: leadFields.company.default(""),
-  ieltsStatus: leadFields.ieltsStatus.default(""),
-  funding: leadFields.funding.default(""),
-};
-
-const generalSchema = z.object({
-  ...baseFields,
-  destination: leadFields.destination(true),
-  studyLevel: leadFields.studyLevel(true),
-  course: leadFields.course(false).default(""),
-  preferredDate: leadFields.preferredDate(false).default(""),
-});
-
-const ieltsSchema = z.object({
-  ...baseFields,
-  destination: leadFields.destination(false).default(""),
-  studyLevel: leadFields.studyLevel(false).default(""),
-  course: leadFields.course(true),
-  preferredDate: leadFields.preferredDate(true),
-});
-
+// The same schema object validates this form and /api/leads.
 type FormData = {
+  formType: "GENERAL" | "IELTS";
   name: string;
   phone: string;
   email: string;
@@ -134,9 +106,10 @@ export default function ConsultationForm({
     control,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(isIelts ? ieltsSchema : generalSchema) as Resolver<FormData>,
+    resolver: zodResolver(leadSchema) as unknown as Resolver<FormData>,
     mode: "onBlur",
     defaultValues: {
+      formType: isIelts ? "IELTS" : "GENERAL",
       destination: defaultDestination ?? "",
       course: defaultCourse ?? "",
     },
@@ -180,12 +153,8 @@ export default function ConsultationForm({
       setStatus({ type: "error", message: "Please complete the security check above the button." });
       return;
     }
-    const payload: Record<string, string> = {
-      formType: isIelts ? "IELTS" : "GENERAL",
-      ...Object.fromEntries(Object.entries(data).map(([key, value]) => [key, String(value ?? "")])),
-      turnstileToken,
-    };
-    const result = await submitLeadForm(payload);
+    // Already validated by leadSchema; the API validates the same object again.
+    const result = await submitLeadForm("/api/leads", { ...data, turnstileToken });
     // Tokens are single-use: get a fresh challenge whatever the outcome.
     setTurnstileReset((n) => n + 1);
     if (result.success) {

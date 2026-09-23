@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendContactNotification } from "@/lib/email";
-import { contactRequestSchema } from "@/lib/validation/public-forms";
+import { contactSchema } from "@/lib/validation/public-forms";
 import { checkRateLimits, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 
-  const parsed = contactRequestSchema.safeParse(body);
+  const parsed = contactSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid submission" }, { status: 400 });
   }

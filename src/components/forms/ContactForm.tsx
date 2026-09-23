@@ -6,17 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Send } from "lucide-react";
 import { submitLeadForm } from "@/lib/formSubmit";
-import { contactFields } from "@/lib/validation/public-forms";
+import { contactSchema, type ContactFormInput } from "@/lib/validation/public-forms";
 import TurnstileWidget from "./TurnstileWidget";
 import { FormField, FormStatus, Honeypot, Input, SubmitButton, Textarea } from "./primitives";
 
-// Field rules are shared with /api/contact (see src/lib/validation/public-forms.ts).
-const schema = z.object({
-  ...contactFields,
-  company: contactFields.company.optional(),
-});
-
-type FormData = z.infer<typeof schema>;
+// The same schema object validates this form and /api/contact.
+type FormData = z.output<typeof contactSchema>;
 
 /** General enquiry form on the contact page. */
 export default function ContactForm() {
@@ -29,8 +24,8 @@ export default function ContactForm() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
+  } = useForm<ContactFormInput, unknown, FormData>({
+    resolver: zodResolver(contactSchema),
     mode: "onBlur",
   });
 
@@ -44,14 +39,7 @@ export default function ContactForm() {
       setStatus({ type: "error", message: "Please complete the security check above the button." });
       return;
     }
-    const result = await submitLeadForm({
-      name: data.name,
-      email: data.email,
-      subject: data.subject,
-      message: data.message,
-      company: "",
-      turnstileToken,
-    });
+    const result = await submitLeadForm("/api/contact", { ...data, company: "", turnstileToken });
     // Tokens are single-use: get a fresh challenge whatever the outcome.
     setTurnstileReset((n) => n + 1);
     setStatus({

@@ -99,15 +99,13 @@ function isoDate(message: string, required: boolean) {
 
 const branchNames = branches.map((b) => b.name);
 
-/** Field validators shared by the client form and the /api/leads route. */
-export const leadFields = {
+/** Building blocks for leadSchema below. */
+const leadFields = {
   name: plainText({ min: 2, max: 100, minMessage: "Please enter your full name" }),
   phone: z.string().trim().regex(phoneRegex, "Enter a valid BD number (e.g. 017XXXXXXXX)"),
   email: z.string().trim().max(254).email("Enter a valid email address"),
   branch: oneOf(branchNames, "Please choose your nearest branch", true),
   message: plainText({ max: 1000, maxMessage: "Message must be under 1000 characters" }),
-  // Honeypot — hidden from humans; any value means a bot.
-  company: z.string().max(200),
   destination: (required: boolean) => slug("Please choose a destination", required),
   course: (required: boolean) => slug("Please choose a course", required),
   studyLevel: (required: boolean) => oneOf(STUDY_LEVELS, "Please choose your study level", required),
@@ -116,60 +114,80 @@ export const leadFields = {
   preferredDate: (required: boolean) => isoDate("Please pick a preferred date", required),
 };
 
-/** Field validators shared by the contact form and the /api/contact route. */
-export const contactFields = {
+/** Building blocks for contactSchema below. */
+const contactFields = {
   name: plainText({ min: 2, max: 100, minMessage: "Please enter your name" }),
   email: z.string().trim().max(254).email("Enter a valid email address"),
   subject: plainText({ min: 2, max: 200, minMessage: "Please enter a subject" }),
   message: plainText({ min: 10, max: 1000, minMessage: "Please write a short message" }),
-  company: z.string().max(200),
 };
 
-// Cloudflare Turnstile response token (verified server-side in the API route).
-const turnstileToken = z.string().max(2048).default("");
+// ---------------------------------------------------------------------------
+// The request schemas. Each is ONE schema object, imported by both the form
+// (react-hook-form resolver) and the API route — so the browser and the
+// server validate exactly the same thing.
+// ---------------------------------------------------------------------------
+
+// Cloudflare Turnstile token and the honeypot aren't typed by the visitor;
+// the form adds them when it submits. Both default to "".
+const botFields = {
+  // Honeypot — hidden from humans; any value means a bot.
+  company: z.string().max(200).default(""),
+  // Cloudflare Turnstile response token (verified server-side in the API route).
+  turnstileToken: z.string().max(2048).default(""),
+};
+
+// .prefault("") runs a missing field through its own rules, so the visitor
+// (or API caller) gets "Please enter your full name", not a type error.
+const leadCommon = {
+  name: leadFields.name.prefault(""),
+  phone: leadFields.phone.prefault(""),
+  email: leadFields.email.prefault(""),
+  branch: leadFields.branch.prefault(""),
+  ieltsStatus: leadFields.ieltsStatus.default(""),
+  funding: leadFields.funding.default(""),
+  message: leadFields.message.default(""),
+  consent: z.literal(true, "Please agree to be contacted"),
+  ...botFields,
+};
 
 /**
- * What /api/leads accepts: a flat object of strings and nothing else
- * (strictObject rejects unknown keys; every field is z.string()).
+ * Consultation / IELTS booking — the only lead schema. Each flow has its own
+ * required fields: a free consultation needs a destination and study level,
+ * an IELTS booking needs a course and a preferred date. Strict: unknown keys
+ * and non-string values (other than the consent checkbox) are rejected.
  */
-export const leadRequestSchema = z
-  .strictObject({
-    formType: z.enum(["GENERAL", "IELTS"]),
-    name: leadFields.name,
-    phone: leadFields.phone,
-    email: leadFields.email,
-    branch: leadFields.branch,
-    destination: leadFields.destination(false).default(""),
-    studyLevel: leadFields.studyLevel(false).default(""),
-    ieltsStatus: leadFields.ieltsStatus.default(""),
-    funding: leadFields.funding.default(""),
+export const leadSchema = z.discriminatedUnion("formType", [
+  z.strictObject({
+    formType: z.literal("GENERAL"),
+    ...leadCommon,
+    destination: leadFields.destination(true).prefault(""),
+    studyLevel: leadFields.studyLevel(true).prefault(""),
     course: leadFields.course(false).default(""),
     preferredDate: leadFields.preferredDate(false).default(""),
-    message: leadFields.message.default(""),
-    consent: z.literal("true", "Please agree to be contacted"),
-    company: leadFields.company.default(""),
-    turnstileToken: turnstileToken,
-  })
-  .superRefine((data, ctx) => {
-    // Same required fields the client enforces per flow.
-    const need = (ok: boolean, path: string, message: string) => {
-      if (!ok) ctx.addIssue({ code: "custom", path: [path], message });
-    };
-    if (data.formType === "GENERAL") {
-      need(data.destination !== "", "destination", "Please choose a destination");
-      need(data.studyLevel !== "", "studyLevel", "Please choose your study level");
-    } else {
-      need(data.course !== "", "course", "Please choose a course");
-      need(data.preferredDate !== "", "preferredDate", "Please pick a preferred date");
-    }
-  });
+  }),
+  z.strictObject({
+    formType: z.literal("IELTS"),
+    ...leadCommon,
+    destination: leadFields.destination(false).default(""),
+    studyLevel: leadFields.studyLevel(false).default(""),
+    course: leadFields.course(true).prefault(""),
+    preferredDate: leadFields.preferredDate(true).prefault(""),
+  }),
+]);
 
-/** What /api/contact accepts. */
-export const contactRequestSchema = z.strictObject({
-  name: contactFields.name,
-  email: contactFields.email,
-  subject: contactFields.subject,
-  message: contactFields.message,
-  company: contactFields.company.default(""),
-  turnstileToken: turnstileToken,
+/** What the form fields hold (before defaults / cleaning). */
+export type LeadFormInput = z.input<typeof leadSchema>;
+/** What the API receives after validation. */
+export type LeadData = z.output<typeof leadSchema>;
+
+/** Contact form — the only contact schema (form and /api/contact). */
+export const contactSchema = z.strictObject({
+  name: contactFields.name.prefault(""),
+  email: contactFields.email.prefault(""),
+  subject: contactFields.subject.prefault(""),
+  message: contactFields.message.prefault(""),
+  ...botFields,
 });
+
+export type ContactFormInput = z.input<typeof contactSchema>;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { leadRequestSchema } from "@/lib/validation/public-forms";
+import { leadSchema } from "@/lib/validation/public-forms";
 import { prisma } from "@/lib/db";
 import { sendConsultationConfirmation, sendNewLeadNotification } from "@/lib/email";
 import { checkRateLimits, getClientIp, tooManyRequests } from "@/lib/rate-limit";
@@ -18,8 +18,8 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 
-  // Strict: a flat object of plain-text strings only (see public-forms.ts).
-  const parsed = leadRequestSchema.safeParse(body);
+  // The same schema the booking form uses (see public-forms.ts).
+  const parsed = leadSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid submission" }, { status: 400 });
   }

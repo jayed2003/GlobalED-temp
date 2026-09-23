@@ -14,9 +14,11 @@ export interface FormSubmitResult {
   message: string;
 }
 
-export async function submitLeadForm(payload: Record<string, string>): Promise<FormSubmitResult> {
-  const isLead = payload.formType === "GENERAL" || payload.formType === "IELTS";
-  const endpoint = isLead ? "/api/leads" : "/api/contact";
+export async function submitLeadForm(
+  endpoint: "/api/leads" | "/api/contact",
+  payload: Record<string, unknown>,
+): Promise<FormSubmitResult> {
+  const isLead = endpoint === "/api/leads";
   const successMessage = isLead
     ? "Thank you! Our counsellor will contact you within 24 hours."
     : "Thank you for contacting GlobalEd. We will respond as soon as possible.";
