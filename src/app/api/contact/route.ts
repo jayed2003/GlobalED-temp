@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
 import { sendContactNotification } from "@/lib/email";
 import { contactRequestSchema } from "@/lib/validation/public-forms";
+import { checkRateLimits, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request.headers);
+  const limit = await checkRateLimits([
+    ["contactBurst", ip],
+    ["contactDaily", ip],
+  ]);
+  if (!limit.success) return tooManyRequests(limit.retryAfter);
+
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 

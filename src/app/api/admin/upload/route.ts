@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { requireSession } from "@/lib/authz";
 import { sanitizeImageUpload, UploadRejectedError } from "@/lib/upload-sanitize";
+import { checkRateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 // sharp and DOMPurify (jsdom) need the Node.js runtime.
 export const runtime = "nodejs";
@@ -12,6 +13,9 @@ const MAX_SIZE = 5 * 1024 * 1024;
 export async function POST(request: Request) {
   const session = await requireSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const limit = await checkRateLimit("upload", session.user.id);
+  if (!limit.success) return tooManyRequests(limit.retryAfter);
 
   const formData = await request.formData().catch(() => null);
   const file = formData?.get("file");

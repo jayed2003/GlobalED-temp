@@ -2,8 +2,16 @@ import { NextResponse } from "next/server";
 import { leadRequestSchema } from "@/lib/validation/public-forms";
 import { prisma } from "@/lib/db";
 import { sendConsultationConfirmation } from "@/lib/email";
+import { checkRateLimits, getClientIp, tooManyRequests } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request.headers);
+  const limit = await checkRateLimits([
+    ["leadBurst", ip],
+    ["leadDaily", ip],
+  ]);
+  if (!limit.success) return tooManyRequests(limit.retryAfter);
+
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 

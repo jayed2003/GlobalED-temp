@@ -1,7 +1,13 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { checkRateLimits, getClientIp } from "@/lib/rate-limit";
+
+/** Too many sign-in attempts; the login form shows a "try again later" message for this code. */
+class LoginRateLimitedError extends CredentialsSignin {
+  code = "rate_limited";
+}
 
 /** Hard limit on an admin session, counted from sign-in (not from last activity). */
 export const ADMIN_SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
@@ -26,10 +32,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: {},
         password: {},
       },
-      authorize: async (credentials) => {
+      authorize: async (credentials, request) => {
         const email = typeof credentials?.email === "string" ? credentials.email : undefined;
         const password = typeof credentials?.password === "string" ? credentials.password : undefined;
         if (!email || !password) return null;
+
+        // Checked before the password so a blocked attacker learns nothing.
+        const ip = getClientIp(request.headers);
+        const limit = await checkRateLimits([
+          ["loginAccount", `${email.trim().toLowerCase()}|${ip}`],
+          ["loginIp", ip],
+        ]);
+        if (!limit.success) throw new LoginRateLimitedError();
 
         const user = await prisma.adminUser.findUnique({ where: { email } });
         if (!user) return null;
@@ -48,21 +62,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    // Used by the proxy for every /admin route.
-    authorized({ auth, request: { nextUrl } }) {
-      const isAdminRoute = nextUrl.pathname.startsWith("/admin");
-      if (!isAdminRoute) return true;
-
-      const isLoggedIn = !!auth?.user;
-      const isLoginPage = nextUrl.pathname === "/admin/login";
-
-      if (isLoginPage) {
-        if (isLoggedIn) return Response.redirect(new URL("/admin", nextUrl));
-        return true;
-      }
-
-      return isLoggedIn;
-    },
     async jwt({ token, user }) {
       // Sign-in: stamp the token with who logged in and when.
       if (user) {
