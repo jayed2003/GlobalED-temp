@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, Raleway } from "next/font/google";
+import { DM_Sans, Noto_Sans_Bengali, Raleway } from "next/font/google";
 import { connection } from "next/server";
 import "./globals.css";
 
@@ -10,6 +10,17 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-dm-sans",
   display: "swap",
+});
+
+// Bangla text (blog posts can be written in Bangla). Only the Bengali
+// character range is included, and it isn't preloaded: the browser fetches it
+// only on pages that actually contain Bangla.
+const notoBengali = Noto_Sans_Bengali({
+  subsets: ["bengali"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-bengali",
+  display: "swap",
+  preload: false,
 });
 
 const raleway = Raleway({
@@ -65,7 +76,7 @@ export default async function RootLayout({
   await connection();
 
   return (
-    <html lang="en" className={`${dmSans.variable} ${raleway.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${raleway.variable} ${notoBengali.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );

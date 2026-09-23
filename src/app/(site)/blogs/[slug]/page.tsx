@@ -11,6 +11,8 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import JsonLd from "@/components/ui/JsonLd";
 import { getAllPosts, getPostSlugs, getPostBySlug } from "@/lib/content/blog";
 import { sanitizeBlogHtml } from "@/lib/sanitize-html";
+import { langOf } from "@/lib/bangla";
+import { htmlToText } from "@/lib/rich-text";
 import { blogCategoryLabels, formatDate } from "@/lib/labels";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.globaled.com.bd";
@@ -73,7 +75,7 @@ export default async function BlogDetailPage({
               <span className="mt-5 inline-block rounded-full bg-accent-500 px-3 py-1 text-xs font-semibold text-primary-950">
                 {blogCategoryLabels[post.category]}
               </span>
-              <h1 className="mt-3 font-heading text-3xl font-bold leading-tight text-white sm:text-4xl">
+              <h1 lang={langOf(post.title)} className="mt-3 font-heading text-3xl font-bold leading-tight text-white sm:text-4xl">
                 {post.title}
               </h1>
               <div className="mt-5 flex flex-wrap items-center gap-5 text-sm text-primary-200">
@@ -110,6 +112,7 @@ export default async function BlogDetailPage({
           <div className="mx-auto max-w-3xl">
             {/* Sanitized on save and again here; old plain-text posts become paragraphs. */}
             <div
+              lang={langOf(htmlToText(post.content))}
               className="prose prose-neutral max-w-none prose-headings:font-heading prose-headings:text-primary-900 prose-a:text-primary-700 prose-img:rounded-xl"
               dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(post.content) }}
             />

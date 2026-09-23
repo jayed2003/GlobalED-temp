@@ -5,9 +5,11 @@
 @theme {
   /* Fonts — brand guideline: DM Sans (headings/brand), Arial (body — system
      font, no next/font import needed), Raleway (secondary titles). */
-  --font-sans: Arial, ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-secondary: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
+  /* --font-bengali: Latin fonts have no Bangla glyphs, so Bangla characters
+     fall through to Noto Sans Bengali instead of a random system font. */
+  --font-sans: Arial, var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-dm-sans), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
+  --font-secondary: var(--font-raleway), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
 
   /* Brand — primary blue (#1d46ba, company brand guideline) */
   --color-primary-50: #f4f6fc;

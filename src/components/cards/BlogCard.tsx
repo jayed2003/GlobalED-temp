@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { blogCategoryLabels, formatDate } from "@/lib/labels";
+import { langOf } from "@/lib/bangla";
 
 /** Blog card with cover, category badge, date, and excerpt. */
 export default function BlogCard({ post }: { post: BlogPost }) {
@@ -30,10 +31,12 @@ export default function BlogCard({ post }: { post: BlogPost }) {
             {formatDate(post.publishedAt)}
           </span>
         </div>
-        <h3 className="mt-3 line-clamp-2 font-heading text-base font-semibold leading-snug text-primary-900">
+        <h3 lang={langOf(post.title)} className="mt-3 line-clamp-2 font-heading text-base font-semibold leading-snug text-primary-900">
           {post.title}
         </h3>
-        <p className="mt-2 line-clamp-2 flex-1 text-sm text-neutral-600">{post.excerpt}</p>
+        <p lang={langOf(post.excerpt)} className="mt-2 line-clamp-2 flex-1 text-sm text-neutral-600">
+          {post.excerpt}
+        </p>
         <span className="mt-4 text-sm font-semibold text-primary-700 group-hover:underline">
           Read more
         </span>

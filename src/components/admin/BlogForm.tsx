@@ -68,6 +68,9 @@ export default function BlogForm({
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField id="b-slug" label="Slug" required error={errors.slug?.message}>
           <Input id="b-slug" placeholder="study-in-uk-guide" {...register("slug")} />
+          <p className="mt-1 text-xs text-neutral-500">
+            The web address: English letters, numbers and hyphens (also for Bangla posts).
+          </p>
         </FormField>
         <FormField id="b-title" label="Title" required error={errors.title?.message}>
           <Input id="b-title" {...register("title")} />
