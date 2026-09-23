@@ -28,8 +28,11 @@ export const POST = adminRoute({ permission: "EVENTS" }, async ({ request }) => 
       time: data.time,
       venue: data.venue,
       bannerImage: data.bannerImage,
+      bannerImageAlt: data.bannerImageAlt,
       description: data.description,
       gallery: data.gallery,
+      // Kept exactly parallel to `gallery`.
+      galleryAlts: data.gallery.map((_, i) => data.galleryAlts[i] ?? ""),
     },
   });
 

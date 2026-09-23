@@ -38,6 +38,7 @@ export const POST = adminRoute({ permission: "TESTIMONIALS" }, async ({ request 
     data: {
       studentName: cleanText(data.studentName),
       reviewImage: data.reviewImage,
+      reviewImageAlt: data.reviewImageAlt,
       university: cleanText(data.university),
       country: cleanText(data.country) || null,
       sortOrder: data.sortOrder,

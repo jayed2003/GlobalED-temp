@@ -10,7 +10,7 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
       <div className="relative aspect-video w-full bg-neutral-50">
         <Image
           src={testimonial.reviewImage}
-          alt={`Review from ${testimonial.studentName}, studying at ${testimonial.university}`}
+          alt={testimonial.reviewImageAlt ?? `Review from ${testimonial.studentName}, studying at ${testimonial.university}`}
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

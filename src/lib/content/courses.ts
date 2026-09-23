@@ -21,6 +21,7 @@ function mapCourse(c: CourseRow): Course {
     title: c.title,
     category: categoryFromEnum[c.category],
     image: c.image,
+    imageAlt: c.imageAlt || c.title,
     overview: c.overview,
     curriculum: c.curriculum,
     duration: c.duration,

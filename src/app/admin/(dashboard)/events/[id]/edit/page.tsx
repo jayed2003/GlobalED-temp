@@ -27,8 +27,10 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
             time: event.time,
             venue: event.venue,
             bannerImage: event.bannerImage,
+            bannerImageAlt: event.bannerImageAlt || event.title,
             description: event.description,
             gallery: event.gallery,
+            galleryAlts: event.gallery.map((_, i) => event.galleryAlts[i] || `${event.title} — photo ${i + 1}`),
           }}
         />
       </div>

@@ -39,7 +39,7 @@ export async function generateMetadata({
     title: `Study in ${destination.name}`,
     description: `${destination.tagline} Admissions, costs, scholarships, and visa guidance for Bangladeshi students with GlobalEd.`,
     image: destination.heroImage,
-    imageAlt: `Study in ${destination.name}`,
+    imageAlt: destination.heroImageAlt,
   });
 }
 
@@ -74,7 +74,7 @@ export default async function DestinationDetailPage({
         <div className="absolute inset-0">
           <Image
             src={destination.heroImage}
-            alt={`Study in ${destination.name}`}
+            alt={destination.heroImageAlt ?? `Study in ${destination.name}`}
             fill
             priority
             className="object-cover opacity-40"

@@ -13,7 +13,7 @@ export default function DestinationCard({ destination }: { destination: Destinat
       <div className="relative aspect-[3/2]">
         <Image
           src={destination.heroImage}
-          alt={`Study in ${destination.name}`}
+          alt={destination.heroImageAlt ?? `Study in ${destination.name}`}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -22,6 +22,7 @@ export default function DestinationCard({ destination }: { destination: Destinat
         <span className="absolute right-3 top-3 h-8 w-8 overflow-hidden rounded-full border-2 border-white/90 shadow-md">
           <Image
             src={destination.flagImage}
+            // Decorative: the country name is printed right beside the flag.
             alt=""
             aria-hidden
             fill

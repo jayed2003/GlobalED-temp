@@ -18,6 +18,7 @@ const emptyValues: BlogFormValues = {
   title: "",
   category: "country-wise",
   coverImage: "",
+  coverImageAlt: "",
   excerpt: "",
   content: "",
   author: "",
@@ -103,6 +104,13 @@ export default function BlogForm({
             value={field.value}
             onChange={field.onChange}
             error={errors.coverImage?.message}
+            alt={{
+              id: "b-cover-alt",
+              registration: register("coverImageAlt"),
+              error: errors.coverImageAlt?.message,
+              required: true,
+              placeholder: "e.g. Students outside a UK university library",
+            }}
           />
         )}
       />

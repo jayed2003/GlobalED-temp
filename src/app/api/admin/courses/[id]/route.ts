@@ -28,6 +28,7 @@ export const PATCH = adminRoute<Params>({ permission: "COURSES" }, async ({ requ
       title: data.title,
       category: courseCategoryToEnum[data.category],
       image: data.image,
+      imageAlt: data.imageAlt,
       overview: data.overview,
       curriculum: data.curriculum,
       duration: data.duration,

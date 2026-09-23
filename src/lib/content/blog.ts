@@ -23,6 +23,7 @@ function mapPost(p: BlogPostRow): BlogPost {
     title: p.title,
     category: categoryFromEnum[p.category],
     coverImage: p.coverImage,
+    coverImageAlt: p.coverImageAlt || p.title,
     excerpt: p.excerpt,
     content: p.content,
     author: p.author,

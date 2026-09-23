@@ -32,7 +32,7 @@ export async function generateMetadata({
     title: course.title,
     description: course.overview,
     image: course.image,
-    imageAlt: course.title,
+    imageAlt: course.imageAlt,
   });
 }
 
@@ -90,7 +90,7 @@ export default async function CourseDetailPage({
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10">
             <Image
               src={course.image}
-              alt={course.title}
+              alt={course.imageAlt ?? course.title}
               fill
               priority
               className="object-cover"

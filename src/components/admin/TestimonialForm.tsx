@@ -72,6 +72,13 @@ export default function TestimonialForm({
             value={field.value}
             onChange={field.onChange}
             error={errors.reviewImage?.message}
+            alt={{
+              id: "t-review-alt",
+              registration: register("reviewImageAlt"),
+              error: errors.reviewImageAlt?.message,
+              required: true,
+              placeholder: "e.g. Screenshot of Tanvir's Google review",
+            }}
           />
         )}
       />

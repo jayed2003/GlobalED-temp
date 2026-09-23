@@ -35,7 +35,7 @@ export async function generateMetadata({
     title: post.title,
     description: post.excerpt,
     image: post.coverImage,
-    imageAlt: post.title,
+    imageAlt: post.coverImageAlt,
     type: "article",
     publishedTime: post.publishedAt,
   });
@@ -101,7 +101,7 @@ export default async function BlogDetailPage({
             <div className="relative -mt-8 aspect-video overflow-hidden rounded-2xl shadow-xl">
               <Image
                 src={post.coverImage}
-                alt={post.title}
+                alt={post.coverImageAlt ?? post.title}
                 fill
                 priority
                 className="object-cover"

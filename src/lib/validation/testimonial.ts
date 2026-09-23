@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { imageAlt } from "./image-alt";
 
 export const testimonialSchema = z.object({
   studentName: z.string().min(1, "Student name is required"),
   reviewImage: z.string().min(1, "Review image is required"),
+  reviewImageAlt: imageAlt(true),
   university: z.string().min(1, "University is required"),
   // Blank means "don't show a country".
   country: z.string(),

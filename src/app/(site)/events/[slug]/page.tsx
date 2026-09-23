@@ -31,7 +31,7 @@ export async function generateMetadata({
     title: event.title,
     description: event.description,
     image: event.bannerImage,
-    imageAlt: event.title,
+    imageAlt: event.bannerImageAlt,
   });
 }
 
@@ -70,7 +70,7 @@ export default async function EventDetailPage({
         <div className="absolute inset-0">
           <Image
             src={event.bannerImage}
-            alt={event.title}
+            alt={event.bannerImageAlt ?? event.title}
             fill
             priority
             className="object-cover opacity-40"
@@ -146,7 +146,7 @@ export default async function EventDetailPage({
                 >
                   <Image
                     src={image}
-                    alt={`${event.title} — photo ${index + 1}`}
+                    alt={event.galleryAlts?.[index] ?? `${event.title} — photo ${index + 1}`}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 100vw, 50vw"

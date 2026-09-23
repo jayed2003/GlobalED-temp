@@ -18,7 +18,9 @@ const emptyValues: DestinationFormValues = {
   name: "",
   tagline: "",
   heroImage: "",
+  heroImageAlt: "",
   flagImage: "",
+  flagImageAlt: "",
   overview: "",
   whyStudyHere: [],
   tuitionRange: "",
@@ -92,6 +94,13 @@ export default function DestinationForm({
               value={field.value}
               onChange={field.onChange}
               error={errors.heroImage?.message}
+              alt={{
+                id: "d-hero-alt",
+                registration: register("heroImageAlt"),
+                error: errors.heroImageAlt?.message,
+                required: true,
+                placeholder: "e.g. Big Ben and the Houses of Parliament, London",
+              }}
             />
           )}
         />
@@ -104,6 +113,13 @@ export default function DestinationForm({
               value={field.value}
               onChange={field.onChange}
               error={errors.flagImage?.message}
+              alt={{
+                id: "d-flag-alt",
+                registration: register("flagImageAlt"),
+                error: errors.flagImageAlt?.message,
+                required: false,
+                placeholder: "Leave empty for \"Flag of {country}\"",
+              }}
             />
           )}
         />

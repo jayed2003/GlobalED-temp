@@ -25,6 +25,7 @@ export default async function EditTestimonialPage({ params }: { params: Promise<
           testimonialId={testimonial.id}
           defaultValues={{
             reviewImage: testimonial.reviewImage,
+            reviewImageAlt: testimonial.reviewImageAlt || `Review from ${testimonial.studentName}`,
             studentName: testimonial.studentName,
             university: testimonial.university,
             country: testimonial.country ?? "",

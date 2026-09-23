@@ -17,6 +17,7 @@ const emptyValues: CourseFormValues = {
   title: "",
   category: "ielts",
   image: "",
+  imageAlt: "",
   overview: "",
   curriculum: [],
   duration: "",
@@ -96,6 +97,13 @@ export default function CourseForm({
             value={field.value}
             onChange={field.onChange}
             error={errors.image?.message}
+            alt={{
+              id: "c-image-alt",
+              registration: register("imageAlt"),
+              error: errors.imageAlt?.message,
+              required: true,
+              placeholder: "e.g. IELTS students in a GlobalEd classroom",
+            }}
           />
         )}
       />

@@ -18,6 +18,7 @@ import {
   Link2,
   Link2Off,
   ImagePlus,
+  TextCursorInput,
   Minus,
   Undo2,
   Redo2,
@@ -172,6 +173,7 @@ function Toolbar({
       ordered: e.isActive("orderedList"),
       quote: e.isActive("blockquote"),
       link: e.isActive("link"),
+      image: e.isActive("image"),
       canUndo: e.can().undo(),
       canRedo: e.can().redo(),
     }),
@@ -204,6 +206,16 @@ function Toolbar({
         run: () => chain().extendMarkRange("link").unsetLink().run(),
       },
       { label: "Insert image", icon: uploading ? Loader2 : ImagePlus, disabled: uploading, run: onImage },
+      {
+        label: "Image alt text",
+        icon: TextCursorInput,
+        disabled: !state.image,
+        run: () => {
+          const current = (editor.getAttributes("image").alt as string | undefined) ?? "";
+          const next = window.prompt("Describe the selected image for screen readers (alt text):", current);
+          if (next !== null) chain().updateAttributes("image", { alt: next.trim() }).run();
+        },
+      },
     ],
     [
       { label: "Undo", icon: Undo2, disabled: !state.canUndo, run: () => chain().undo().run() },

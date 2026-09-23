@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { imageAlt } from "./image-alt";
 import { noDuplicates } from "./normalize";
 
 export const universitySchema = z.object({
@@ -19,7 +20,10 @@ export const destinationSchema = z.object({
   name: z.string().min(1, "Country name is required"),
   tagline: z.string().min(1, "Tagline is required"),
   heroImage: z.string().min(1, "Hero image is required"),
+  heroImageAlt: imageAlt(true),
   flagImage: z.string().min(1, "Flag image is required"),
+  // Optional: defaults to "Flag of {country}".
+  flagImageAlt: imageAlt(false),
   overview: z.string().min(1, "Overview is required"),
   whyStudyHere: z
     .array(z.string().min(1, "Cannot be empty"))

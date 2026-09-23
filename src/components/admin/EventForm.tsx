@@ -21,8 +21,10 @@ const emptyValues: EventFormValues = {
   time: "",
   venue: "",
   bannerImage: "",
+  bannerImageAlt: "",
   description: "",
   gallery: [],
+  galleryAlts: [],
 };
 
 export default function EventForm({
@@ -111,6 +113,13 @@ export default function EventForm({
             value={field.value}
             onChange={field.onChange}
             error={errors.bannerImage?.message}
+            alt={{
+              id: "e-banner-alt",
+              registration: register("bannerImageAlt"),
+              error: errors.bannerImageAlt?.message,
+              required: true,
+              placeholder: "e.g. Students visiting university stalls at the expo",
+            }}
           />
         )}
       />
@@ -123,7 +132,20 @@ export default function EventForm({
         control={control}
         name="gallery"
         render={({ field }) => (
-          <GalleryUploadField label="Photo Gallery (for previous events)" value={field.value} onChange={field.onChange} />
+          <Controller
+            control={control}
+            name="galleryAlts"
+            render={({ field: altsField }) => (
+              <GalleryUploadField
+                label="Photo Gallery (for previous events)"
+                value={field.value}
+                onChange={field.onChange}
+                alts={altsField.value}
+                onAltsChange={altsField.onChange}
+                altError={errors.galleryAlts?.message ?? errors.galleryAlts?.root?.message}
+              />
+            )}
+          />
         )}
       />
 

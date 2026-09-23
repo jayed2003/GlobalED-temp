@@ -49,7 +49,9 @@ export interface Destination {
   name: string;
   tagline: string;
   heroImage: string;
+  heroImageAlt?: string;
   flagImage: string;
+  flagImageAlt?: string;
   overview: string;
   whyStudyHere: string[];
   popularUniversities: University[];
@@ -87,6 +89,7 @@ export interface Course {
   title: string;
   category: CourseCategory;
   image: string;
+  imageAlt?: string;
   overview: string;
   curriculum: string[];
   duration: string;
@@ -166,6 +169,7 @@ export interface BlogPost {
   title: string;
   category: BlogCategory;
   coverImage: string;
+  coverImageAlt?: string;
   excerpt: string;
   content: string;
   author: string;
@@ -185,8 +189,10 @@ export interface EventItem {
   time: string;
   venue: string;
   bannerImage: string;
+  bannerImageAlt?: string;
   description: string;
   gallery?: string[];
+  galleryAlts?: string[];
 }
 
 // ---------- Team ----------
@@ -220,6 +226,7 @@ export interface Testimonial {
   studentName: string;
   /** The review, shown as a landscape (16:9) image on the card. */
   reviewImage: string;
+  reviewImageAlt?: string;
   university: string;
   country?: string;
   course?: string;

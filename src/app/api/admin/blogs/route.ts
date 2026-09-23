@@ -30,6 +30,7 @@ export const POST = adminRoute({ permission: "BLOGS" }, async ({ request }) => {
       title: data.title,
       category: blogCategoryToEnum[data.category],
       coverImage: data.coverImage,
+      coverImageAlt: data.coverImageAlt,
       excerpt: data.excerpt,
       content,
       author: data.author,

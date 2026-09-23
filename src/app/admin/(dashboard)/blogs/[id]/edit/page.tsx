@@ -24,6 +24,7 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
             title: post.title,
             category: blogCategoryFromEnum[post.category],
             coverImage: post.coverImage,
+            coverImageAlt: post.coverImageAlt || post.title,
             excerpt: post.excerpt,
             content: post.content,
             author: post.author,

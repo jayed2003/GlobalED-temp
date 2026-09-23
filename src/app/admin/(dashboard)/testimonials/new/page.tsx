@@ -20,7 +20,7 @@ export default async function NewTestimonialPage() {
         <TestimonialForm
           mode="create"
           takenOrders={existing.map((t) => ({ order: t.sortOrder, name: t.studentName }))}
-          defaultValues={{ reviewImage: "", studentName: "", university: "", country: "", sortOrder: nextOrder }}
+          defaultValues={{ reviewImage: "", reviewImageAlt: "", studentName: "", university: "", country: "", sortOrder: nextOrder }}
         />
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { imageAlt } from "./image-alt";
 import { htmlToText } from "@/lib/rich-text";
 import { dateField, EARLIEST_CONTENT_DATE, todayInDhaka } from "./dates";
 
@@ -10,6 +11,7 @@ export const blogSchema = z.object({
   title: z.string().min(1, "Title is required"),
   category: z.enum(["country-wise", "scholarships", "ielts", "english"]),
   coverImage: z.string().min(1, "Cover image is required"),
+  coverImageAlt: imageAlt(true),
   excerpt: z.string().min(1, "Excerpt is required"),
   // HTML from the rich text editor. "Required" means some actual text — an
   // empty editor still produces markup like <p></p>.

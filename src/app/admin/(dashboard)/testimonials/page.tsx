@@ -16,7 +16,7 @@ export default async function AdminTestimonialsPage() {
     id: t.id,
     cells: [
       <span key="img" className="relative block h-12 w-12 overflow-hidden rounded-md bg-neutral-100">
-        <Image src={t.reviewImage} alt="" fill className="object-cover" sizes="48px" unoptimized />
+        <Image src={t.reviewImage} alt={t.reviewImageAlt || `Review from ${t.studentName}`} fill className="object-cover" sizes="48px" unoptimized />
       </span>,
       t.studentName,
       t.university,

@@ -24,8 +24,10 @@ function mapEvent(e: EventRow): EventItem {
     time: e.time,
     venue: e.venue,
     bannerImage: e.bannerImage,
+    bannerImageAlt: e.bannerImageAlt || e.title,
     description: e.description,
     gallery: e.gallery.length > 0 ? e.gallery : undefined,
+    galleryAlts: e.gallery.map((_, i) => e.galleryAlts[i] || `${e.title} — photo ${i + 1}`),
   };
 }
 

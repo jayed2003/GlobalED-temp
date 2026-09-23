@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { imageAlt } from "./image-alt";
 import { noDuplicates } from "./normalize";
 
 export const courseSchema = z.object({
@@ -9,6 +10,7 @@ export const courseSchema = z.object({
   title: z.string().min(1, "Title is required"),
   category: z.enum(["ielts", "english", "other-languages"]),
   image: z.string().min(1, "Course image is required"),
+  imageAlt: imageAlt(true),
   overview: z.string().min(1, "Overview is required"),
   curriculum: z
     .array(z.string().min(1, "Cannot be empty"))

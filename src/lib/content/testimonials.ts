@@ -10,6 +10,7 @@ export const getAllTestimonials = unstable_cache(
     return rows.map((t) => ({
       studentName: t.studentName,
       reviewImage: t.reviewImage,
+      reviewImageAlt: t.reviewImageAlt || `Review from ${t.studentName}, studying at ${t.university}`,
       university: t.university,
       country: t.country ?? undefined,
     }));

@@ -14,7 +14,7 @@ export default function CourseCard({ course }: { course: Course }) {
       <div className="relative aspect-[4/3]">
         <Image
           src={course.image}
-          alt={course.title}
+          alt={course.imageAlt ?? course.title}
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

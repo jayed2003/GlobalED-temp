@@ -24,6 +24,7 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
             title: course.title,
             category: courseCategoryFromEnum[course.category],
             image: course.image,
+            imageAlt: course.imageAlt || course.title,
             overview: course.overview,
             curriculum: course.curriculum,
             duration: course.duration,

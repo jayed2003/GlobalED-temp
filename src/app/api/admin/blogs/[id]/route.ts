@@ -33,6 +33,7 @@ export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ reques
       title: data.title,
       category: blogCategoryToEnum[data.category],
       coverImage: data.coverImage,
+      coverImageAlt: data.coverImageAlt,
       excerpt: data.excerpt,
       content,
       author: data.author,
