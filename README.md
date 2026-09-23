@@ -74,7 +74,10 @@ All three are linked in the footer and listed in the sitemap.
 
 ## Local development
 
-Requires Node.js 20.9 or newer.
+Requires **Node.js 24** — pinned in `package.json` (`engines`), which is also
+what Vercel runs. The HTML/SVG sanitizer (`isomorphic-dompurify` → jsdom)
+needs Node 20.19+, 22.12+ or 24; on older versions blog pages and image
+uploads fail with `ERR_REQUIRE_ESM`.
 
 ```bash
 npm install          # also generates the Prisma client
