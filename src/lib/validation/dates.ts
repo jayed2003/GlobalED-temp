@@ -39,11 +39,11 @@ export function isRealDate(value: string): boolean {
   return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
 }
 
-/** "2026-09-23" -> "23 Sep 2026" for messages. */
+/** "2026-09-23" -> "23 September 2026". */
 export function formatDate(isoDate: string): string {
   return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en-GB", {
     day: "numeric",
-    month: "short",
+    month: "long",
     year: "numeric",
     timeZone: "UTC",
   });

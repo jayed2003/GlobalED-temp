@@ -178,11 +178,11 @@ export default async function Footer() {
         <Container className="flex flex-col items-center justify-between gap-3 py-5 text-xs text-primary-300 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.brandName}. All rights reserved.</p>
           <div className="flex items-center gap-5">
-            <Link href="#" className="transition-colors hover:text-accent-300">
+            <Link href="/privacy-policy" className="transition-colors hover:text-accent-300">
               Privacy Policy
             </Link>
-            <Link href="#" className="transition-colors hover:text-accent-300">
-              Terms of Use
+            <Link href="/terms-and-conditions" className="transition-colors hover:text-accent-300">
+              Terms &amp; Conditions
             </Link>
           </div>
         </Container>

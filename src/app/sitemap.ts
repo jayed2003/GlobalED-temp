@@ -40,6 +40,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "" ? 1 : 0.8,
   }));
 
+  // Legal pages: public and indexable, but rarely updated.
+  const legalRoutes = ["/privacy-policy", "/terms-and-conditions"].map((path) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified: new Date(),
+    changeFrequency: "yearly" as const,
+    priority: 0.3,
+  }));
+
   const dynamicRoutes = [
     ...destinations.map((d) => `/destinations/${d.slug}`),
     ...services.map((s) => `/services/${s.slug}`),
@@ -53,5 +61,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...dynamicRoutes];
+  return [...staticRoutes, ...dynamicRoutes, ...legalRoutes];
 }
