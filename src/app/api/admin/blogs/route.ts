@@ -3,6 +3,7 @@ import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
+import { publishTimestamp } from "@/lib/api/publish";
 import { blogSchema } from "@/lib/validation/blog";
 import { sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { htmlToText } from "@/lib/rich-text";
@@ -34,7 +35,7 @@ export const POST = adminRoute({ permission: "BLOGS" }, async ({ request }) => {
       excerpt: data.excerpt,
       content,
       author: data.author,
-      publishedAt: new Date(data.publishedAt),
+      publishedAt: publishTimestamp(data),
       featured: data.featured,
     },
   });

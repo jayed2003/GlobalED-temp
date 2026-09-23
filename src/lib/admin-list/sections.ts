@@ -84,6 +84,17 @@ export const blogsList: ListConfig = {
   ],
   extraFilters: [
     {
+      key: "state",
+      label: "State",
+      filter: {
+        kind: "select",
+        options: [
+          { value: "live", label: "Published", where: { publishedAt: { lte: "$now" } } },
+          { value: "scheduled", label: "Scheduled", where: { publishedAt: { gt: "$now" } } },
+        ],
+      },
+    },
+    {
       key: "featured",
       label: "Featured",
       filter: {
@@ -98,7 +109,6 @@ export const blogsList: ListConfig = {
   searchFields: ["title", "slug", "excerpt", "content", "author"],
   dateField: "publishedAt",
   dateLabel: "Published",
-  dateOnly: true,
   orderBy: { publishedAt: "desc" },
 };
 

@@ -8,7 +8,7 @@ import { getAllPosts } from "@/lib/content/blog";
 export default async function BlogsPreview() {
   const posts = await getAllPosts();
   const latest = [...posts]
-    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+    .sort((a, b) => (b.publishedAtIso ?? b.publishedAt).localeCompare(a.publishedAtIso ?? a.publishedAt))
     .slice(0, 3);
 
   return (

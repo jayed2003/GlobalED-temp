@@ -38,7 +38,7 @@ export async function generateMetadata({
     image: post.coverImage,
     imageAlt: post.coverImageAlt,
     type: "article",
-    publishedTime: post.publishedAt,
+    publishedTime: post.publishedAtIso ?? post.publishedAt,
   });
 }
 
@@ -66,7 +66,7 @@ export default async function BlogDetailPage({
           description: post.excerpt,
           image: post.coverImage.startsWith("http") ? post.coverImage : `${SITE_URL}${post.coverImage}`,
           author: { "@type": "Organization", name: post.author },
-          datePublished: post.publishedAt,
+          datePublished: post.publishedAtIso ?? post.publishedAt,
         }}
       />
 

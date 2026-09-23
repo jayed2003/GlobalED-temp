@@ -3,6 +3,7 @@ import { revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
+import { publishTimestamp } from "@/lib/api/publish";
 import { blogSchema } from "@/lib/validation/blog";
 import { sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { htmlToText } from "@/lib/rich-text";
@@ -12,6 +13,8 @@ type Params = { id: string };
 
 export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ request, params: { id } }) => {
   const data = await readJson(request, blogSchema);
+  const current = await prisma.blogPost.findUnique({ where: { id }, select: { publishedAt: true } });
+  if (!current) throw new ApiError(404, "This post no longer exists. It may have been deleted — refresh the page.");
   // Only the allowed formatting is ever stored.
   const content = sanitizeBlogHtml(data.content);
   if (!htmlToText(content)) throw new ApiError(400, "Content is required", "content");
@@ -37,7 +40,7 @@ export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ reques
       excerpt: data.excerpt,
       content,
       author: data.author,
-      publishedAt: new Date(data.publishedAt),
+      publishedAt: publishTimestamp(data, current.publishedAt),
       featured: data.featured,
     },
   });

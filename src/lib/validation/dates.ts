@@ -80,3 +80,45 @@ export function dateField(rule: DateRule) {
       }
     });
 }
+
+// ---------------------------------------------------------------------------
+// Date + time in Bangladesh (UTC+6 all year — no daylight saving), used for
+// scheduled blog publishing.
+// ---------------------------------------------------------------------------
+
+const TIME_24H = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+/** "14:30" style 24-hour time. */
+export function isRealTime(value: string): boolean {
+  return TIME_24H.test(value);
+}
+
+/** A Bangladesh-time date ("2026-10-01") and time ("09:30") as an instant. */
+export function fromDhaka(date: string, time: string): Date {
+  return new Date(`${date}T${time}:00+06:00`);
+}
+
+/** The Bangladesh-time date and time of an instant. */
+export function dhakaParts(d: Date): { date: string; time: string } {
+  const date = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Dhaka", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+  const time = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Dhaka", hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
+  return { date, time };
+}
+
+/** "1 October 2026, 9:30 am" in Bangladesh time. */
+export function formatDhakaDateTime(d: Date): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Dhaka",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(d);
+}
+
+/** True when the instant is still ahead (e.g. a scheduled post not yet live). */
+export function isInFuture(d: Date): boolean {
+  return d.getTime() > Date.now();
+}

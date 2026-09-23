@@ -11,7 +11,8 @@ import { FormField, FormStatus, Input, Select, SubmitButton, Textarea } from "@/
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { blogSchema, type BlogFormValues } from "@/lib/validation/blog";
-import { EARLIEST_CONTENT_DATE, todayInDhaka } from "@/lib/validation/dates";
+import { todayInDhaka } from "@/lib/validation/dates";
+import PublishSettings from "@/components/admin/PublishSettings";
 
 const emptyValues: BlogFormValues = {
   slug: "",
@@ -22,7 +23,9 @@ const emptyValues: BlogFormValues = {
   excerpt: "",
   content: "",
   author: "",
-  publishedAt: todayInDhaka(),
+  publishMode: "now",
+  publishDate: todayInDhaka(),
+  publishTime: "",
   featured: false,
 };
 
@@ -30,10 +33,13 @@ export default function BlogForm({
   mode,
   postId,
   defaultValues,
+  currentPublish,
 }: {
   mode: "create" | "edit";
   postId?: string;
   defaultValues?: BlogFormValues;
+  /** Editing: the post's current publish time (for the "Keep" option). */
+  currentPublish?: { label: string; scheduled: boolean };
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -78,7 +84,7 @@ export default function BlogForm({
         </FormField>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2">
         <FormField id="b-category" label="Category" required error={errors.category?.message}>
           <Select id="b-category" {...register("category")}>
             <option value="country-wise">Country-wise</option>
@@ -90,10 +96,9 @@ export default function BlogForm({
         <FormField id="b-author" label="Author" required error={errors.author?.message}>
           <Input id="b-author" {...register("author")} />
         </FormField>
-        <FormField id="b-date" label="Published Date" required error={errors.publishedAt?.message}>
-          <Input id="b-date" type="date" min={EARLIEST_CONTENT_DATE} max={todayInDhaka()} {...register("publishedAt")} />
-        </FormField>
       </div>
+
+      <PublishSettings control={control} register={register} errors={errors} current={currentPublish} />
 
       <Controller
         control={control}

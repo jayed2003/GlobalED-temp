@@ -37,7 +37,7 @@ export interface ListConfig {
   searchFields: string[];
   dateField: string;
   dateLabel: string;
-  /** Date-only columns (event date, publish date) are stored as UTC midnight. */
+  /** Date-only columns (event date) are stored as UTC midnight. */
   dateOnly?: boolean;
   orderBy: Where | Where[];
   /** Page size; lists without one show everything that matches. */
@@ -114,6 +114,19 @@ function dateRange(config: ListConfig, query: ListQuery): Where | undefined {
   return atPath(config.dateField, range);
 }
 
+/**
+ * Option conditions are plain data; the string "$now" in one stands for the
+ * current time when the query runs (e.g. scheduled = publishedAt > "$now").
+ */
+function resolveNow(value: unknown, now: Date): unknown {
+  if (value === "$now") return now;
+  if (Array.isArray(value)) return value.map((v) => resolveNow(v, now));
+  if (value && typeof value === "object" && !(value instanceof Date)) {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, resolveNow(v, now)]));
+  }
+  return value;
+}
+
 /** Prisma `where` for the current search, filters and date range. */
 export function buildWhere(config: ListConfig, query: ListQuery, base?: Where): Where {
   const and: Where[] = base ? [base] : [];
@@ -126,7 +139,7 @@ export function buildWhere(config: ListConfig, query: ListQuery, base?: Where): 
     if (filter.kind === "text") and.push(contains(filter.fields, value));
     if (filter.kind === "select") {
       const option = filter.options.find((o) => o.value === value);
-      if (option) and.push(option.where);
+      if (option) and.push(resolveNow(option.where, new Date()) as Where);
     }
     if (filter.kind === "number") {
       const n = Number.parseInt(value, 10);

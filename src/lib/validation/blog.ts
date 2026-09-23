@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { imageAlt } from "./image-alt";
 import { htmlToText } from "@/lib/rich-text";
-import { dateField, EARLIEST_CONTENT_DATE, todayInDhaka } from "./dates";
+import { addYears, fromDhaka, isRealDate, isRealTime, todayInDhaka } from "./dates";
 
-export const blogSchema = z.object({
+export const blogSchema = z
+  .object({
   slug: z
     .string()
     .min(1, "Slug is required")
@@ -20,15 +21,30 @@ export const blogSchema = z.object({
     .max(200_000, "The post is too long")
     .refine((html) => htmlToText(html).length > 0, "Content is required"),
   author: z.string().min(1, "Author is required"),
-  // Posts go live as soon as they're saved (there's no scheduling), so the
-  // publish date can't be in the future.
-  publishedAt: dateField({
-    required: "Publish date is required",
-    min: () => EARLIEST_CONTENT_DATE,
-    max: todayInDhaka,
-    maxMessage: () => "The publish date can't be in the future. Use today or an earlier date.",
-  }),
+  /**
+   * When the post goes live:
+   *   now      — immediately (the server stamps the current time)
+   *   schedule — at publishDate + publishTime, Bangladesh time; hidden from
+   *              the public site until then. Past dates/times are refused.
+   *   keep     — (editing only) leave the existing publish date/time as it is
+   */
+  publishMode: z.enum(["now", "schedule", "keep"]),
+  publishDate: z.string().trim(),
+  publishTime: z.string().trim(),
   featured: z.boolean(),
-});
+})
+  .superRefine((post, ctx) => {
+    if (post.publishMode !== "schedule") return;
+    const issue = (path: "publishDate" | "publishTime", message: string) =>
+      ctx.addIssue({ code: "custom", path: [path], message });
+
+    if (!isRealDate(post.publishDate)) return issue("publishDate", "Pick the date to publish on");
+    if (post.publishDate < todayInDhaka()) return issue("publishDate", "Past dates can't be used — pick today or a later date");
+    if (post.publishDate > addYears(todayInDhaka(), 1)) return issue("publishDate", "Posts can be scheduled up to 1 year ahead");
+    if (!isRealTime(post.publishTime)) return issue("publishTime", "Pick the time to publish at");
+    if (fromDhaka(post.publishDate, post.publishTime).getTime() <= Date.now()) {
+      issue("publishTime", "That time has already passed — pick a later time, or choose \"Publish now\"");
+    }
+  });
 
 export type BlogFormValues = z.infer<typeof blogSchema>;

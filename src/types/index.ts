@@ -174,7 +174,10 @@ export interface BlogPost {
   content: string;
   author: string;
   /** ISO date string, e.g. "2026-07-15" */
+  /** Publish date in Bangladesh time, YYYY-MM-DD (for display). */
   publishedAt: string;
+  /** Exact publish moment, ISO 8601 — posts are hidden until then. */
+  publishedAtIso?: string;
   featured?: boolean;
 }
 
