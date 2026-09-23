@@ -1,8 +1,18 @@
+import type { Metadata } from "next";
 import { Compass } from "lucide-react";
 import Container from "@/components/layout/Container";
 import { ButtonLink } from "@/components/ui/Button";
 
-/** Branded 404 page. */
+export const metadata: Metadata = {
+  title: "Page not found",
+  robots: { index: false, follow: true },
+};
+
+/**
+ * Branded 404, rendered inside the site layout (navbar + footer) for any
+ * unknown public URL — see [...slug]/page.tsx — and for unknown blog, course,
+ * destination, event and service slugs, whose pages call notFound().
+ */
 export default function NotFound() {
   return (
     <section className="py-24 sm:py-32">
