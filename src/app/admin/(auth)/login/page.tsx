@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import LoginForm from "@/components/admin/LoginForm";
 
 export const metadata: Metadata = {
@@ -30,8 +31,16 @@ export default async function AdminLoginPage({
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
-        <h1 className="font-heading text-xl font-bold text-primary-900">GlobalEd Admin</h1>
-        <p className="mt-1 text-sm text-neutral-500">Sign in to manage site content.</p>
+        <Image
+          src="/images/logos/logo-01.png"
+          alt="GlobalEd"
+          width={1600}
+          height={315}
+          priority
+          className="mx-auto h-10 w-auto"
+        />
+        <h1 className="mt-6 text-center font-heading text-xl font-bold text-primary-900">Admin Sign In</h1>
+        <p className="mt-1 text-center text-sm text-neutral-500">Sign in to manage site content.</p>
         {expired && (
           <p role="status" className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
             Your session has expired. Please sign in again.

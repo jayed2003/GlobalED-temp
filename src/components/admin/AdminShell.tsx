@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -62,7 +63,10 @@ export default function AdminShell({
       <InboxPoller initial={inboxCounts} />
       <aside className="hidden w-64 shrink-0 border-r border-neutral-200 bg-white sm:block">
         <div className="border-b border-neutral-200 px-5 py-5">
-          <p className="font-heading text-lg font-bold text-primary-900">GlobalEd Admin</p>
+          <Link href="/admin" className="block" aria-label="GlobalEd admin dashboard">
+            <Image src="/images/logos/logo-01.png" alt="GlobalEd" width={1600} height={315} priority className="h-8 w-auto" />
+          </Link>
+          <p className="mt-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400">Admin Panel</p>
         </div>
         <nav className="space-y-1 p-3">
           {visibleItems.map((item) => (
