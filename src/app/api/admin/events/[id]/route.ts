@@ -5,10 +5,11 @@ import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { eventSchema } from "@/lib/validation/event";
 import { eventStatusToEnum } from "@/lib/content/events";
+import { logActivity } from "@/lib/activity";
 
 type Params = { id: string };
 
-export const PATCH = adminRoute<Params>({ permission: "EVENTS" }, async ({ request, params: { id } }) => {
+export const PATCH = adminRoute<Params>({ permission: "EVENTS" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, eventSchema);
 
   const existing = await prisma.eventItem.findUnique({ where: { slug: data.slug } });
@@ -21,7 +22,7 @@ export const PATCH = adminRoute<Params>({ permission: "EVENTS" }, async ({ reque
     { excludeId: id, message: `An event titled "${data.title.trim()}" already exists on ${data.date}`, field: "title" },
   );
 
-  await prisma.eventItem.update({
+  const updated = await prisma.eventItem.update({
     where: { id },
     data: {
       slug: data.slug,
@@ -40,11 +41,13 @@ export const PATCH = adminRoute<Params>({ permission: "EVENTS" }, async ({ reque
   });
 
   revalidateTag("events", { expire: 0 });
+  await logActivity(session, { action: "UPDATED", entityType: "event", entityId: id, label: updated.title });
   return NextResponse.json({ ok: true });
 });
 
-export const DELETE = adminRoute<Params>({ permission: "EVENTS" }, async ({ params: { id } }) => {
-  await prisma.eventItem.delete({ where: { id } });
+export const DELETE = adminRoute<Params>({ permission: "EVENTS" }, async ({ session, params: { id } }) => {
+  const removed = await prisma.eventItem.delete({ where: { id } });
+  await logActivity(session, { action: "DELETED", entityType: "event", entityId: id, label: removed.title });
 
   revalidateTag("events", { expire: 0 });
   return NextResponse.json({ ok: true });

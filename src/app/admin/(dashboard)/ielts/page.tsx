@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import IeltsContentForm from "@/components/admin/IeltsContentForm";
 import { mapIeltsContent } from "@/lib/content/ielts";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 
 export default async function AdminIeltsPage() {
   const session = await requirePermission("IELTS");
@@ -21,11 +22,12 @@ export default async function AdminIeltsPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-primary-900">IELTS Hub Content</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        This edits the singleton IELTS content shown across the 5 pages under /ielts.
-      </p>
-      <div className="mt-6 max-w-3xl">
+      <AdminPageHeader
+        title="IELTS Content"
+        description="The text shown across the IELTS pages: What is IELTS, Why IELTS, IELTS with GlobalEd and Preparation."
+        viewHref="/ielts"
+      />
+      <div className="max-w-3xl">
         <IeltsContentForm defaultValues={content} courses={courses} />
       </div>
     </div>

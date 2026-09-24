@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
+import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
+import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
-import { FormField, FormStatus, Input, SubmitButton, Textarea } from "@/components/forms/primitives";
+import { FormField, Input, Textarea } from "@/components/forms/primitives";
 import RepeatableFieldList from "@/components/admin/RepeatableFieldList";
 import ObjectFieldArray from "@/components/admin/ObjectFieldArray";
 import ImageUploadField from "@/components/admin/ImageUploadField";
@@ -51,11 +53,13 @@ export default function DestinationForm({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<DestinationFormValues>({
     resolver: zodResolver(destinationSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
+
+  useUnsavedChangesGuard(isDirty && !saved);
 
   const onSubmit = async (data: DestinationFormValues) => {
     setStatus(null);
@@ -65,6 +69,7 @@ export default function DestinationForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
+    toast.success(mode === "create" ? "Destination created" : "Changes saved", { href: `/destinations/${data.slug}`, linkLabel: "View on site" });
     router.push("/admin/destinations");
     router.refresh();
   };
@@ -226,12 +231,12 @@ export default function DestinationForm({
         )}
       />
 
-      <SubmitButton loading={isSubmitting || saved}>
-        <Save size={18} aria-hidden />
-        {mode === "create" ? "Create Destination" : "Save Changes"}
-      </SubmitButton>
-
-      <FormStatus status={status?.type ?? null} message={status?.message} />
+      <EditorActionBar
+        dirty={isDirty && !saved}
+        busy={isSubmitting || saved}
+        submitLabel={mode === "create" ? "Create Destination" : "Save Changes"}
+        error={status?.type === "error" ? status.message : null}
+      />
     </form>
   );
 }

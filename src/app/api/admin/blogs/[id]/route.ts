@@ -8,10 +8,11 @@ import { blogSchema } from "@/lib/validation/blog";
 import { sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { htmlToText } from "@/lib/rich-text";
 import { blogCategoryToEnum } from "@/lib/content/blog";
+import { logActivity } from "@/lib/activity";
 
 type Params = { id: string };
 
-export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ request, params: { id } }) => {
+export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, blogSchema);
   const current = await prisma.blogPost.findUnique({ where: { id }, select: { publishedAt: true } });
   if (!current) throw new ApiError(404, "This post no longer exists. It may have been deleted — refresh the page.");
@@ -29,7 +30,7 @@ export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ reques
     { excludeId: id, message: `A post titled "${data.title.trim()}" already exists`, field: "title" },
   );
 
-  await prisma.blogPost.update({
+  const updated = await prisma.blogPost.update({
     where: { id },
     data: {
       slug: data.slug,
@@ -47,11 +48,13 @@ export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ reques
   });
 
   revalidateTag("blog-posts", { expire: 0 });
+  await logActivity(session, { action: "UPDATED", entityType: "blog", entityId: id, label: updated.title });
   return NextResponse.json({ ok: true });
 });
 
-export const DELETE = adminRoute<Params>({ permission: "BLOGS" }, async ({ params: { id } }) => {
-  await prisma.blogPost.delete({ where: { id } });
+export const DELETE = adminRoute<Params>({ permission: "BLOGS" }, async ({ session, params: { id } }) => {
+  const removed = await prisma.blogPost.delete({ where: { id } });
+  await logActivity(session, { action: "DELETED", entityType: "blog", entityId: id, label: removed.title });
 
   revalidateTag("blog-posts", { expire: 0 });
   return NextResponse.json({ ok: true });

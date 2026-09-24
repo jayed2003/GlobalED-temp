@@ -4,10 +4,11 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { destinationSchema } from "@/lib/validation/destination";
+import { logActivity } from "@/lib/activity";
 
 type Params = { id: string };
 
-export const PATCH = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({ request, params: { id } }) => {
+export const PATCH = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, destinationSchema);
 
   const existing = await prisma.destination.findUnique({ where: { slug: data.slug } });
@@ -20,7 +21,7 @@ export const PATCH = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({
     { excludeId: id, message: `A destination called "${data.name.trim()}" already exists`, field: "name" },
   );
 
-  await prisma.destination.update({
+  const updated = await prisma.destination.update({
     where: { id },
     data: {
       slug: data.slug,
@@ -48,11 +49,13 @@ export const PATCH = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({
   });
 
   revalidateTag("destinations", { expire: 0 });
+  await logActivity(session, { action: "UPDATED", entityType: "destination", entityId: id, label: updated.name });
   return NextResponse.json({ ok: true });
 });
 
-export const DELETE = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({ params: { id } }) => {
-  await prisma.destination.delete({ where: { id } });
+export const DELETE = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({ session, params: { id } }) => {
+  const removed = await prisma.destination.delete({ where: { id } });
+  await logActivity(session, { action: "DELETED", entityType: "destination", entityId: id, label: removed.name });
 
   revalidateTag("destinations", { expire: 0 });
   return NextResponse.json({ ok: true });

@@ -1,16 +1,7 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  Award,
-  FileCheck,
-  GraduationCap,
-  Languages,
-  Luggage,
-  Plane,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Service } from "@/types";
-
-const icons = { GraduationCap, Award, FileCheck, Plane, Luggage, Languages };
+import SiteIcon from "@/components/ui/SiteIcon";
 
 /** Numbered service card with icon (NWC 01–06 pattern). */
 export default function ServiceCard({
@@ -20,8 +11,6 @@ export default function ServiceCard({
   service: Service;
   index: number;
 }) {
-  const Icon = icons[service.icon as keyof typeof icons] ?? GraduationCap;
-
   return (
     <Link
       href={`/services/${service.slug}`}
@@ -29,7 +18,7 @@ export default function ServiceCard({
     >
       <div className="flex items-center justify-between">
         <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-50 text-primary-700 transition-colors group-hover:bg-primary-700 group-hover:text-white">
-          <Icon size={24} aria-hidden />
+          <SiteIcon name={service.icon} size={24} aria-hidden />
         </span>
         <span className="font-heading text-2xl font-bold text-neutral-200 transition-colors group-hover:text-accent-700">
           {String(index + 1).padStart(2, "0")}

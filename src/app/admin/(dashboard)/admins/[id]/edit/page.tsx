@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/authz";
 import AdminUserForm from "@/components/admin/AdminUserForm";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 
 export default async function EditAdminPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
@@ -18,8 +19,11 @@ export default async function EditAdminPage({ params }: { params: Promise<{ id: 
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-primary-900">Edit {admin.name}</h1>
-      <div className="mt-6 max-w-xl">
+      <AdminPageHeader
+        title={admin.name}
+        breadcrumbs={[{ label: "Manage Admins", href: "/admin/admins" }]}
+      />
+      <div className="max-w-xl">
         <AdminUserForm
           mode="edit"
           adminId={admin.id}

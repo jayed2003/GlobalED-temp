@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
+import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
+import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
-import { FormField, FormStatus, Input, SubmitButton } from "@/components/forms/primitives";
+import { FormField, Input } from "@/components/forms/primitives";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import { testimonialSchema, type TestimonialFormValues } from "@/lib/validation/testimonial";
 
@@ -43,11 +45,13 @@ export default function TestimonialForm({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<TestimonialFormValues>({
     resolver: zodResolver(testimonialSchema),
     defaultValues,
   });
+
+  useUnsavedChangesGuard(isDirty && !saved);
 
   const onSubmit = async (data: TestimonialFormValues) => {
     setStatus(null);
@@ -57,6 +61,7 @@ export default function TestimonialForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
+    toast.success(mode === "create" ? "Review created" : "Changes saved");
     router.push("/admin/testimonials");
     router.refresh();
   };
@@ -119,12 +124,12 @@ export default function TestimonialForm({
         </p>
       </FormField>
 
-      <SubmitButton loading={isSubmitting || saved}>
-        <Save size={18} aria-hidden />
-        {mode === "create" ? "Add Review" : "Save Changes"}
-      </SubmitButton>
-
-      <FormStatus status={status?.type ?? null} message={status?.message} />
+      <EditorActionBar
+        dirty={isDirty && !saved}
+        busy={isSubmitting || saved}
+        submitLabel={mode === "create" ? "Add Review" : "Save Changes"}
+        error={status?.type === "error" ? status.message : null}
+      />
     </form>
   );
 }

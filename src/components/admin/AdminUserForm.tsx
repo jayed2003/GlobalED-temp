@@ -3,16 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
+import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
+import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
-import { FormField, FormStatus, Input, SubmitButton } from "@/components/forms/primitives";
+import { FormField, Input } from "@/components/forms/primitives";
 import {
   createAdminUserSchema,
   updateAdminUserSchema,
   adminPermissionLabels,
-  adminPermissionValues,
+  grantablePermissions,
   type CreateAdminUserFormValues,
 } from "@/lib/validation/admin-user";
 
@@ -46,11 +48,13 @@ export default function AdminUserForm({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<CreateAdminUserFormValues>({
     resolver: zodResolver(mode === "create" ? createAdminUserSchema : updateAdminUserSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
+
+  useUnsavedChangesGuard(isDirty && !saved);
 
   const onSubmit = async (data: CreateAdminUserFormValues) => {
     setStatus(null);
@@ -60,6 +64,7 @@ export default function AdminUserForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
+    toast.success(mode === "create" ? "Admin account created" : "Changes saved");
     router.push("/admin/admins");
     router.refresh();
   };
@@ -105,7 +110,7 @@ export default function AdminUserForm({
                 Content Permissions
               </label>
               <div className="grid gap-2 sm:grid-cols-2">
-                {adminPermissionValues.map((perm) => (
+                {grantablePermissions.map((perm) => (
                   <label key={perm} className="flex items-center gap-2 text-sm text-neutral-700">
                     <input
                       type="checkbox"
@@ -133,12 +138,12 @@ export default function AdminUserForm({
         />
       )}
 
-      <SubmitButton loading={isSubmitting || saved}>
-        <Save size={18} aria-hidden />
-        {mode === "create" ? "Create Admin" : "Save Changes"}
-      </SubmitButton>
-
-      <FormStatus status={status?.type ?? null} message={status?.message} />
+      <EditorActionBar
+        dirty={isDirty && !saved}
+        busy={isSubmitting || saved}
+        submitLabel={mode === "create" ? "Create Admin" : "Save Changes"}
+        error={status?.type === "error" ? status.message : null}
+      />
     </form>
   );
 }

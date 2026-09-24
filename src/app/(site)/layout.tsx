@@ -3,16 +3,18 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingWhatsApp from "@/components/layout/FloatingWhatsApp";
 import ScrollToTop from "@/components/layout/ScrollToTop";
+import PreviewBanner from "@/components/layout/PreviewBanner";
 import { buildNavItems } from "@/data/navigation";
 import { getAllDestinations } from "@/lib/content/destinations";
 import { getAllCourses } from "@/lib/content/courses";
+import { isPreview } from "@/lib/preview";
 
 export default async function SiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [destinations, courses] = await Promise.all([getAllDestinations(), getAllCourses()]);
+  const [destinations, courses, preview] = await Promise.all([getAllDestinations(), getAllCourses(), isPreview()]);
   const navItems = buildNavItems(destinations, courses);
 
   return (
@@ -29,6 +31,7 @@ export default async function SiteLayout({
       <Footer />
       <FloatingWhatsApp />
       <ScrollToTop />
+      {preview && <PreviewBanner />}
     </>
   );
 }

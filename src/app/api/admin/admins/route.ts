@@ -3,10 +3,11 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { createAdminUserSchema } from "@/lib/validation/admin-user";
+import { logActivity } from "@/lib/activity";
 
 // Always creates an EDITOR — there is exactly one master admin (the seeded
 // account) and it's never created through this endpoint.
-export const POST = adminRoute({ adminOnly: true }, async ({ request }) => {
+export const POST = adminRoute({ adminOnly: true }, async ({ request, session }) => {
   const data = await readJson(request, createAdminUserSchema);
 
   // Emails are stored lowercase (see admin-user.ts); insensitive match also
@@ -25,5 +26,6 @@ export const POST = adminRoute({ adminOnly: true }, async ({ request }) => {
     },
   });
 
+  await logActivity(session, { action: "CREATED", entityType: "admin", entityId: created.id, label: created.name });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

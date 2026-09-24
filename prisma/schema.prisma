@@ -21,6 +21,12 @@ enum AdminPermission {
   LEADS
   TESTIMONIALS
   MESSAGES
+  // CMS sections (each shown in the admin form once its section exists)
+  PAGES
+  SERVICES
+  FAQS
+  TEAM
+  SETTINGS
 }
 
 enum CourseCategory {
@@ -68,6 +74,40 @@ model AdminUser {
   permissions  AdminPermission[]
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
+  activities   ActivityLog[]
+}
+
+enum ActivityAction {
+  CREATED
+  UPDATED
+  PUBLISHED
+  UNPUBLISHED
+  DELETED
+  BULK_DELETED
+  STATUS_CHANGED
+  SIGNED_IN
+}
+
+/// Who changed what, and when. Written by src/lib/activity.ts.
+model ActivityLog {
+  id          String         @id @default(cuid())
+  // Null once the admin is deleted; adminName keeps who it was.
+  adminId     String?
+  admin       AdminUser?     @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  adminName   String
+  action      ActivityAction
+  // "blog", "course", "page", ... (see ENTITY_LABELS in src/lib/activity.ts)
+  entityType  String
+  entityId    String?
+  // What the item was called at the time, e.g. the post title.
+  entityLabel String         @default("")
+  // Extra context, e.g. "Status: Contacted" or "3 items".
+  details     String         @default("")
+  createdAt   DateTime       @default(now())
+
+  @@index([createdAt])
+  @@index([adminId])
+  @@index([entityType, entityId])
 }
 
 model Destination {

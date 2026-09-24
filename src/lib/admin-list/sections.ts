@@ -1,5 +1,5 @@
 import { branches } from "@/data/branches";
-import { adminPermissionLabels, adminPermissionValues } from "@/lib/validation/admin-user";
+import { adminPermissionLabels, grantablePermissions } from "@/lib/validation/admin-user";
 import { leadStatusOptions, messageStatusOptions } from "@/lib/inbox";
 import type { ListConfig } from "./core";
 
@@ -240,7 +240,7 @@ export const adminsList: ListConfig = {
       label: "Permissions",
       filter: {
         kind: "select",
-        options: adminPermissionValues.map((p) => ({ value: p, label: adminPermissionLabels[p], where: { permissions: { has: p } } })),
+        options: grantablePermissions.map((p) => ({ value: p, label: adminPermissionLabels[p], where: { permissions: { has: p } } })),
       },
     },
     created,

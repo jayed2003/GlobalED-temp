@@ -71,7 +71,8 @@ export default async function RootLayout({
   await connection();
 
   return (
-    <html lang="en" className={`${dmSans.variable} ${raleway.variable} ${notoBengali.variable}`}>
+    // data-scroll-behavior: Next.js turns smooth scrolling off during route changes.
+    <html lang="en" data-scroll-behavior="smooth" className={`${dmSans.variable} ${raleway.variable} ${notoBengali.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import CourseForm from "@/components/admin/CourseForm";
 import { courseCategoryFromEnum } from "@/lib/content/courses";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 
 export default async function EditCoursePage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requirePermission("COURSES");
@@ -14,8 +15,12 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-primary-900">Edit {course.title}</h1>
-      <div className="mt-6 max-w-2xl">
+      <AdminPageHeader
+        title={course.title}
+        breadcrumbs={[{ label: "Courses", href: "/admin/courses" }]}
+        viewHref={`/courses/${course.slug}`}
+      />
+      <div className="max-w-2xl">
         <CourseForm
           mode="edit"
           courseId={course.id}

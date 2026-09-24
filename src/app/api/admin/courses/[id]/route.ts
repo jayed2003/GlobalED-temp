@@ -5,10 +5,11 @@ import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { courseSchema } from "@/lib/validation/course";
 import { courseCategoryToEnum } from "@/lib/content/courses";
+import { logActivity } from "@/lib/activity";
 
 type Params = { id: string };
 
-export const PATCH = adminRoute<Params>({ permission: "COURSES" }, async ({ request, params: { id } }) => {
+export const PATCH = adminRoute<Params>({ permission: "COURSES" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, courseSchema);
 
   const existing = await prisma.course.findUnique({ where: { slug: data.slug } });
@@ -21,7 +22,7 @@ export const PATCH = adminRoute<Params>({ permission: "COURSES" }, async ({ requ
     { excludeId: id, message: `A course called "${data.title.trim()}" already exists`, field: "title" },
   );
 
-  await prisma.course.update({
+  const updated = await prisma.course.update({
     where: { id },
     data: {
       slug: data.slug,
@@ -40,11 +41,13 @@ export const PATCH = adminRoute<Params>({ permission: "COURSES" }, async ({ requ
 
   revalidateTag("courses", { expire: 0 });
   revalidateTag("ielts-content", { expire: 0 });
+  await logActivity(session, { action: "UPDATED", entityType: "course", entityId: id, label: updated.title });
   return NextResponse.json({ ok: true });
 });
 
-export const DELETE = adminRoute<Params>({ permission: "COURSES" }, async ({ params: { id } }) => {
-  await prisma.course.delete({ where: { id } });
+export const DELETE = adminRoute<Params>({ permission: "COURSES" }, async ({ session, params: { id } }) => {
+  const removed = await prisma.course.delete({ where: { id } });
+  await logActivity(session, { action: "DELETED", entityType: "course", entityId: id, label: removed.title });
 
   revalidateTag("courses", { expire: 0 });
   revalidateTag("ielts-content", { expire: 0 });

@@ -8,8 +8,9 @@ import { blogSchema } from "@/lib/validation/blog";
 import { sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { htmlToText } from "@/lib/rich-text";
 import { blogCategoryToEnum } from "@/lib/content/blog";
+import { logActivity } from "@/lib/activity";
 
-export const POST = adminRoute({ permission: "BLOGS" }, async ({ request }) => {
+export const POST = adminRoute({ permission: "BLOGS" }, async ({ request, session }) => {
   const data = await readJson(request, blogSchema);
   // Only the allowed formatting is ever stored.
   const content = sanitizeBlogHtml(data.content);
@@ -42,5 +43,6 @@ export const POST = adminRoute({ permission: "BLOGS" }, async ({ request }) => {
   });
 
   revalidateTag("blog-posts", { expire: 0 });
+  await logActivity(session, { action: "CREATED", entityType: "blog", entityId: created.id, label: created.title });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

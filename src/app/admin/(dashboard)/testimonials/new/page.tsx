@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import TestimonialForm from "@/components/admin/TestimonialForm";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 
 export default async function NewTestimonialPage() {
   const session = await requirePermission("TESTIMONIALS");
@@ -15,8 +16,11 @@ export default async function NewTestimonialPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-primary-900">Add Review</h1>
-      <div className="mt-6 max-w-xl">
+      <AdminPageHeader
+        title="Add Review"
+        breadcrumbs={[{ label: "Reviews", href: "/admin/testimonials" }]}
+      />
+      <div className="max-w-xl">
         <TestimonialForm
           mode="create"
           takenOrders={existing.map((t) => ({ order: t.sortOrder, name: t.studentName }))}

@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
+import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
+import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
-import { FormField, FormStatus, Input, SubmitButton, Textarea } from "@/components/forms/primitives";
+import { FormField, Input, Textarea } from "@/components/forms/primitives";
 import RepeatableFieldList from "@/components/admin/RepeatableFieldList";
 import ObjectFieldArray from "@/components/admin/ObjectFieldArray";
 import CourseSlugPicker from "@/components/admin/CourseSlugPicker";
@@ -37,17 +39,21 @@ export default function IeltsContentForm({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    reset,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<IeltsContentFormValues>({
     resolver: zodResolver(ieltsContentSchema),
     defaultValues,
   });
 
+  useUnsavedChangesGuard(isDirty);
+
   const onSubmit = async (data: IeltsContentFormValues) => {
     setStatus(null);
     const result = await adminRequest("/api/admin/ielts", { method: "PATCH", json: data });
     if (!result.ok) return showServerError(result, setError, setStatus);
-    setStatus({ type: "success", message: "IELTS content updated." });
+    reset(data); // saved: nothing unsaved any more
+    toast.success("IELTS content saved", { href: "/ielts", linkLabel: "View on site" });
     router.refresh();
   };
 
@@ -267,12 +273,12 @@ export default function IeltsContentForm({
         />
       </Section>
 
-      <SubmitButton loading={isSubmitting}>
-        <Save size={18} aria-hidden />
-        Save IELTS Content
-      </SubmitButton>
-
-      <FormStatus status={status?.type ?? null} message={status?.message} />
+      <EditorActionBar
+        dirty={isDirty}
+        busy={isSubmitting}
+        submitLabel={"Save IELTS Content"}
+        error={status?.type === "error" ? status.message : null}
+      />
     </form>
   );
 }

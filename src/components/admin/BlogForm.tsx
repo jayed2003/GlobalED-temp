@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
+import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
+import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
-import { FormField, FormStatus, Input, Select, SubmitButton, Textarea } from "@/components/forms/primitives";
+import { FormField, Input, Select, Textarea } from "@/components/forms/primitives";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { blogSchema, type BlogFormValues } from "@/lib/validation/blog";
@@ -61,11 +63,13 @@ export default function BlogForm({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<BlogFormValues>({
     resolver: zodResolver(blogSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
+
+  useUnsavedChangesGuard(isDirty && !saved);
 
   const onSubmit = async (data: BlogFormValues) => {
     setStatus(null);
@@ -75,6 +79,13 @@ export default function BlogForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
+    toast.success(
+      mode === "create" ? "Post created" : "Changes saved",
+      // Scheduled posts aren't on the site yet, so no link for them.
+      data.publishMode === "schedule" || (data.publishMode === "keep" && currentPublish?.scheduled)
+        ? undefined
+        : { href: `/blogs/${data.slug}`, linkLabel: "View on site" },
+    );
     router.push("/admin/blogs");
     router.refresh();
   };
@@ -157,12 +168,12 @@ export default function BlogForm({
         Feature this post
       </label>
 
-      <SubmitButton loading={isSubmitting || saved}>
-        <Save size={18} aria-hidden />
-        {mode === "create" ? "Create Post" : "Save Changes"}
-      </SubmitButton>
-
-      <FormStatus status={status?.type ?? null} message={status?.message} />
+      <EditorActionBar
+        dirty={isDirty && !saved}
+        busy={isSubmitting || saved}
+        submitLabel={mode === "create" ? "Create Post" : "Save Changes"}
+        error={status?.type === "error" ? status.message : null}
+      />
     </form>
   );
 }

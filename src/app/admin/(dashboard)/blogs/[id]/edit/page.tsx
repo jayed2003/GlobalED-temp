@@ -5,6 +5,7 @@ import BlogForm from "@/components/admin/BlogForm";
 import { SITE_URL } from "@/lib/site-url";
 import { blogCategoryFromEnum } from "@/lib/content/blog";
 import { dhakaParts, formatDhakaDateTime, isInFuture } from "@/lib/validation/dates";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 
 export default async function EditBlogPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requirePermission("BLOGS");
@@ -19,8 +20,13 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-primary-900">Edit {post.title}</h1>
-      <div className="mt-6 max-w-5xl">
+      <AdminPageHeader
+        title={post.title}
+        breadcrumbs={[{ label: "Blogs", href: "/admin/blogs" }]}
+        status={scheduled ? "scheduled" : "published"}
+        viewHref={scheduled ? undefined : `/blogs/${post.slug}`}
+      />
+      <div className="max-w-5xl">
         <BlogForm
           mode="edit"
           postId={post.id}

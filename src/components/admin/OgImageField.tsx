@@ -33,12 +33,17 @@ export default function OgImageField({
   error,
   coverImage,
   alt,
+  altId = "b-og-alt",
+  fallbackName = "the cover image",
 }: {
   value: string;
   onChange: (url: string) => void;
   error?: string;
   coverImage: string;
   alt: { registration: UseFormRegisterReturn; error?: string };
+  altId?: string;
+  /** How the fallback image is described, e.g. "the hero image". */
+  fallbackName?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -135,7 +140,7 @@ export default function OgImageField({
                   {uploading
                     ? "Uploading…"
                     : fallback === coverImage
-                      ? "No OG image — falls back to the cover image"
+                      ? `No OG image — falls back to ${fallbackName}`
                       : "No OG image — shares use the default GlobalEd card"}
                 </p>
                 {!uploading && <p className="text-xs text-neutral-500">Drop an image here, or choose a file below</p>}
@@ -180,11 +185,11 @@ export default function OgImageField({
 
       {value && (
         <div className="mt-3">
-          <label htmlFor="b-og-alt" className="mb-1 block text-xs font-medium text-primary-900">
+          <label htmlFor={altId} className="mb-1 block text-xs font-medium text-primary-900">
             OG image alt text <span className="text-red-500">*</span>
           </label>
           <input
-            id="b-og-alt"
+            id={altId}
             type="text"
             placeholder="Describe what the image shows"
             aria-invalid={!!alt.error}

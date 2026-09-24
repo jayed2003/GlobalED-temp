@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/authz";
 import AdminUserForm from "@/components/admin/AdminUserForm";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 
 export default async function NewAdminPage() {
   const session = await requireAdmin();
@@ -8,8 +9,11 @@ export default async function NewAdminPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-primary-900">Add Admin</h1>
-      <div className="mt-6 max-w-xl">
+      <AdminPageHeader
+        title="Add Admin"
+        breadcrumbs={[{ label: "Manage Admins", href: "/admin/admins" }]}
+      />
+      <div className="max-w-xl">
         <AdminUserForm mode="create" />
       </div>
     </div>

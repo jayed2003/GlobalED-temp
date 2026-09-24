@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import DestinationForm from "@/components/admin/DestinationForm";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 
 export default async function EditDestinationPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requirePermission("DESTINATIONS");
@@ -19,8 +20,12 @@ export default async function EditDestinationPage({ params }: { params: Promise<
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-primary-900">Edit {destination.name}</h1>
-      <div className="mt-6 max-w-3xl">
+      <AdminPageHeader
+        title={destination.name}
+        breadcrumbs={[{ label: "Destinations", href: "/admin/destinations" }]}
+        viewHref={`/destinations/${destination.slug}`}
+      />
+      <div className="max-w-3xl">
         <DestinationForm
           mode="edit"
           destinationId={destination.id}

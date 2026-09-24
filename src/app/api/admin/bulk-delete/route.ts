@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { buildWhere, parseListQuery, type Where } from "@/lib/admin-list/core";
 import { listConfigs, type ListSection } from "@/lib/admin-list/sections";
+import { logActivity, type EntityType } from "@/lib/activity";
 
 /**
  * "Delete selected" for every admin list: either explicit ids, or everything
@@ -37,6 +38,18 @@ const sections: Record<
   admins: { permission: "MASTER", tags: [], count: (w) => prisma.adminUser.count({ where: w }), remove: (w) => prisma.adminUser.deleteMany({ where: w }) },
 };
 
+/** Activity-log entity for each bulk-delete section. */
+const BULK_ENTITY: Record<keyof typeof sections, EntityType> = {
+  destinations: "destination",
+  courses: "course",
+  blogs: "blog",
+  events: "event",
+  testimonials: "testimonial",
+  leads: "lead",
+  messages: "message",
+  admins: "admin",
+};
+
 export const POST = adminRoute({ anyAdmin: true }, async ({ request, session }) => {
   const body = await readJson(request, bodySchema);
   const section = sections[body.section];
@@ -64,6 +77,9 @@ export const POST = adminRoute({ anyAdmin: true }, async ({ request, session }) 
   const { count } = await section.remove(where);
   for (const tag of section.tags) revalidateTag(tag, { expire: 0 });
 
+  if (count > 0) {
+    await logActivity(session, { action: "BULK_DELETED", entityType: BULK_ENTITY[body.section], label: `${count} ${count === 1 ? "item" : "items"}`, details: `${count} deleted` });
+  }
   const skipped = requested - count;
   return NextResponse.json({
     deleted: count,

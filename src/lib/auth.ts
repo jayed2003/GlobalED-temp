@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { checkRateLimits, getClientIp } from "@/lib/rate-limit";
+import { recordActivity } from "@/lib/activity";
 
 /** Too many sign-in attempts; the login form shows a "try again later" message for this code. */
 class LoginRateLimitedError extends CredentialsSignin {
@@ -62,6 +63,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  events: {
+    // Sign-ins show in the activity log (useful to spot an account being misused).
+    async signIn({ user }) {
+      await recordActivity(
+        { id: user.id ?? null, name: user.name || user.email || "Admin" },
+        { action: "SIGNED_IN", entityType: "session", label: user.email ?? "" },
+      );
+    },
+  },
   callbacks: {
     async jwt({ token, user }) {
       // Sign-in: stamp the token with who logged in and when.

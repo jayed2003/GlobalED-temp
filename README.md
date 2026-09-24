@@ -188,6 +188,19 @@ needed to run the site.
 - **Content rules:** duplicate names/titles/slugs and repeated list entries
   are refused; dates must be real and sensible (no past blog publish dates;
   an event's date must match its Upcoming / Previous status).
+- **Editing:** every editor has a save bar that stays in view, says when
+  there are unsaved changes (or why a save failed), and saves with
+  **Ctrl+S**. Leaving a page with unsaved changes asks first. After saving, a
+  notification offers **View on site**. Lists of items inside a form
+  (key points, universities, FAQs…) are reordered by dragging the handle —
+  or with the keyboard: focus the handle, Space, arrow keys, Space.
+- **Preview:** `/api/admin/preview?path=/some-page` shows the site with
+  unpublished changes (Next.js draft mode) and a "Preview" banner with
+  **Exit preview**. Only signed-in admins with access to that section can
+  turn it on; visitors never see drafts.
+- **Activity log:** every create, edit, delete, status change and sign-in is
+  recorded (who, what, when) in the `ActivityLog` table, kept for 12 months.
+  Deleting an admin keeps their name on past entries.
 - Errors are shown as plain messages on the form; an expired session sends
   you back to the login page.
 
@@ -344,3 +357,25 @@ Follow-up to this batch:
 
 Database migration `20260923201131_blog_seo_fields` (additive; already
 applied to production) adds the blog SEO columns.
+
+### Full-site CMS (in progress)
+
+Making every part of the site editable from the admin panel, in phases
+(page layouts, navigation, buttons and the legal pages stay in code).
+
+**Phase 0 — foundations:**
+- Admin sidebar grouped into Overview / Content / Company / Inbox / Settings,
+  with the current section highlighted and a menu on phones and tablets.
+- One editor look everywhere: page header with breadcrumb, status and
+  **View on site**; sticky save bar with unsaved-changes indicator, Ctrl+S
+  and a leave-page warning; success notifications.
+- Drag-and-drop reordering (`@dnd-kit`, keyboard accessible) for lists
+  inside forms; shared icon set (`src/lib/icons.ts`) and icon picker; shared
+  SEO fields (`SeoFields.tsx`) used by the blog SEO panel.
+- Activity log (`src/lib/activity.ts`) wired into every admin change and
+  sign-in; preview mode (`src/lib/preview.ts`, `/api/admin/preview`).
+- New permissions reserved for the coming sections: Pages, Services, FAQs,
+  Team, Site Settings (offered in the admin form once each section exists).
+
+Database migration `20260924000000_activity_log_and_cms_permissions`
+(additive; already applied to production).

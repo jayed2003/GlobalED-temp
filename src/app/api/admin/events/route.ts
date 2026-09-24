@@ -5,8 +5,9 @@ import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { eventSchema } from "@/lib/validation/event";
 import { eventStatusToEnum } from "@/lib/content/events";
+import { logActivity } from "@/lib/activity";
 
-export const POST = adminRoute({ permission: "EVENTS" }, async ({ request }) => {
+export const POST = adminRoute({ permission: "EVENTS" }, async ({ request, session }) => {
   const data = await readJson(request, eventSchema);
 
   const existing = await prisma.eventItem.findUnique({ where: { slug: data.slug } });
@@ -37,5 +38,6 @@ export const POST = adminRoute({ permission: "EVENTS" }, async ({ request }) => 
   });
 
   revalidateTag("events", { expire: 0 });
+  await logActivity(session, { action: "CREATED", entityType: "event", entityId: created.id, label: created.title });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

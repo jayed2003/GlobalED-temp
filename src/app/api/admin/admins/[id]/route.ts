@@ -4,6 +4,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { updateAdminUserSchema } from "@/lib/validation/admin-user";
+import { logActivity } from "@/lib/activity";
 
 type Params = { id: string };
 
@@ -34,6 +35,7 @@ export const PATCH = adminRoute<Params>({ adminOnly: true }, async ({ request, s
   }
 
   await prisma.adminUser.update({ where: { id }, data: updateData });
+  await logActivity(session, { action: "UPDATED", entityType: "admin", entityId: id, label: data.name, details: data.password ? "Password changed" : "" });
   return NextResponse.json({ ok: true });
 });
 
@@ -46,5 +48,6 @@ export const DELETE = adminRoute<Params>({ adminOnly: true }, async ({ session, 
   if (target.role === "ADMIN") throw new ApiError(400, "The master admin account cannot be deleted");
 
   await prisma.adminUser.delete({ where: { id } });
+  await logActivity(session, { action: "DELETED", entityType: "admin", entityId: id, label: target.name });
   return NextResponse.json({ ok: true });
 });

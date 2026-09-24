@@ -1,5 +1,7 @@
 import { z } from "zod";
+import type { AdminPermission } from "@/generated/prisma/client";
 
+/** Every permission the database knows (the AdminPermission enum). */
 export const adminPermissionValues = [
   "DESTINATIONS",
   "COURSES",
@@ -9,10 +11,30 @@ export const adminPermissionValues = [
   "LEADS",
   "MESSAGES",
   "TESTIMONIALS",
-] as const;
+  "PAGES",
+  "SERVICES",
+  "FAQS",
+  "TEAM",
+  "SETTINGS",
+] as const satisfies readonly AdminPermission[];
+
+/**
+ * The permissions the admin form offers: one per admin section that exists.
+ * A CMS section's permission is added here when the section ships.
+ */
+export const grantablePermissions: readonly AdminPermission[] = [
+  "DESTINATIONS",
+  "COURSES",
+  "BLOGS",
+  "EVENTS",
+  "IELTS",
+  "LEADS",
+  "MESSAGES",
+  "TESTIMONIALS",
+];
 
 /** Display names for permissions (admin form checkboxes and the admins list). */
-export const adminPermissionLabels: Record<(typeof adminPermissionValues)[number], string> = {
+export const adminPermissionLabels: Record<AdminPermission, string> = {
   DESTINATIONS: "Destinations",
   COURSES: "Courses",
   BLOGS: "Blogs",
@@ -21,6 +43,11 @@ export const adminPermissionLabels: Record<(typeof adminPermissionValues)[number
   LEADS: "Leads",
   MESSAGES: "Contact Messages",
   TESTIMONIALS: "Reviews",
+  PAGES: "Pages",
+  SERVICES: "Services",
+  FAQS: "FAQs",
+  TEAM: "Team",
+  SETTINGS: "Site Settings & Branches",
 };
 
 // Role is never user-editable: create always makes an EDITOR, and the one

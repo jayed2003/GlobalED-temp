@@ -1,7 +1,11 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
+import { arrayMove } from "@dnd-kit/sortable";
+import SortableList from "@/components/admin/ui/SortableList";
+import { useRowIds } from "@/components/admin/ui/useRowIds";
 
+/** A list of small records (e.g. universities, FAQs): add, edit, drag to reorder, remove. */
 export default function ObjectFieldArray<T extends Record<string, unknown>>({
   label,
   value,
@@ -17,13 +21,25 @@ export default function ObjectFieldArray<T extends Record<string, unknown>>({
   renderRow: (item: T, update: (patch: Partial<T>) => void) => React.ReactNode;
   error?: string;
 }) {
+  const rows = useRowIds(value.length);
+
   const updateAt = (index: number, patch: Partial<T>) => {
     const copy = [...value];
     copy[index] = { ...copy[index], ...patch };
     onChange(copy);
   };
-  const remove = (index: number) => onChange(value.filter((_, i) => i !== index));
-  const add = () => onChange([...value, emptyItem]);
+  const remove = (index: number) => {
+    rows.remove(index);
+    onChange(value.filter((_, i) => i !== index));
+  };
+  const add = () => {
+    rows.add();
+    onChange([...value, emptyItem]);
+  };
+  const move = (from: number, to: number) => {
+    rows.move(from, to);
+    onChange(arrayMove(value, from, to));
+  };
 
   return (
     <div>
@@ -37,22 +53,23 @@ export default function ObjectFieldArray<T extends Record<string, unknown>>({
           <Plus size={14} aria-hidden /> Add
         </button>
       </div>
-      <div className="space-y-3">
-        {value.map((item, index) => (
-          <div key={index} className="flex items-start gap-2 rounded-lg border border-neutral-200 p-3">
-            <div className="flex-1">{renderRow(item, (patch) => updateAt(index, patch))}</div>
+      <SortableList ids={rows.ids} onMove={move} label={label.toLowerCase()}>
+        {(index, handle) => (
+          <div className="flex items-start gap-2 rounded-lg border border-neutral-200 bg-white p-3">
+            <div className="pt-1">{handle}</div>
+            <div className="flex-1">{renderRow(value[index], (patch) => updateAt(index, patch))}</div>
             <button
               type="button"
               onClick={() => remove(index)}
               className="rounded p-1.5 text-red-500 hover:bg-red-50"
-              aria-label="Remove"
+              aria-label={`Remove item ${index + 1}`}
             >
               <Trash2 size={16} aria-hidden />
             </button>
           </div>
-        ))}
-        {value.length === 0 && <p className="text-sm text-neutral-400">No items yet.</p>}
-      </div>
+        )}
+      </SortableList>
+      {value.length === 0 && <p className="text-sm text-neutral-400">No items yet.</p>}
       {error && (
         <p role="alert" className="mt-1.5 text-xs font-medium text-red-600">
           {error}

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { cleanText, testimonialSchema } from "@/lib/validation/testimonial";
+import { logActivity } from "@/lib/activity";
 type Params = { id: string };
 
 async function orderTakenBy(sortOrder: number, excludeId?: string) {
@@ -13,7 +14,7 @@ async function orderTakenBy(sortOrder: number, excludeId?: string) {
   });
 }
 
-export const PATCH = adminRoute<Params>({ permission: "TESTIMONIALS" }, async ({ request, params: { id } }) => {
+export const PATCH = adminRoute<Params>({ permission: "TESTIMONIALS" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, testimonialSchema);
 
   const reviews = await prisma.testimonial.findMany({ select: { id: true, studentName: true, university: true } });
@@ -36,7 +37,7 @@ export const PATCH = adminRoute<Params>({ permission: "TESTIMONIALS" }, async ({
     );
   }
 
-  await prisma.testimonial.update({
+  const updated = await prisma.testimonial.update({
     where: { id },
     data: {
       studentName: cleanText(data.studentName),
@@ -49,11 +50,13 @@ export const PATCH = adminRoute<Params>({ permission: "TESTIMONIALS" }, async ({
   });
 
   revalidateTag("testimonials", { expire: 0 });
+  await logActivity(session, { action: "UPDATED", entityType: "testimonial", entityId: id, label: updated.studentName });
   return NextResponse.json({ ok: true });
 });
 
-export const DELETE = adminRoute<Params>({ permission: "TESTIMONIALS" }, async ({ params: { id } }) => {
-  await prisma.testimonial.delete({ where: { id } });
+export const DELETE = adminRoute<Params>({ permission: "TESTIMONIALS" }, async ({ session, params: { id } }) => {
+  const removed = await prisma.testimonial.delete({ where: { id } });
+  await logActivity(session, { action: "DELETED", entityType: "testimonial", entityId: id, label: removed.studentName });
 
   revalidateTag("testimonials", { expire: 0 });
   return NextResponse.json({ ok: true });

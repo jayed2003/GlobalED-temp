@@ -4,8 +4,9 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import { adminRoute, readJson } from "@/lib/api/admin-route";
 import { ieltsContentSchema } from "@/lib/validation/ielts";
+import { logActivity } from "@/lib/activity";
 
-export const PATCH = adminRoute({ permission: "IELTS" }, async ({ request }) => {
+export const PATCH = adminRoute({ permission: "IELTS" }, async ({ request, session }) => {
   const data = await readJson(request, ieltsContentSchema);
 
   const courses = await prisma.course.findMany({ where: { slug: { in: data.preparation.courseSlugs } } });
@@ -50,5 +51,6 @@ export const PATCH = adminRoute({ permission: "IELTS" }, async ({ request }) => 
 
   revalidateTag("ielts-content", { expire: 0 });
   revalidateTag("courses", { expire: 0 });
+  await logActivity(session, { action: "UPDATED", entityType: "ielts", entityId: "main", label: "IELTS pages" });
   return NextResponse.json({ ok: true });
 });

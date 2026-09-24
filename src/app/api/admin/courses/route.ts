@@ -5,8 +5,9 @@ import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { courseSchema } from "@/lib/validation/course";
 import { courseCategoryToEnum } from "@/lib/content/courses";
+import { logActivity } from "@/lib/activity";
 
-export const POST = adminRoute({ permission: "COURSES" }, async ({ request }) => {
+export const POST = adminRoute({ permission: "COURSES" }, async ({ request, session }) => {
   const data = await readJson(request, courseSchema);
 
   const existing = await prisma.course.findUnique({ where: { slug: data.slug } });
@@ -40,5 +41,6 @@ export const POST = adminRoute({ permission: "COURSES" }, async ({ request }) =>
 
   revalidateTag("courses", { expire: 0 });
   revalidateTag("ielts-content", { expire: 0 });
+  await logActivity(session, { action: "CREATED", entityType: "course", entityId: created.id, label: created.title });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

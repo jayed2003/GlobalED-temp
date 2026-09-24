@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { cleanText, testimonialSchema } from "@/lib/validation/testimonial";
+import { logActivity } from "@/lib/activity";
 
 async function orderTakenBy(sortOrder: number, excludeId?: string) {
   return prisma.testimonial.findFirst({
@@ -12,7 +13,7 @@ async function orderTakenBy(sortOrder: number, excludeId?: string) {
   });
 }
 
-export const POST = adminRoute({ permission: "TESTIMONIALS" }, async ({ request }) => {
+export const POST = adminRoute({ permission: "TESTIMONIALS" }, async ({ request, session }) => {
   const data = await readJson(request, testimonialSchema);
 
   const reviews = await prisma.testimonial.findMany({ select: { id: true, studentName: true, university: true } });
@@ -46,5 +47,6 @@ export const POST = adminRoute({ permission: "TESTIMONIALS" }, async ({ request 
   });
 
   revalidateTag("testimonials", { expire: 0 });
+  await logActivity(session, { action: "CREATED", entityType: "testimonial", entityId: created.id, label: created.studentName });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
+import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
+import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
-import { FormField, FormStatus, Input, Select, SubmitButton, Textarea } from "@/components/forms/primitives";
+import { FormField, Input, Select, Textarea } from "@/components/forms/primitives";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import GalleryUploadField from "@/components/admin/GalleryUploadField";
 import { addYears, EARLIEST_CONTENT_DATE, todayInDhaka } from "@/lib/validation/dates";
@@ -47,13 +49,15 @@ export default function EventForm({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
   const eventStatus = useWatch({ control, name: "status" });
   const today = todayInDhaka();
+
+  useUnsavedChangesGuard(isDirty && !saved);
 
   const onSubmit = async (data: EventFormValues) => {
     setStatus(null);
@@ -63,6 +67,7 @@ export default function EventForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
+    toast.success(mode === "create" ? "Event created" : "Changes saved", { href: `/events/${data.slug}`, linkLabel: "View on site" });
     router.push("/admin/events");
     router.refresh();
   };
@@ -149,12 +154,12 @@ export default function EventForm({
         )}
       />
 
-      <SubmitButton loading={isSubmitting || saved}>
-        <Save size={18} aria-hidden />
-        {mode === "create" ? "Create Event" : "Save Changes"}
-      </SubmitButton>
-
-      <FormStatus status={status?.type ?? null} message={status?.message} />
+      <EditorActionBar
+        dirty={isDirty && !saved}
+        busy={isSubmitting || saved}
+        submitLabel={mode === "create" ? "Create Event" : "Save Changes"}
+        error={status?.type === "error" ? status.message : null}
+      />
     </form>
   );
 }

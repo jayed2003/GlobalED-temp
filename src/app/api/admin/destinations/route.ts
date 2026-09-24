@@ -4,8 +4,9 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { destinationSchema } from "@/lib/validation/destination";
+import { logActivity } from "@/lib/activity";
 
-export const POST = adminRoute({ permission: "DESTINATIONS" }, async ({ request }) => {
+export const POST = adminRoute({ permission: "DESTINATIONS" }, async ({ request, session }) => {
   const data = await readJson(request, destinationSchema);
 
   const existing = await prisma.destination.findUnique({ where: { slug: data.slug } });
@@ -42,5 +43,6 @@ export const POST = adminRoute({ permission: "DESTINATIONS" }, async ({ request 
   });
 
   revalidateTag("destinations", { expire: 0 });
+  await logActivity(session, { action: "CREATED", entityType: "destination", entityId: created.id, label: created.name });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

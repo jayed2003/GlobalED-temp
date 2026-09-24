@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
+import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
+import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
-import { FormField, FormStatus, Input, Select, SubmitButton, Textarea } from "@/components/forms/primitives";
+import { FormField, Input, Select, Textarea } from "@/components/forms/primitives";
 import RepeatableFieldList from "@/components/admin/RepeatableFieldList";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import { courseSchema, type CourseFormValues } from "@/lib/validation/course";
@@ -46,11 +48,13 @@ export default function CourseForm({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
+
+  useUnsavedChangesGuard(isDirty && !saved);
 
   const onSubmit = async (data: CourseFormValues) => {
     setStatus(null);
@@ -60,6 +64,7 @@ export default function CourseForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
+    toast.success(mode === "create" ? "Course created" : "Changes saved", { href: `/courses/${data.slug}`, linkLabel: "View on site" });
     router.push("/admin/courses");
     router.refresh();
   };
@@ -137,12 +142,12 @@ export default function CourseForm({
         </FormField>
       </div>
 
-      <SubmitButton loading={isSubmitting || saved}>
-        <Save size={18} aria-hidden />
-        {mode === "create" ? "Create Course" : "Save Changes"}
-      </SubmitButton>
-
-      <FormStatus status={status?.type ?? null} message={status?.message} />
+      <EditorActionBar
+        dirty={isDirty && !saved}
+        busy={isSubmitting || saved}
+        submitLabel={mode === "create" ? "Create Course" : "Save Changes"}
+        error={status?.type === "error" ? status.message : null}
+      />
     </form>
   );
 }
