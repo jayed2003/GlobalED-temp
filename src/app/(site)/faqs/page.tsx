@@ -3,7 +3,7 @@ import PageHero from "@/components/sections/PageHero";
 import CtaBanner from "@/components/sections/CtaBanner";
 import FaqFilter from "@/components/sections/FaqFilter";
 import Container from "@/components/layout/Container";
-import { faqs } from "@/data/faqs";
+import { getFaqs } from "@/lib/content/faqs";
 import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FaqsPage() {
-  const page = await getPage("faqs");
+  const [page, faqs] = await Promise.all([getPage("faqs"), getFaqs()]);
   return (
     <>
       <PageHero

@@ -1,4 +1,3 @@
-import { services } from "./services";
 
 export interface NavItem {
   label: string;
@@ -14,6 +13,7 @@ export interface NavItem {
 export function buildNavItems(
   destinations: { slug: string; name: string }[],
   courses: { slug: string; title: string }[],
+  services: { slug: string; title: string }[],
 ): NavItem[] {
   return [
     {

@@ -7,6 +7,7 @@ import PreviewBanner from "@/components/layout/PreviewBanner";
 import { buildNavItems } from "@/data/navigation";
 import { getAllDestinations } from "@/lib/content/destinations";
 import { getAllCourses } from "@/lib/content/courses";
+import { getServiceLinks } from "@/lib/content/services";
 import { isPreview } from "@/lib/preview";
 
 export default async function SiteLayout({
@@ -14,8 +15,13 @@ export default async function SiteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [destinations, courses, preview] = await Promise.all([getAllDestinations(), getAllCourses(), isPreview()]);
-  const navItems = buildNavItems(destinations, courses);
+  const [destinations, courses, services, preview] = await Promise.all([
+    getAllDestinations(),
+    getAllCourses(),
+    getServiceLinks(),
+    isPreview(),
+  ]);
+  const navItems = buildNavItems(destinations, courses, services);
 
   return (
     <>

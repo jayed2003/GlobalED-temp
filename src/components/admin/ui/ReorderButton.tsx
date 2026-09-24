@@ -26,6 +26,7 @@ export default function ReorderButton({
   items,
   title,
   what,
+  label = "Reorder",
 }: {
   /** POST { ids } in the new order. */
   endpoint: string;
@@ -33,6 +34,8 @@ export default function ReorderButton({
   title: string;
   /** Plural noun for screen readers, e.g. "branches". */
   what: string;
+  /** Button text, when a page has more than one list to order. */
+  label?: string;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -87,7 +90,7 @@ export default function ReorderButton({
         disabled={items.length < 2}
         className={adminButton("secondary")}
       >
-        <ArrowUpDown size={16} aria-hidden /> Reorder
+        <ArrowUpDown size={16} aria-hidden /> {label}
       </button>
 
       {open && (

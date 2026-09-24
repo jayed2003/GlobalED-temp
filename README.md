@@ -53,14 +53,16 @@ src/
 - **Editable in the admin panel (database):** destinations, courses, blogs,
   events, IELTS page content, reviews, **site settings** (phone, email,
   WhatsApp, social links, key numbers, footer text, call-to-action banner),
-  **branches**, and the **text and images of every page** (home, about,
-  contact, consultation, listing pages, IELTS — Admin → Pages). Edits show on
-  the site immediately (pages: when published).
-- **Hard-coded in `src/data/`:** services, team members, FAQs, navigation
-  and the legal pages (`legal.ts`). Changing these means editing the file and
-  redeploying. (Services, FAQs and team are being moved into the admin panel
-  — see "Full-site CMS" in the change log.) Page layouts, buttons and menus
-  stay in code by design.
+  **branches**, **services**, **FAQs**, **team members**, and the **text and
+  images of every page** (home, about, contact, consultation, listing pages,
+  IELTS — Admin → Pages). Edits show on the site immediately (pages and draft
+  services: when published).
+- **Hard-coded in `src/data/`:** navigation (`navigation.ts` — its
+  Destinations, Courses and Services menus list the published items
+  automatically) and the legal pages (`legal.ts`). Changing these means
+  editing the file and redeploying. Page layouts, buttons and menus stay in
+  code by design. The other files there are only sample content for
+  `prisma db seed`.
 
 > **Editing from a local copy:** local `.env` points at the production
 > database, but saving content locally only refreshes the *local* cache —
@@ -228,6 +230,17 @@ needed to run the site.
   booking form offers the shown branches, and the server checks against the
   same list. At least one branch must stay shown. Leads keep the branch
   *name*, so renaming or removing a branch never breaks old leads.
+- **Services** (Content → Services): name, web address (slug), icon,
+  summary, "How we help", benefits, process steps and Search & sharing. A new
+  service starts as a **Draft** — hidden from visitors, the menu, footer and
+  sitemap, but viewable with **Preview** — until it's set to **Published**.
+  Drag to reorder with **Reorder** (menu, home page and services page follow).
+- **FAQs** (Company → FAQs): question, answer, category (General / Study
+  Abroad / IELTS), **Show on the FAQs page**, and **Also show on the Services
+  page** (the "Common Questions" list there). Duplicate questions are refused.
+- **Team** (Company → Team): name, role, photo with alt text, optional short
+  bio, **Board of Directors** or **Team**, and **Show on the Our Team page**.
+  Each group has its own order (**Reorder board** / **Reorder team**).
 - **Activity log:** every create, edit, delete, status change and sign-in is
   recorded (who, what, when) in the `ActivityLog` table, kept for 12 months.
   Deleting an admin keeps their name on past entries.
@@ -285,7 +298,7 @@ request. Database content is still cached, so pages stay fast.
   an address on it. Until then Resend only delivers to the account owner, so
   lead alerts don't reach `COMPANY_NOTIFY_EMAIL`.
 - **Real photos:** course images, blog covers, event images, two reviews and
-  the team photos (`src/data/team.ts`) are still placeholders.
+  the six Team photos (Company → Team) are still placeholders.
 - **Events:** "Global Education Expo 2026 — Dhaka" (12 Sept) and "Free IELTS
   Mock Test Day" (20 Sept) are in the past but still marked Upcoming — edit
   them to Previous in the admin panel.
@@ -449,3 +462,24 @@ before and after; already applied to production).
 Database migration `20260924020000_site_pages` (additive, pre-filled with
 every page's current copy, validated against the page definitions; already
 applied to production).
+
+**Phase 3 — services, FAQs, team:**
+- `Service`, `Faq` and `TeamMember` tables with admin lists (search,
+  filters, bulk delete, **Reorder**), add/edit screens and APIs under
+  `/api/admin/services`, `/faqs`, `/team` (new **Services**, **FAQs** and
+  **Team** permissions, now offered in the admin form).
+- Services have **Draft / Published** (`ContentStatus`) and their own
+  Search & sharing fields; drafts are left out of the services pages, home
+  grid, menu, footer and sitemap, and show only in preview.
+- The Services page's "Common Questions" now come from FAQs marked **Also
+  show on the Services page** (it used to take the last four by position).
+- Public pages read them through cached getters (`src/lib/content/services.ts`,
+  `faqs.ts`, `team.ts`); `src/data/services.ts`, `faqs.ts`, `team.ts` and
+  `organization.ts` removed.
+- Verified: home, services (index and all six), FAQs, Our Team, About and
+  Contact matched the live site after the migration (visible text, links,
+  menus, sitemap, titles and share tags).
+
+Database migration `20260924030000_services_faqs_team` (additive, pre-filled
+with the 6 services, 24 FAQs and 11 team members; already applied to
+production).

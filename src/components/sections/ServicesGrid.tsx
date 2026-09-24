@@ -2,11 +2,12 @@ import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import ServiceCard from "@/components/cards/ServiceCard";
 import Reveal from "@/components/ui/Reveal";
-import { services } from "@/data/services";
+import { getServices } from "@/lib/content/services";
 import type { HeadingContent } from "@/lib/pages";
 
 /** Home "Our Services" section — 6 numbered service cards. */
-export default function ServicesGrid({ heading }: { heading: HeadingContent }) {
+export default async function ServicesGrid({ heading }: { heading: HeadingContent }) {
+  const services = await getServices();
   return (
     <section className="py-16 sm:py-24">
       <Container>

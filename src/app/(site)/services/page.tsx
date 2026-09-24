@@ -5,18 +5,17 @@ import ServiceCard from "@/components/cards/ServiceCard";
 import FaqAccordion from "@/components/ui/FaqAccordion";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
-import { services } from "@/data/services";
-import { faqs } from "@/data/faqs";
+import { getServices } from "@/lib/content/services";
+import { getServiceFaqs } from "@/lib/content/faqs";
 import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
 export async function generateMetadata(): Promise<Metadata> {
   return editablePageMetadata("services", await getPage("services"));
 }
 
-const serviceFaqs = faqs.slice(-4); // Last 4 are service-related FAQs
 
 export default async function ServicesPage() {
-  const page = await getPage("services");
+  const [page, services, serviceFaqs] = await Promise.all([getPage("services"), getServices(), getServiceFaqs()]);
   return (
     <>
       <PageHero

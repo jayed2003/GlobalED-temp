@@ -358,3 +358,72 @@ model SitePage {
   publishedAt   DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+/// Draft = saved but not on the site (visible only in preview); Published = live.
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+/// A service (Admin → Services): its own page under /services, a card on the
+/// home page and services page, and a link in the menu and footer.
+model Service {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  /// Icon name from src/lib/icons.ts
+  icon             String
+  shortDescription String
+  description      String        @db.Text
+  benefits         String[]
+  /// Steps: [{ step, description }]
+  process          Json
+  status           ContentStatus @default(PUBLISHED)
+  sortOrder        Int           @default(0)
+  seoTitle         String        @default("")
+  metaDescription  String        @default("")
+  ogImage          String        @default("")
+  ogImageAlt       String        @default("")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+enum FaqCategory {
+  GENERAL
+  STUDY_ABROAD
+  IELTS
+}
+
+/// A question on the FAQs page (Admin → FAQs). Destinations have their own FAQs.
+model Faq {
+  id             String      @id @default(cuid())
+  question       String
+  answer         String      @db.Text
+  category       FaqCategory
+  /// Also listed under "Common Questions About Our Services" on /services.
+  showOnServices Boolean     @default(false)
+  shown          Boolean     @default(true)
+  sortOrder      Int         @default(0)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+enum TeamGroup {
+  BOARD
+  TEAM
+}
+
+/// A person on the Our Team page (Admin → Team): Board of Directors or staff.
+model TeamMember {
+  id        String    @id @default(cuid())
+  name      String
+  role      String
+  photo     String
+  photoAlt  String    @default("")
+  bio       String    @default("")
+  group     TeamGroup @default(TEAM)
+  shown     Boolean   @default(true)
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

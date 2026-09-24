@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { services } from "@/data/services";
+import { getServiceLinks } from "@/lib/content/services";
 import { getAllDestinations } from "@/lib/content/destinations";
 import { getAllCourses } from "@/lib/content/courses";
 import { getAllPosts } from "@/lib/content/blog";
@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const dynamicRoutes = [
     ...destinations.map((d) => `/destinations/${d.slug}`),
-    ...services.map((s) => `/services/${s.slug}`),
+    ...(await getServiceLinks()).map((s) => `/services/${s.slug}`),
     ...courses.map((c) => `/courses/${c.slug}`),
     ...posts.map((p) => `/blogs/${p.slug}`),
     ...events.map((e) => `/events/${e.slug}`),

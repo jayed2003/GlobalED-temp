@@ -4,8 +4,7 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import SectionHeading from "@/components/ui/SectionHeading";
 import TeamCard from "@/components/cards/TeamCard";
 import Container from "@/components/layout/Container";
-import { organization } from "@/data/organization";
-import { team } from "@/data/team";
+import { getTeam } from "@/lib/content/team";
 import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function OurTeamPage() {
-  const page = await getPage("about-team");
+  const [page, { board, team }] = await Promise.all([getPage("about-team"), getTeam()]);
   return (
     <>
       <PhotoHero
@@ -31,7 +30,7 @@ export default async function OurTeamPage() {
           {/* One row of 5 on desktop; wraps (centered) on smaller screens. Every card
               has the same width and the same 24px gap, so spacing stays consistent. */}
           <div className="mt-12 flex flex-wrap justify-center gap-6">
-            {organization.boardOfDirectors.map((member) => (
+            {board.map((member) => (
               <div
                 key={member.name}
                 className="w-[calc((100%_-_24px)/2)] sm:w-[calc((100%_-_48px)/3)] lg:w-[calc((100%_-_96px)/5)]"

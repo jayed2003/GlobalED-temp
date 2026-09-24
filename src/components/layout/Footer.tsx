@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { getBranches, getSiteSettings, telHref } from "@/lib/content/settings";
 import { socialLinks } from "./socialLinks";
-import { services } from "@/data/services";
+import { getServiceLinks } from "@/lib/content/services";
 import { getAllDestinations } from "@/lib/content/destinations";
 import { getAllCourses } from "@/lib/content/courses";
 import { legalLinks } from "@/data/legal";
@@ -11,11 +11,12 @@ import Container from "./Container";
 
 /** Multi-column footer with all branches (PFEC / Career Paths pattern). */
 export default async function Footer() {
-  const [destinations, courses, site, branches] = await Promise.all([
+  const [destinations, courses, site, branches, services] = await Promise.all([
     getAllDestinations(),
     getAllCourses(),
     getSiteSettings(),
     getBranches(),
+    getServiceLinks(),
   ]);
   const socials = socialLinks(site);
   return (

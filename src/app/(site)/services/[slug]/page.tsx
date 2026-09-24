@@ -5,11 +5,11 @@ import PageHero from "@/components/sections/PageHero";
 import CtaBanner from "@/components/sections/CtaBanner";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
-import { services } from "@/data/services";
+import { getServiceBySlug, getServiceLinks } from "@/lib/content/services";
 import { pageMetadata } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return services.map((s) => ({ slug: s.slug }));
+export async function generateStaticParams() {
+  return (await getServiceLinks()).map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({
@@ -18,12 +18,15 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const service = services.find((s) => s.slug === slug);
+  const service = await getServiceBySlug(slug);
   if (!service) return {};
+  // The admin's SEO fields, when set, replace the title / summary.
   return pageMetadata({
     path: `/services/${service.slug}`,
-    title: service.title,
-    description: service.shortDescription,
+    title: service.seoTitle ? { absolute: service.seoTitle } : service.title,
+    description: service.metaDescription || service.shortDescription,
+    image: service.ogImage || null,
+    imageAlt: service.ogImageAlt || null,
   });
 }
 
@@ -33,7 +36,7 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = services.find((s) => s.slug === slug);
+  const service = await getServiceBySlug(slug);
   if (!service) notFound();
 
   return (
@@ -58,8 +61,8 @@ export default async function ServiceDetailPage({
               What You Get
             </h3>
             <ul className="mt-4 space-y-3">
-              {service.benefits.map((benefit) => (
-                <li key={benefit} className="flex gap-2.5 text-sm leading-relaxed text-neutral-700">
+              {service.benefits.map((benefit, index) => (
+                <li key={index} className="flex gap-2.5 text-sm leading-relaxed text-neutral-700">
                   <CheckCircle2 size={17} aria-hidden className="mt-0.5 shrink-0 text-green-600" />
                   {benefit}
                 </li>
@@ -76,7 +79,7 @@ export default async function ServiceDetailPage({
           <ol className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
             {service.process.map((step, index) => (
               <li
-                key={step.step}
+                key={index}
                 className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-700 font-heading font-bold text-white">

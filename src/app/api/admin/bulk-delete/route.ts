@@ -43,6 +43,9 @@ const sections: Record<
   leads: { permission: "LEADS", tags: [], count: (w) => prisma.lead.count({ where: w }), remove: (w) => prisma.lead.deleteMany({ where: w }) },
   messages: { permission: "MESSAGES", tags: [], count: (w) => prisma.contactMessage.count({ where: w }), remove: (w) => prisma.contactMessage.deleteMany({ where: w }) },
   admins: { permission: "MASTER", tags: [], count: (w) => prisma.adminUser.count({ where: w }), remove: (w) => prisma.adminUser.deleteMany({ where: w }) },
+  services: { permission: "SERVICES", tags: ["services"], count: (w) => prisma.service.count({ where: w }), remove: (w) => prisma.service.deleteMany({ where: w }) },
+  faqs: { permission: "FAQS", tags: ["faqs"], count: (w) => prisma.faq.count({ where: w }), remove: (w) => prisma.faq.deleteMany({ where: w }) },
+  team: { permission: "TEAM", tags: ["team"], count: (w) => prisma.teamMember.count({ where: w }), remove: (w) => prisma.teamMember.deleteMany({ where: w }) },
   branches: {
     permission: "SETTINGS",
     tags: ["branches"],
@@ -69,6 +72,9 @@ const BULK_ENTITY: Record<keyof typeof sections, EntityType> = {
   messages: "message",
   admins: "admin",
   branches: "branch",
+  services: "service",
+  faqs: "faq",
+  team: "team",
 };
 
 export const POST = adminRoute({ anyAdmin: true }, async ({ request, session }) => {

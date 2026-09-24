@@ -84,6 +84,11 @@ export interface Service {
   description: string;
   benefits: string[];
   process: ServiceStep[];
+  /** SEO overrides; empty means use the title / summary. */
+  seoTitle?: string;
+  metaDescription?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
 }
 
 // ---------- Course ----------
@@ -214,11 +219,9 @@ export interface TeamMember {
   name: string;
   designation: string;
   photo: string;
+  /** Alt text for the photo (falls back to "Name, role at GlobalEd"). */
+  photoAlt?: string;
   bio?: string;
-  socials?: {
-    linkedin?: string;
-    facebook?: string;
-  };
 }
 
 // ---------- Branch ----------
@@ -243,33 +246,4 @@ export interface Testimonial {
   university: string;
   country?: string;
   course?: string;
-}
-
-// ---------- Organization (About) ----------
-
-export interface TimelineEntry {
-  year: string;
-  milestone: string;
-}
-
-export interface SisterOrganization {
-  name: string;
-  description: string;
-  /** Optional — the card shows just the name until a logo file is added. */
-  logo?: string;
-}
-
-export interface BoardMember {
-  name: string;
-  designation: string;
-  photo: string;
-}
-
-export interface Organization {
-  history: string[];
-  mission: string;
-  vision: string;
-  timeline: TimelineEntry[];
-  sisterOrganizations: SisterOrganization[];
-  boardOfDirectors: BoardMember[];
 }

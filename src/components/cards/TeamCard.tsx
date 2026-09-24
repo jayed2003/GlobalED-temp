@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { TeamMember } from "@/types";
+import { isOriginalUpload } from "@/lib/images";
 
 const DEFAULT_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
@@ -16,10 +17,11 @@ export default function TeamCard({
       <div className="relative aspect-square">
         <Image
           src={member.photo}
-          alt={`${member.name}, ${member.designation} at GlobalEd`}
+          alt={member.photoAlt || `${member.name}, ${member.designation} at GlobalEd`}
           fill
           className="object-cover"
           sizes={sizes}
+          unoptimized={isOriginalUpload(member.photo)}
         />
       </div>
       <div className="p-4 text-center">

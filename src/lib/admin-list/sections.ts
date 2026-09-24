@@ -275,6 +275,102 @@ export const branchesList: ListConfig = {
   orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
 };
 
+const shownFilter = (label: string) => ({
+  key: "shown",
+  label,
+  filter: {
+    kind: "select" as const,
+    options: [
+      { value: "yes", label: "Shown", where: { shown: true } },
+      { value: "no", label: "Hidden", where: { shown: false } },
+    ],
+  },
+});
+
+export const servicesList: ListConfig = {
+  section: "services",
+  columns: [
+    { key: "title", label: "Service", filter: { kind: "text", fields: ["title"] } },
+    { key: "slug", label: "Slug", filter: { kind: "text", fields: ["slug"] } },
+    {
+      key: "status",
+      label: "Status",
+      filter: {
+        kind: "select",
+        options: [
+          { value: "PUBLISHED", label: "Published", where: { status: "PUBLISHED" } },
+          { value: "DRAFT", label: "Draft", where: { status: "DRAFT" } },
+        ],
+      },
+    },
+    { key: "updated", label: "Updated" },
+  ],
+  searchFields: ["title", "slug", "shortDescription", "description"],
+  dateField: "updatedAt",
+  dateLabel: "Updated",
+  orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+};
+
+export const faqsList: ListConfig = {
+  section: "faqs",
+  columns: [
+    { key: "question", label: "Question", filter: { kind: "text", fields: ["question"] } },
+    {
+      key: "category",
+      label: "Category",
+      filter: {
+        kind: "select",
+        options: [
+          { value: "GENERAL", label: "General", where: { category: "GENERAL" } },
+          { value: "STUDY_ABROAD", label: "Study abroad", where: { category: "STUDY_ABROAD" } },
+          { value: "IELTS", label: "IELTS", where: { category: "IELTS" } },
+        ],
+      },
+    },
+    {
+      key: "services",
+      label: "Services page",
+      filter: {
+        kind: "select",
+        options: [
+          { value: "yes", label: "Also on Services", where: { showOnServices: true } },
+          { value: "no", label: "FAQs page only", where: { showOnServices: false } },
+        ],
+      },
+    },
+    shownFilter("On site"),
+  ],
+  searchFields: ["question", "answer"],
+  dateField: "updatedAt",
+  dateLabel: "Updated",
+  orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+};
+
+export const teamList: ListConfig = {
+  section: "team",
+  columns: [
+    { key: "photo", label: "Photo" },
+    { key: "name", label: "Name", filter: { kind: "text", fields: ["name"] } },
+    { key: "role", label: "Role", filter: { kind: "text", fields: ["role"] } },
+    {
+      key: "group",
+      label: "Group",
+      filter: {
+        kind: "select",
+        options: [
+          { value: "BOARD", label: "Board of Directors", where: { group: "BOARD" } },
+          { value: "TEAM", label: "Team", where: { group: "TEAM" } },
+        ],
+      },
+    },
+    shownFilter("On site"),
+  ],
+  searchFields: ["name", "role", "bio"],
+  dateField: "createdAt",
+  dateLabel: "Added",
+  orderBy: [{ group: "asc" }, { sortOrder: "asc" }, { createdAt: "asc" }],
+};
+
 export const listConfigs = {
   destinations: destinationsList,
   courses: coursesList,
@@ -285,6 +381,9 @@ export const listConfigs = {
   messages: messagesList,
   admins: adminsList,
   branches: branchesList,
+  services: servicesList,
+  faqs: faqsList,
+  team: teamList,
 } as const;
 
 export type ListSection = keyof typeof listConfigs;

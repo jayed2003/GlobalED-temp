@@ -20,6 +20,9 @@ import {
   Building2,
   Settings,
   LayoutTemplate,
+  Briefcase,
+  HelpCircle,
+  UsersRound,
 } from "lucide-react";
 import type { AdminPermission } from "@/generated/prisma/client";
 import SignOutButton from "@/components/admin/SignOutButton";
@@ -52,12 +55,15 @@ const navGroups: { label: string; items: NavItem[] }[] = [
       { href: "/admin/events", label: "Events", icon: CalendarDays, permission: "EVENTS" },
       { href: "/admin/destinations", label: "Destinations", icon: Globe2, permission: "DESTINATIONS" },
       { href: "/admin/courses", label: "Courses", icon: GraduationCap, permission: "COURSES" },
+      { href: "/admin/services", label: "Services", icon: Briefcase, permission: "SERVICES" },
       { href: "/admin/ielts", label: "IELTS Content", icon: BookOpenCheck, permission: "IELTS" },
     ],
   },
   {
     label: "Company",
     items: [
+      { href: "/admin/team", label: "Team", icon: UsersRound, permission: "TEAM" },
+      { href: "/admin/faqs", label: "FAQs", icon: HelpCircle, permission: "FAQS" },
       { href: "/admin/testimonials", label: "Reviews", icon: Star, permission: "TESTIMONIALS" },
       { href: "/admin/branches", label: "Branches", icon: Building2, permission: "SETTINGS" },
     ],
