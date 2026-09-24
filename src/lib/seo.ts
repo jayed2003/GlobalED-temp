@@ -93,3 +93,22 @@ export function recordMetadata(
     imageAlt: record.ogImage ? record.ogImageAlt : defaults.imageAlt,
   });
 }
+
+/**
+ * Page 2+ of a list split into pages: "… — Page 2 | GlobalEd" and its own
+ * canonical URL, so search engines index each page rather than folding them
+ * into page 1.
+ */
+export function pagedMetadata(meta: Metadata, page: number, path: string): Metadata {
+  if (page <= 1) return meta;
+  const url = `${path}?page=${page}`;
+  const withPage = (title: string) => title.replace(/( \| [^|]+)?$/, ` — Page ${page}$1`);
+  const title = meta.title && typeof meta.title === "object" && "absolute" in meta.title ? meta.title.absolute : String(meta.title ?? "");
+  return {
+    ...meta,
+    title: { absolute: withPage(title) },
+    alternates: { ...meta.alternates, canonical: url },
+    openGraph: { ...meta.openGraph, url, title: withPage(title) },
+    twitter: { ...meta.twitter, title: withPage(title) },
+  };
+}

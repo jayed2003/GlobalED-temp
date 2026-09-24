@@ -632,3 +632,14 @@ with defaults; already applied to production).
   code (navigation and the legal pages).
 - README: the admin panel as a CMS, permissions, drafts and preview, and an
   [Admin guide](#admin-guide-for-editors) for non-technical editors.
+
+### After the CMS release (Sept 2026)
+
+- **Activity log** kept for 6 months (was 12).
+- **Destinations page in pages of 16 countries** (`/destinations?page=2`, …),
+  with Previous / Next and page numbers that jump to the list. Each page has
+  its own title ("… — Page 2") and canonical URL; unknown page numbers are
+  404s. The controls only appear once there are more than 16 published
+  countries (today there are 13). The `Pagination` component
+  (`src/components/ui/Pagination.tsx`) and `src/lib/pagination.ts` can be
+  reused for other public lists.
