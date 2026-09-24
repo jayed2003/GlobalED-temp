@@ -4,6 +4,8 @@ import { requirePermission } from "@/lib/authz";
 import CourseForm from "@/components/admin/CourseForm";
 import { courseCategoryFromEnum } from "@/lib/content/courses";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
+import PreviewLink from "@/components/admin/ui/PreviewLink";
+import { SITE_URL } from "@/lib/site-url";
 
 export default async function EditCoursePage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requirePermission("COURSES");
@@ -18,12 +20,15 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
       <AdminPageHeader
         title={course.title}
         breadcrumbs={[{ label: "Courses", href: "/admin/courses" }]}
-        viewHref={`/courses/${course.slug}`}
+        status={course.publishStatus === "DRAFT" ? "draft" : "published"}
+        viewHref={course.publishStatus === "DRAFT" ? undefined : `/courses/${course.slug}`}
+        actions={course.publishStatus === "DRAFT" ? <PreviewLink path={`/courses/${course.slug}`} /> : undefined}
       />
-      <div className="max-w-2xl">
+      <div className="max-w-3xl">
         <CourseForm
           mode="edit"
           courseId={course.id}
+          siteUrl={SITE_URL}
           defaultValues={{
             slug: course.slug,
             title: course.title,
@@ -36,6 +41,11 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
             schedule: course.schedule,
             price: course.price,
             badge: course.badge ?? "",
+            publishStatus: course.publishStatus,
+            seoTitle: course.seoTitle,
+            metaDescription: course.metaDescription,
+            ogImage: course.ogImage,
+            ogImageAlt: course.ogImageAlt,
           }}
         />
       </div>

@@ -19,7 +19,7 @@ import FaqAccordion from "@/components/ui/FaqAccordion";
 import JsonLd from "@/components/ui/JsonLd";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { getAllDestinations, getDestinationSlugs, getDestinationBySlug } from "@/lib/content/destinations";
-import { pageMetadata } from "@/lib/seo";
+import { recordMetadata } from "@/lib/seo";
 import { isOriginalUpload } from "@/lib/images";
 
 export async function generateStaticParams() {
@@ -35,7 +35,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const destination = await getDestinationBySlug(slug);
   if (!destination) return {};
-  return pageMetadata({
+  return recordMetadata(destination, {
     path: `/destinations/${destination.slug}`,
     title: `Study in ${destination.name}`,
     description: `${destination.tagline} Admissions, costs, scholarships, and visa guidance for Bangladeshi students with GlobalEd.`,

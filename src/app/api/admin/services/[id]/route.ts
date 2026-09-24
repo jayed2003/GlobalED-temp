@@ -4,7 +4,8 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { serviceSchema } from "@/lib/validation/service";
-import { logActivity } from "@/lib/activity";
+import { recordSeoFields } from "@/lib/api/publish";
+import { logActivity, savedAction } from "@/lib/activity";
 
 type Params = { id: string };
 
@@ -22,12 +23,10 @@ export const PATCH = adminRoute<Params>({ permission: "SERVICES" }, async ({ req
     { excludeId: id, message: `There is already a service called "${data.title}"`, field: "title" },
   );
 
-  const updated = await prisma.service.update({ where: { id }, data });
+  const updated = await prisma.service.update({ where: { id }, data: { ...data, ...recordSeoFields(data) } });
 
   revalidateTag("services", { expire: 0 });
-  const action =
-    current.status !== data.status ? (data.status === "PUBLISHED" ? "PUBLISHED" : "UNPUBLISHED") : "UPDATED";
-  await logActivity(session, { action, entityType: "service", entityId: id, label: updated.title });
+  await logActivity(session, { action: savedAction(current.status, data.status), entityType: "service", entityId: id, label: updated.title });
   return NextResponse.json({ ok: true });
 });
 

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requirePermission } from "@/lib/authz";
 import DestinationForm from "@/components/admin/DestinationForm";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
+import { SITE_URL } from "@/lib/site-url";
 
 export default async function NewDestinationPage() {
   const session = await requirePermission("DESTINATIONS");
@@ -14,7 +15,7 @@ export default async function NewDestinationPage() {
         breadcrumbs={[{ label: "Destinations", href: "/admin/destinations" }]}
       />
       <div className="max-w-3xl">
-        <DestinationForm mode="create" />
+        <DestinationForm mode="create" siteUrl={SITE_URL} />
       </div>
     </div>
   );

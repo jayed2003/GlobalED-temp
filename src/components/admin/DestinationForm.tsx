@@ -4,15 +4,19 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
 import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import PublishStatusCard from "@/components/admin/ui/PublishStatusCard";
+import SectionCard from "@/components/admin/ui/SectionCard";
+import { previewHref } from "@/components/admin/ui/PreviewLink";
 import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
 import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField, Input, Textarea } from "@/components/forms/primitives";
 import RepeatableFieldList from "@/components/admin/RepeatableFieldList";
 import ObjectFieldArray from "@/components/admin/ObjectFieldArray";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import SeoFields from "@/components/admin/SeoFields";
 import { destinationSchema, type DestinationFormValues } from "@/lib/validation/destination";
 
 const emptyValues: DestinationFormValues = {
@@ -31,16 +35,24 @@ const emptyValues: DestinationFormValues = {
   visaInfo: [],
   popularUniversities: [],
   faqs: [],
+  publishStatus: "DRAFT",
+  seoTitle: "",
+  metaDescription: "",
+  ogImage: "",
+  ogImageAlt: "",
 };
 
 export default function DestinationForm({
   mode,
   destinationId,
   defaultValues,
+  siteUrl,
 }: {
   mode: "create" | "edit";
   destinationId?: string;
   defaultValues?: DestinationFormValues;
+  /** Public site URL for the search preview. */
+  siteUrl: string;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -58,6 +70,10 @@ export default function DestinationForm({
     resolver: zodResolver(destinationSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
+  const [name, slug, tagline, heroImage, seoTitle, metaDescription, publishStatus] = useWatch({
+    control,
+    name: ["name", "slug", "tagline", "heroImage", "seoTitle", "metaDescription", "publishStatus"],
+  });
 
   useUnsavedChangesGuard(isDirty && !saved);
 
@@ -69,7 +85,13 @@ export default function DestinationForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
-    toast.success(mode === "create" ? "Destination created" : "Changes saved", { href: `/destinations/${data.slug}`, linkLabel: "View on site" });
+    const live = data.publishStatus === "PUBLISHED";
+    toast.success(
+      live ? (mode === "create" ? "Destination published" : "Changes saved") : "Saved as a draft — not on the site yet",
+      live
+        ? { href: `/destinations/${data.slug}`, linkLabel: "View on site" }
+        : { href: previewHref(`/destinations/${data.slug}`), linkLabel: "Preview" },
+    );
     router.push("/admin/destinations");
     router.refresh();
   };
@@ -231,10 +253,54 @@ export default function DestinationForm({
         )}
       />
 
+      <PublishStatusCard
+        registration={register("publishStatus")}
+        value={publishStatus}
+        publishedHint="On the destinations page, the menu and the booking form"
+      />
+
+      <SectionCard title="Search & sharing" description="How this destination's page looks in Google and when it's shared.">
+        <Controller
+          control={control}
+          name="ogImage"
+          render={({ field }) => (
+            <SeoFields
+              idPrefix="d"
+              siteUrl={siteUrl}
+              path={`/destinations/${slug || "country"}`}
+              title={{
+                registration: register("seoTitle"),
+                value: seoTitle,
+                fallback: name ? `Study in ${name} | GlobalEd` : "",
+                fallbackNote: "using the country name",
+                error: errors.seoTitle?.message,
+              }}
+              description={{
+                registration: register("metaDescription"),
+                value: metaDescription,
+                fallback: tagline
+                  ? `${tagline} Admissions, costs, scholarships, and visa guidance for Bangladeshi students with GlobalEd.`
+                  : "",
+                fallbackNote: "using the tagline",
+                error: errors.metaDescription?.message,
+              }}
+              ogImage={{
+                value: field.value,
+                onChange: field.onChange,
+                error: errors.ogImage?.message,
+                fallbackImage: heroImage,
+                fallbackName: "the hero image",
+                alt: { registration: register("ogImageAlt"), error: errors.ogImageAlt?.message },
+              }}
+            />
+          )}
+        />
+      </SectionCard>
+
       <EditorActionBar
         dirty={isDirty && !saved}
         busy={isSubmitting || saved}
-        submitLabel={mode === "create" ? "Create Destination" : "Save Changes"}
+        submitLabel={mode === "create" ? (publishStatus === "PUBLISHED" ? "Publish Destination" : "Save Draft") : "Save Changes"}
         error={status?.type === "error" ? status.message : null}
       />
     </form>

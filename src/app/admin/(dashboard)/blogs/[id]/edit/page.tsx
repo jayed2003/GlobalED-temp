@@ -6,6 +6,7 @@ import { SITE_URL } from "@/lib/site-url";
 import { blogCategoryFromEnum } from "@/lib/content/blog";
 import { dhakaParts, formatDhakaDateTime, isInFuture } from "@/lib/validation/dates";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
+import PreviewLink from "@/components/admin/ui/PreviewLink";
 
 export default async function EditBlogPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requirePermission("BLOGS");
@@ -15,7 +16,9 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
   const post = await prisma.blogPost.findUnique({ where: { id } });
   if (!post) notFound();
 
-  const scheduled = isInFuture(post.publishedAt);
+  const draft = post.publishStatus === "DRAFT";
+  const scheduled = !draft && isInFuture(post.publishedAt);
+  const live = !draft && !scheduled;
   const publishParts = dhakaParts(post.publishedAt);
 
   return (
@@ -23,8 +26,9 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
       <AdminPageHeader
         title={post.title}
         breadcrumbs={[{ label: "Blogs", href: "/admin/blogs" }]}
-        status={scheduled ? "scheduled" : "published"}
-        viewHref={scheduled ? undefined : `/blogs/${post.slug}`}
+        status={draft ? "draft" : scheduled ? "scheduled" : "published"}
+        viewHref={live ? `/blogs/${post.slug}` : undefined}
+        actions={live ? undefined : <PreviewLink path={`/blogs/${post.slug}`} />}
       />
       <div className="max-w-5xl">
         <BlogForm
@@ -33,6 +37,7 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
           siteUrl={SITE_URL}
           currentPublish={{
             scheduled,
+            draft,
             label: `${scheduled ? "Scheduled for" : "Published"} ${formatDhakaDateTime(post.publishedAt)}`,
           }}
           defaultValues={{
@@ -44,7 +49,8 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
             excerpt: post.excerpt,
             content: post.content,
             author: post.author,
-            publishMode: "keep",
+            // A draft stays a draft unless another choice is made.
+            publishMode: draft ? "draft" : "keep",
             publishDate: publishParts.date,
             publishTime: publishParts.time,
             featured: post.featured,

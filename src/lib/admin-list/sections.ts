@@ -21,12 +21,26 @@ const readFilter = {
 
 const created = { key: "created", label: "Created" };
 
+/** Draft / Published column for content that can be drafted (`field` is its status column). */
+const publishColumn = (field: string, label = "Status") => ({
+  key: field,
+  label,
+  filter: {
+    kind: "select" as const,
+    options: [
+      { value: "PUBLISHED", label: "Published", where: { [field]: "PUBLISHED" } },
+      { value: "DRAFT", label: "Draft", where: { [field]: "DRAFT" } },
+    ],
+  },
+});
+
 export const destinationsList: ListConfig = {
   section: "destinations",
   columns: [
     { key: "name", label: "Name", filter: { kind: "text", fields: ["name"] } },
     { key: "slug", label: "Slug", filter: { kind: "text", fields: ["slug"] } },
     { key: "tagline", label: "Tagline", filter: { kind: "text", fields: ["tagline"] } },
+    publishColumn("publishStatus"),
     created,
   ],
   searchFields: ["name", "slug", "tagline", "overview"],
@@ -53,6 +67,7 @@ export const coursesList: ListConfig = {
       },
     },
     { key: "price", label: "Fee", filter: { kind: "text", fields: ["price"] } },
+    publishColumn("publishStatus"),
     created,
   ],
   searchFields: ["title", "slug", "overview", "price", "duration", "schedule"],
@@ -88,8 +103,9 @@ export const blogsList: ListConfig = {
       filter: {
         kind: "select",
         options: [
-          { value: "live", label: "Published", where: { publishedAt: { lte: "$now" } } },
-          { value: "scheduled", label: "Scheduled", where: { publishedAt: { gt: "$now" } } },
+          { value: "live", label: "Published", where: { publishStatus: "PUBLISHED", publishedAt: { lte: "$now" } } },
+          { value: "scheduled", label: "Scheduled", where: { publishStatus: "PUBLISHED", publishedAt: { gt: "$now" } } },
+          { value: "draft", label: "Draft", where: { publishStatus: "DRAFT" } },
         ],
       },
     },
@@ -128,6 +144,8 @@ export const eventsList: ListConfig = {
     },
     { key: "date", label: "Date" },
     { key: "venue", label: "Venue", filter: { kind: "text", fields: ["venue"] } },
+    // "Status" here is already Upcoming / Previous.
+    publishColumn("publishStatus", "Publishing"),
   ],
   searchFields: ["title", "slug", "venue", "description"],
   dateField: "date",

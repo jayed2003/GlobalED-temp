@@ -78,6 +78,19 @@ export async function recordActivity(admin: { id: string | null; name: string },
   }
 }
 
+type PublishState = "DRAFT" | "PUBLISHED";
+
+/** Log entry for a new item that can start as a draft. */
+export function createdAction(state: PublishState): Pick<Entry, "action" | "details"> {
+  return state === "PUBLISHED" ? { action: "PUBLISHED" } : { action: "CREATED", details: "Saved as draft" };
+}
+
+/** Log action for saving an existing item: published / unpublished when that changed. */
+export function savedAction(before: PublishState, after: PublishState): ActivityAction {
+  if (before === after) return "UPDATED";
+  return after === "PUBLISHED" ? "PUBLISHED" : "UNPUBLISHED";
+}
+
 /** Record something the signed-in admin just did. */
 export function logActivity(session: Session, entry: Entry): Promise<void> {
   return recordActivity(

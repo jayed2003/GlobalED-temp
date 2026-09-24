@@ -4,7 +4,8 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { destinationSchema } from "@/lib/validation/destination";
-import { logActivity } from "@/lib/activity";
+import { recordSeoFields } from "@/lib/api/publish";
+import { createdAction, logActivity } from "@/lib/activity";
 
 export const POST = adminRoute({ permission: "DESTINATIONS" }, async ({ request, session }) => {
   const data = await readJson(request, destinationSchema);
@@ -37,12 +38,14 @@ export const POST = adminRoute({ permission: "DESTINATIONS" }, async ({ request,
       scholarships: data.scholarships,
       visaInfo: data.visaInfo,
       sortOrder: count,
+      publishStatus: data.publishStatus,
+      ...recordSeoFields(data),
       universities: { create: data.popularUniversities.map((u, i) => ({ ...u, sortOrder: i })) },
       faqs: { create: data.faqs.map((f, i) => ({ ...f, sortOrder: i })) },
     },
   });
 
   revalidateTag("destinations", { expire: 0 });
-  await logActivity(session, { action: "CREATED", entityType: "destination", entityId: created.id, label: created.name });
+  await logActivity(session, { ...createdAction(data.publishStatus), entityType: "destination", entityId: created.id, label: created.name });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

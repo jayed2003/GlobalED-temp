@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import AdminTable from "@/components/admin/AdminTable";
+import StatusPill from "@/components/admin/ui/StatusPill";
 import type { Prisma } from "@/generated/prisma/client";
 import { buildWhere, paging, parseListQuery } from "@/lib/admin-list/core";
 import { eventsList } from "@/lib/admin-list/sections";
@@ -27,6 +28,7 @@ export default async function AdminEventsPage({ searchParams }: { searchParams: 
       statusLabels[e.status],
       formatDayOnly(e.date),
       <span key="venue" className="line-clamp-1 block max-w-xs text-neutral-500">{e.venue}</span>,
+      <StatusPill key="state" state={e.publishStatus === "DRAFT" ? "draft" : "published"} />,
     ],
     editHref: `/admin/events/${e.id}/edit`,
     deleteEndpoint: `/api/admin/events/${e.id}`,

@@ -53,6 +53,8 @@ export default function SeoFields({
     error?: string;
     /** The image shares use when no OG image is set (cover, hero, …). */
     fallbackImage: string;
+    /** What that image is called in the hint, e.g. "the hero image" (default: the cover image). */
+    fallbackName?: string;
     alt: { registration: UseFormRegisterReturn; error?: string };
   };
   /** Extra fields shown first (e.g. the blog's focus keyword). */
@@ -107,6 +109,7 @@ export default function SeoFields({
         onChange={ogImage.onChange}
         error={ogImage.error}
         coverImage={ogImage.fallbackImage}
+        fallbackName={ogImage.fallbackName}
         alt={ogImage.alt}
         altId={`${idPrefix}-og-alt`}
       />

@@ -1,7 +1,8 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
+import { isPreview } from "@/lib/preview";
 import type { BlogPost, BlogCategory } from "@/types";
-import type { BlogPost as BlogPostRow, BlogCategory as BlogCategoryEnum } from "@/generated/prisma/client";
+import type { BlogPost as BlogPostRow, BlogCategory as BlogCategoryEnum, Prisma } from "@/generated/prisma/client";
 import { dhakaParts } from "@/lib/validation/dates";
 
 const categoryToEnum: Record<BlogCategory, BlogCategoryEnum> = {
@@ -41,47 +42,53 @@ function mapPost(p: BlogPostRow): BlogPost {
 /**
  * Scheduled posts are stored like any other but stay hidden until their
  * publish time. The check runs on every request (after the cache), so a post
- * appears the minute it's due — no cache refresh needed.
+ * appears the minute it's due — no cache refresh needed. Drafts are left out
+ * whatever their date. An admin in preview sees drafts and scheduled posts.
  */
 function isLive(post: BlogPost): boolean {
   return Date.parse(post.publishedAtIso ?? post.publishedAt) <= Date.now();
 }
 
-const getAllPostsIncludingScheduled = unstable_cache(
-  async (): Promise<BlogPost[]> => {
-    const rows = await prisma.blogPost.findMany({ orderBy: { publishedAt: "desc" } });
-    return rows.map(mapPost);
-  },
-  ["blog-posts-all"],
-  { tags: ["blog-posts"] },
-);
-
-/** Published posts, newest first. */
-export async function getAllPosts(): Promise<BlogPost[]> {
-  return (await getAllPostsIncludingScheduled()).filter(isLive);
+async function loadPosts(where: Prisma.BlogPostWhereInput): Promise<BlogPost[]> {
+  const rows = await prisma.blogPost.findMany({ where, orderBy: { publishedAt: "desc" } });
+  return rows.map(mapPost);
 }
 
+const getPublishedPostsIncludingScheduled = unstable_cache(
+  () => loadPosts({ publishStatus: "PUBLISHED" }),
+  ["blog-posts-published"],
+  { tags: ["blog-posts"] },
+);
+
+/** Live posts, newest first (drafts and scheduled posts too while previewing). */
+export async function getAllPosts(): Promise<BlogPost[]> {
+  if (await isPreview()) return loadPosts({});
+  return (await getPublishedPostsIncludingScheduled()).filter(isLive);
+}
+
+/** Published slugs, for pre-rendering the post pages. */
 export const getPostSlugs = unstable_cache(
   async (): Promise<string[]> => {
-    const rows = await prisma.blogPost.findMany({ select: { slug: true } });
+    const rows = await prisma.blogPost.findMany({ where: { publishStatus: "PUBLISHED" }, select: { slug: true } });
     return rows.map((r) => r.slug);
   },
-  ["blog-posts-slugs"],
+  ["blog-posts-published-slugs"],
   { tags: ["blog-posts"] },
 );
 
-const getPostBySlugIncludingScheduled = unstable_cache(
+const getPublishedPostBySlug = unstable_cache(
   async (slug: string): Promise<BlogPost | undefined> => {
-    const row = await prisma.blogPost.findUnique({ where: { slug } });
+    const row = await prisma.blogPost.findFirst({ where: { slug, publishStatus: "PUBLISHED" } });
     return row ? mapPost(row) : undefined;
   },
-  ["blog-post-by-slug"],
+  ["blog-post-published-by-slug"],
   { tags: ["blog-posts"] },
 );
 
-/** A published post by slug; scheduled (not yet live) posts count as not found. */
+/** A live post by slug; drafts and scheduled posts count as not found (except in preview). */
 export async function getPostBySlug(slug: string): Promise<BlogPost | undefined> {
-  const post = await getPostBySlugIncludingScheduled(slug);
+  if (await isPreview()) return (await getAllPosts()).find((p) => p.slug === slug);
+  const post = await getPublishedPostBySlug(slug);
   return post && isLive(post) ? post : undefined;
 }
 

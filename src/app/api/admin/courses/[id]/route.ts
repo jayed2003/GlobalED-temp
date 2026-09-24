@@ -5,12 +5,15 @@ import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { courseSchema } from "@/lib/validation/course";
 import { courseCategoryToEnum } from "@/lib/content/courses";
-import { logActivity } from "@/lib/activity";
+import { recordSeoFields } from "@/lib/api/publish";
+import { logActivity, savedAction } from "@/lib/activity";
 
 type Params = { id: string };
 
 export const PATCH = adminRoute<Params>({ permission: "COURSES" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, courseSchema);
+  const current = await prisma.course.findUnique({ where: { id }, select: { publishStatus: true } });
+  if (!current) throw new ApiError(404, "This course no longer exists. It may have been deleted — refresh the page.");
 
   const existing = await prisma.course.findUnique({ where: { slug: data.slug } });
   if (existing && existing.id !== id) throw new ApiError(409, "A course with this slug already exists", "slug");
@@ -36,12 +39,14 @@ export const PATCH = adminRoute<Params>({ permission: "COURSES" }, async ({ requ
       schedule: data.schedule,
       price: data.price,
       badge: data.badge || null,
+      publishStatus: data.publishStatus,
+      ...recordSeoFields(data),
     },
   });
 
   revalidateTag("courses", { expire: 0 });
   revalidateTag("ielts-content", { expire: 0 });
-  await logActivity(session, { action: "UPDATED", entityType: "course", entityId: id, label: updated.title });
+  await logActivity(session, { action: savedAction(current.publishStatus, data.publishStatus), entityType: "course", entityId: id, label: updated.title });
   return NextResponse.json({ ok: true });
 });
 

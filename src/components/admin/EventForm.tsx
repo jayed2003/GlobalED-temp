@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminRequest } from "@/lib/admin-fetch";
 import EditorActionBar from "@/components/admin/ui/EditorActionBar";
+import PublishStatusCard from "@/components/admin/ui/PublishStatusCard";
+import SectionCard from "@/components/admin/ui/SectionCard";
+import { previewHref } from "@/components/admin/ui/PreviewLink";
 import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
 import { toast } from "@/components/admin/ui/toast";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
@@ -12,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField, Input, Select, Textarea } from "@/components/forms/primitives";
 import ImageUploadField from "@/components/admin/ImageUploadField";
 import GalleryUploadField from "@/components/admin/GalleryUploadField";
+import SeoFields from "@/components/admin/SeoFields";
 import { addYears, EARLIEST_CONTENT_DATE, todayInDhaka } from "@/lib/validation/dates";
 import { eventSchema, type EventFormValues } from "@/lib/validation/event";
 
@@ -27,16 +31,24 @@ const emptyValues: EventFormValues = {
   description: "",
   gallery: [],
   galleryAlts: [],
+  publishStatus: "DRAFT",
+  seoTitle: "",
+  metaDescription: "",
+  ogImage: "",
+  ogImageAlt: "",
 };
 
 export default function EventForm({
   mode,
   eventId,
   defaultValues,
+  siteUrl,
 }: {
   mode: "create" | "edit";
   eventId?: string;
   defaultValues?: EventFormValues;
+  /** Public site URL for the search preview. */
+  siteUrl: string;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -54,7 +66,10 @@ export default function EventForm({
     resolver: zodResolver(eventSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
-  const eventStatus = useWatch({ control, name: "status" });
+  const [eventStatus, title, slug, description, bannerImage, seoTitle, metaDescription, publishStatus] = useWatch({
+    control,
+    name: ["status", "title", "slug", "description", "bannerImage", "seoTitle", "metaDescription", "publishStatus"],
+  });
   const today = todayInDhaka();
 
   useUnsavedChangesGuard(isDirty && !saved);
@@ -67,7 +82,13 @@ export default function EventForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
-    toast.success(mode === "create" ? "Event created" : "Changes saved", { href: `/events/${data.slug}`, linkLabel: "View on site" });
+    const live = data.publishStatus === "PUBLISHED";
+    toast.success(
+      live ? (mode === "create" ? "Event published" : "Changes saved") : "Saved as a draft — not on the site yet",
+      live
+        ? { href: `/events/${data.slug}`, linkLabel: "View on site" }
+        : { href: previewHref(`/events/${data.slug}`), linkLabel: "Preview" },
+    );
     router.push("/admin/events");
     router.refresh();
   };
@@ -154,10 +175,52 @@ export default function EventForm({
         )}
       />
 
+      <PublishStatusCard
+        registration={register("publishStatus")}
+        value={publishStatus}
+        publishedHint="On the events page and the home page"
+      />
+
+      <SectionCard title="Search & sharing" description="How this event's page looks in Google and when it's shared.">
+        <Controller
+          control={control}
+          name="ogImage"
+          render={({ field }) => (
+            <SeoFields
+              idPrefix="e"
+              siteUrl={siteUrl}
+              path={`/events/${slug || "event"}`}
+              title={{
+                registration: register("seoTitle"),
+                value: seoTitle,
+                fallback: title ? `${title} | GlobalEd` : "",
+                fallbackNote: "using the event title",
+                error: errors.seoTitle?.message,
+              }}
+              description={{
+                registration: register("metaDescription"),
+                value: metaDescription,
+                fallback: description,
+                fallbackNote: "using the description",
+                error: errors.metaDescription?.message,
+              }}
+              ogImage={{
+                value: field.value,
+                onChange: field.onChange,
+                error: errors.ogImage?.message,
+                fallbackImage: bannerImage,
+                fallbackName: "the banner image",
+                alt: { registration: register("ogImageAlt"), error: errors.ogImageAlt?.message },
+              }}
+            />
+          )}
+        />
+      </SectionCard>
+
       <EditorActionBar
         dirty={isDirty && !saved}
         busy={isSubmitting || saved}
-        submitLabel={mode === "create" ? "Create Event" : "Save Changes"}
+        submitLabel={mode === "create" ? (publishStatus === "PUBLISHED" ? "Publish Event" : "Save Draft") : "Save Changes"}
         error={status?.type === "error" ? status.message : null}
       />
     </form>

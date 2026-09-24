@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import AdminTable from "@/components/admin/AdminTable";
+import StatusPill from "@/components/admin/ui/StatusPill";
 import type { Prisma } from "@/generated/prisma/client";
 import { buildWhere, paging, parseListQuery } from "@/lib/admin-list/core";
 import { blogsList } from "@/lib/admin-list/sections";
@@ -27,12 +28,14 @@ export default async function AdminBlogsPage({ searchParams }: { searchParams: S
       p.title,
       blogCategoryLabels[blogCategoryFromEnum[p.category]],
       p.author,
-      <span key="published" className="inline-flex flex-wrap items-center gap-2">
-        {formatDhakaDateTime(p.publishedAt)}
-        {isInFuture(p.publishedAt) && (
-          <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">Scheduled</span>
-        )}
-      </span>,
+      p.publishStatus === "DRAFT" ? (
+        <StatusPill key="published" state="draft" />
+      ) : (
+        <span key="published" className="inline-flex flex-wrap items-center gap-2">
+          {formatDhakaDateTime(p.publishedAt)}
+          {isInFuture(p.publishedAt) && <StatusPill state="scheduled" />}
+        </span>
+      ),
     ],
     editHref: `/admin/blogs/${p.id}/edit`,
     deleteEndpoint: `/api/admin/blogs/${p.id}`,

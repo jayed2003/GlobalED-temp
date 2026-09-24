@@ -8,7 +8,7 @@ import { blogSchema } from "@/lib/validation/blog";
 import { sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { htmlToText } from "@/lib/rich-text";
 import { blogCategoryToEnum } from "@/lib/content/blog";
-import { logActivity } from "@/lib/activity";
+import { createdAction, logActivity } from "@/lib/activity";
 
 export const POST = adminRoute({ permission: "BLOGS" }, async ({ request, session }) => {
   const data = await readJson(request, blogSchema);
@@ -37,12 +37,17 @@ export const POST = adminRoute({ permission: "BLOGS" }, async ({ request, sessio
       content,
       author: data.author,
       publishedAt: publishTimestamp(data),
+      publishStatus: data.publishMode === "draft" ? "DRAFT" : "PUBLISHED",
       featured: data.featured,
       ...seoFields(data),
     },
   });
 
   revalidateTag("blog-posts", { expire: 0 });
-  await logActivity(session, { action: "CREATED", entityType: "blog", entityId: created.id, label: created.title });
+  const logged =
+    data.publishMode === "schedule"
+      ? { action: "CREATED" as const, details: "Scheduled" }
+      : createdAction(data.publishMode === "draft" ? "DRAFT" : "PUBLISHED");
+  await logActivity(session, { ...logged, entityType: "blog", entityId: created.id, label: created.title });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

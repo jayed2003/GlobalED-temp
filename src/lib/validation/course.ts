@@ -2,8 +2,10 @@ import { z } from "zod";
 import { imageAlt } from "./image-alt";
 import { imageUrl } from "./image-url";
 import { noDuplicates } from "./normalize";
+import { checkSeoImageAlt, seoRecordFields } from "./seo";
 
-export const courseSchema = z.object({
+export const courseSchema = z
+  .object({
   slug: z
     .string()
     .min(1, "Slug is required")
@@ -21,6 +23,9 @@ export const courseSchema = z.object({
   schedule: z.string().min(1, "Schedule is required"),
   price: z.string().min(1, "Price is required"),
   badge: z.string().optional(),
-});
+  publishStatus: z.enum(["DRAFT", "PUBLISHED"]),
+  ...seoRecordFields,
+})
+  .superRefine(checkSeoImageAlt);
 
 export type CourseFormValues = z.infer<typeof courseSchema>;

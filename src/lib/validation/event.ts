@@ -2,6 +2,7 @@ import { z } from "zod";
 import { noDuplicates } from "./normalize";
 import { imageAlt } from "./image-alt";
 import { imageUrl } from "./image-url";
+import { checkSeoImageAlt, seoRecordFields } from "./seo";
 import { addYears, dateField, EARLIEST_CONTENT_DATE, isRealDate, todayInDhaka } from "./dates";
 
 export const eventSchema = z.object({
@@ -25,9 +26,12 @@ export const eventSchema = z.object({
   gallery: z.array(imageUrl("Gallery photo is missing")).superRefine(noDuplicates((s: string) => s, "photo")),
   // One alt text per gallery photo, same order as `gallery`.
   galleryAlts: z.array(imageAlt(false)),
+  publishStatus: z.enum(["DRAFT", "PUBLISHED"]),
+  ...seoRecordFields,
 })
   // The status must agree with the date, and every gallery photo needs alt text.
   .superRefine((event, ctx) => {
+    checkSeoImageAlt(event, ctx);
     event.gallery.forEach((_, i) => {
       if (!event.galleryAlts[i]?.trim()) {
         ctx.addIssue({ code: "custom", path: ["galleryAlts"], message: `Describe gallery photo ${i + 1} (alt text)` });

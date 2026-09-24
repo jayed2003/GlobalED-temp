@@ -75,3 +75,21 @@ export function pageMetadata({ title, description, path, image, imageAlt, type =
     },
   };
 }
+
+/**
+ * A content record's page (destination, course, event, service, post): its
+ * own Search & sharing fields, when filled in, replace the defaults built
+ * from its title, text and image.
+ */
+export function recordMetadata(
+  record: { seoTitle?: string; metaDescription?: string; ogImage?: string; ogImageAlt?: string },
+  defaults: PageSeo,
+): Metadata {
+  return pageMetadata({
+    ...defaults,
+    title: record.seoTitle ? { absolute: record.seoTitle } : defaults.title,
+    description: record.metaDescription || defaults.description,
+    image: record.ogImage || defaults.image,
+    imageAlt: record.ogImage ? record.ogImageAlt : defaults.imageAlt,
+  });
+}

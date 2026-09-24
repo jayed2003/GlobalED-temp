@@ -11,7 +11,7 @@ import JsonLd from "@/components/ui/JsonLd";
 import { ButtonLink } from "@/components/ui/Button";
 import { getCourseSlugs, getCourseBySlug, getCoursesByCategory } from "@/lib/content/courses";
 import { courseCategoryLabels } from "@/lib/labels";
-import { pageMetadata } from "@/lib/seo";
+import { recordMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
 import { isOriginalUpload } from "@/lib/images";
 
@@ -28,7 +28,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const course = await getCourseBySlug(slug);
   if (!course) return {};
-  return pageMetadata({
+  return recordMetadata(course, {
     path: `/courses/${course.slug}`,
     title: course.title,
     description: course.overview,

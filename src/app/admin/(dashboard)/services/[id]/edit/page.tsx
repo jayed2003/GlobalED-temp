@@ -1,10 +1,9 @@
 import { notFound, redirect } from "next/navigation";
-import { Eye } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { requirePermission } from "@/lib/authz";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
+import PreviewLink from "@/components/admin/ui/PreviewLink";
 import ServiceForm from "@/components/admin/ServiceForm";
-import { adminButton } from "@/components/admin/ui/buttons";
 import type { ServiceFormValues } from "@/lib/validation/service";
 import { SITE_URL } from "@/lib/site-url";
 
@@ -24,18 +23,7 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
         breadcrumbs={[{ label: "Services", href: "/admin/services" }]}
         status={draft ? "draft" : "published"}
         viewHref={draft ? undefined : `/services/${service.slug}`}
-        actions={
-          draft ? (
-            <a
-              href={`/api/admin/preview?path=${encodeURIComponent(`/services/${service.slug}`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={adminButton("secondary")}
-            >
-              <Eye size={16} aria-hidden /> Preview
-            </a>
-          ) : undefined
-        }
+        actions={draft ? <PreviewLink path={`/services/${service.slug}`} /> : undefined}
       />
       <div className="max-w-4xl">
         <ServiceForm

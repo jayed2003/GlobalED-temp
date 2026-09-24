@@ -5,7 +5,8 @@ import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { eventSchema } from "@/lib/validation/event";
 import { eventStatusToEnum } from "@/lib/content/events";
-import { logActivity } from "@/lib/activity";
+import { recordSeoFields } from "@/lib/api/publish";
+import { createdAction, logActivity } from "@/lib/activity";
 
 export const POST = adminRoute({ permission: "EVENTS" }, async ({ request, session }) => {
   const data = await readJson(request, eventSchema);
@@ -34,10 +35,12 @@ export const POST = adminRoute({ permission: "EVENTS" }, async ({ request, sessi
       gallery: data.gallery,
       // Kept exactly parallel to `gallery`.
       galleryAlts: data.gallery.map((_, i) => data.galleryAlts[i] ?? ""),
+      publishStatus: data.publishStatus,
+      ...recordSeoFields(data),
     },
   });
 
   revalidateTag("events", { expire: 0 });
-  await logActivity(session, { action: "CREATED", entityType: "event", entityId: created.id, label: created.title });
+  await logActivity(session, { ...createdAction(data.publishStatus), entityType: "event", entityId: created.id, label: created.title });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

@@ -13,10 +13,11 @@ import SeoFields from "@/components/admin/SeoFields";
 import EditorActionBar from "@/components/admin/ui/EditorActionBar";
 import IconPicker from "@/components/admin/ui/IconPicker";
 import SectionCard from "@/components/admin/ui/SectionCard";
+import PublishStatusCard from "@/components/admin/ui/PublishStatusCard";
+import { previewHref } from "@/components/admin/ui/PreviewLink";
 import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
 import { toast } from "@/components/admin/ui/toast";
 import { serviceSchema, type ServiceFormValues } from "@/lib/validation/service";
-import { cn } from "@/lib/utils";
 
 const emptyValues: ServiceFormValues = {
   slug: "",
@@ -79,7 +80,7 @@ export default function ServiceForm({
       live ? (mode === "create" ? "Service published" : "Changes saved") : "Saved as a draft — not on the site yet",
       live
         ? { href: `/services/${data.slug}`, linkLabel: "View on site" }
-        : { href: `/api/admin/preview?path=${encodeURIComponent(`/services/${data.slug}`)}`, linkLabel: "Preview" },
+        : { href: previewHref(`/services/${data.slug}`), linkLabel: "Preview" },
     );
     router.push("/admin/services");
     router.refresh();
@@ -169,30 +170,7 @@ export default function ServiceForm({
         />
       </SectionCard>
 
-      <SectionCard title="Publishing">
-        <div role="radiogroup" aria-label="Publishing" className="grid gap-3 sm:grid-cols-2">
-          {(
-            [
-              { value: "PUBLISHED", label: "Published", hint: "On the site, in the menu and footer" },
-              { value: "DRAFT", label: "Draft", hint: "Hidden from visitors; you can preview it" },
-            ] as const
-          ).map((o) => (
-            <label
-              key={o.value}
-              className={cn(
-                "flex cursor-pointer gap-2.5 rounded-lg border p-3 text-sm",
-                publishState === o.value ? "border-primary-500 bg-primary-50" : "border-neutral-200 hover:bg-neutral-50",
-              )}
-            >
-              <input type="radio" value={o.value} className="mt-0.5 accent-primary-700" {...register("status")} />
-              <span>
-                <span className="block font-medium text-primary-900">{o.label}</span>
-                <span className="block text-xs text-neutral-500">{o.hint}</span>
-              </span>
-            </label>
-          ))}
-        </div>
-      </SectionCard>
+      <PublishStatusCard registration={register("status")} value={publishState} publishedHint="On the site, in the menu and footer" />
 
       <SectionCard title="Search & sharing" description="How this service's page looks in Google and when it's shared.">
         <Controller

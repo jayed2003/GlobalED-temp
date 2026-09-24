@@ -2,6 +2,7 @@ import { z } from "zod";
 import { imageAlt } from "./image-alt";
 import { imageUrl } from "./image-url";
 import { noDuplicates } from "./normalize";
+import { checkSeoImageAlt, seoRecordFields } from "./seo";
 
 export const universitySchema = z.object({
   name: z.string().min(1, "University name is required"),
@@ -13,7 +14,8 @@ export const destinationFaqSchema = z.object({
   a: z.string().min(1, "Answer is required"),
 });
 
-export const destinationSchema = z.object({
+export const destinationSchema = z
+  .object({
   slug: z
     .string()
     .min(1, "Slug is required")
@@ -48,6 +50,9 @@ export const destinationSchema = z.object({
     .array(destinationFaqSchema)
     .min(1, "Add at least one FAQ")
     .superRefine(noDuplicates((f: { q: string }) => f.q, "question")),
-});
+  publishStatus: z.enum(["DRAFT", "PUBLISHED"]),
+  ...seoRecordFields,
+})
+  .superRefine(checkSeoImageAlt);
 
 export type DestinationFormValues = z.infer<typeof destinationSchema>;

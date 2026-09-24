@@ -14,7 +14,7 @@ import { optimizeBodyImages, sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { langOf } from "@/lib/bangla";
 import { htmlToText } from "@/lib/rich-text";
 import { blogCategoryLabels, formatDate } from "@/lib/labels";
-import { pageMetadata } from "@/lib/seo";
+import { recordMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
 import { isOriginalUpload } from "@/lib/images";
 
@@ -31,13 +31,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return {};
-  return pageMetadata({
+  return recordMetadata(post, {
     path: `/blogs/${post.slug}`,
-    // The admin's SEO fields, when set, replace the title / excerpt / cover.
-    title: post.seoTitle ? { absolute: post.seoTitle } : post.title,
-    description: post.metaDescription || post.excerpt,
-    image: post.ogImage || post.coverImage,
-    imageAlt: post.ogImage ? post.ogImageAlt : post.coverImageAlt,
+    title: post.title,
+    description: post.excerpt,
+    image: post.coverImage,
+    imageAlt: post.coverImageAlt,
     type: "article",
     publishedTime: post.publishedAtIso ?? post.publishedAt,
   });

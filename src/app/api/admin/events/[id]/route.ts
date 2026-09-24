@@ -5,12 +5,15 @@ import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { eventSchema } from "@/lib/validation/event";
 import { eventStatusToEnum } from "@/lib/content/events";
-import { logActivity } from "@/lib/activity";
+import { recordSeoFields } from "@/lib/api/publish";
+import { logActivity, savedAction } from "@/lib/activity";
 
 type Params = { id: string };
 
 export const PATCH = adminRoute<Params>({ permission: "EVENTS" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, eventSchema);
+  const current = await prisma.eventItem.findUnique({ where: { id }, select: { publishStatus: true } });
+  if (!current) throw new ApiError(404, "This event no longer exists. It may have been deleted — refresh the page.");
 
   const existing = await prisma.eventItem.findUnique({ where: { slug: data.slug } });
   if (existing && existing.id !== id) throw new ApiError(409, "An event with this slug already exists", "slug");
@@ -37,11 +40,13 @@ export const PATCH = adminRoute<Params>({ permission: "EVENTS" }, async ({ reque
       gallery: data.gallery,
       // Kept exactly parallel to `gallery`.
       galleryAlts: data.gallery.map((_, i) => data.galleryAlts[i] ?? ""),
+      publishStatus: data.publishStatus,
+      ...recordSeoFields(data),
     },
   });
 
   revalidateTag("events", { expire: 0 });
-  await logActivity(session, { action: "UPDATED", entityType: "event", entityId: id, label: updated.title });
+  await logActivity(session, { action: savedAction(current.publishStatus, data.publishStatus), entityType: "event", entityId: id, label: updated.title });
   return NextResponse.json({ ok: true });
 });
 

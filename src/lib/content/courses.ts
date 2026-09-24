@@ -1,7 +1,13 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
+import { isPreview } from "@/lib/preview";
 import type { Course, CourseCategory } from "@/types";
-import type { Course as CourseRow, CourseCategory as CourseCategoryEnum } from "@/generated/prisma/client";
+import type { Course as CourseRow, CourseCategory as CourseCategoryEnum, Prisma } from "@/generated/prisma/client";
+
+/**
+ * Courses. Visitors see published ones (pages, menu, footer, IELTS page,
+ * booking form, sitemap); an admin in preview also sees drafts.
+ */
 
 const categoryToEnum: Record<CourseCategory, CourseCategoryEnum> = {
   ielts: "IELTS",
@@ -28,46 +34,50 @@ function mapCourse(c: CourseRow): Course {
     schedule: c.schedule,
     price: c.price,
     badge: c.badge ?? undefined,
+    seoTitle: c.seoTitle,
+    metaDescription: c.metaDescription,
+    ogImage: c.ogImage,
+    ogImageAlt: c.ogImageAlt,
   };
 }
 
-export const getAllCourses = unstable_cache(
-  async (): Promise<Course[]> => {
-    const rows = await prisma.course.findMany({ orderBy: { sortOrder: "asc" } });
-    return rows.map(mapCourse);
-  },
-  ["courses-all"],
+async function loadCourses(where: Prisma.CourseWhereInput): Promise<Course[]> {
+  const rows = await prisma.course.findMany({ where, orderBy: { sortOrder: "asc" } });
+  return rows.map(mapCourse);
+}
+
+const getPublishedCourses = unstable_cache(
+  () => loadCourses({ publishStatus: "PUBLISHED" }),
+  ["courses-published"],
   { tags: ["courses"] },
 );
 
+/** Courses shown on the site, in order (drafts too while previewing). */
+export async function getAllCourses(): Promise<Course[]> {
+  if (await isPreview()) return loadCourses({});
+  return getPublishedCourses();
+}
+
+/** Published slugs, for pre-rendering the course pages. */
 export const getCourseSlugs = unstable_cache(
   async (): Promise<string[]> => {
-    const rows = await prisma.course.findMany({ select: { slug: true }, orderBy: { sortOrder: "asc" } });
-    return rows.map((r) => r.slug);
-  },
-  ["courses-slugs"],
-  { tags: ["courses"] },
-);
-
-export const getCourseBySlug = unstable_cache(
-  async (slug: string): Promise<Course | undefined> => {
-    const row = await prisma.course.findUnique({ where: { slug } });
-    return row ? mapCourse(row) : undefined;
-  },
-  ["course-by-slug"],
-  { tags: ["courses"] },
-);
-
-export const getCoursesByCategory = unstable_cache(
-  async (category: CourseCategory): Promise<Course[]> => {
     const rows = await prisma.course.findMany({
-      where: { category: categoryToEnum[category] },
+      where: { publishStatus: "PUBLISHED" },
+      select: { slug: true },
       orderBy: { sortOrder: "asc" },
     });
-    return rows.map(mapCourse);
+    return rows.map((r) => r.slug);
   },
-  ["courses-by-category"],
+  ["courses-published-slugs"],
   { tags: ["courses"] },
 );
+
+export async function getCourseBySlug(slug: string): Promise<Course | undefined> {
+  return (await getAllCourses()).find((c) => c.slug === slug);
+}
+
+export async function getCoursesByCategory(category: CourseCategory): Promise<Course[]> {
+  return (await getAllCourses()).filter((c) => c.category === category);
+}
 
 export { categoryToEnum as courseCategoryToEnum, categoryFromEnum as courseCategoryFromEnum };

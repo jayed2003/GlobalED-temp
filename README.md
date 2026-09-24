@@ -55,8 +55,9 @@ src/
   WhatsApp, social links, key numbers, footer text, call-to-action banner),
   **branches**, **services**, **FAQs**, **team members**, and the **text and
   images of every page** (home, about, contact, consultation, listing pages,
-  IELTS — Admin → Pages). Edits show on the site immediately (pages and draft
-  services: when published).
+  IELTS — Admin → Pages). Edits show on the site immediately; pages, and
+  destinations, courses, events, services and blog posts saved as drafts,
+  appear when published.
 - **Hard-coded in `src/data/`:** navigation (`navigation.ts` — its
   Destinations, Courses and Services menus list the published items
   automatically) and the legal pages (`legal.ts`). Changing these means
@@ -182,12 +183,24 @@ needed to run the site.
   The HTML is sanitized on save and on display. The cover image has a large
   16:9 preview (the shape it's shown in on the site); you can drop an image
   onto it.
-- **Publishing a blog post:** *Publish now*, or *Schedule for later* with a
+- **Publishing a blog post:** *Publish now*, *Schedule for later* with a
   date and time (Bangladesh time, up to a year ahead; past dates and times
-  can't be picked). A scheduled post is hidden from the site, blog list and
-  sitemap until its time, then appears on its own. Editing keeps the
-  original date unless you choose otherwise. The Blogs list marks
-  scheduled posts and can filter Published / Scheduled.
+  can't be picked), or *Save as draft*. A scheduled post is hidden from the
+  site, blog list and sitemap until its time, then appears on its own; a
+  draft stays hidden until it's published. Both can be checked with
+  **Preview**. Editing keeps the original date unless you choose otherwise
+  (or *Move to drafts*). The Blogs list marks drafts and scheduled posts and
+  can filter Published / Scheduled / Draft.
+- **Drafts for destinations, courses and events:** each editor has a
+  **Publishing** card — *Published* (on the site, in the menu and booking
+  form) or *Draft* (hidden from visitors, viewable with **Preview**). New
+  items start as drafts ("Save Draft"; switch to Published to go live
+  straight away). Editing a published item saves it live; to work on it
+  privately, move it back to Draft first. Lists show the status and filter
+  by it. The booking form only offers published destinations and courses.
+- **Search & sharing** for destinations, courses, events and services: SEO
+  title, meta description and share image with a search preview. Empty
+  fields fall back to the page's usual title, text and image.
 - **Blog SEO panel** (under the content): focus keyword, SEO title (counter
   /60), meta description (counter /156), an **OG image** for social shares
   (JPG/WebP, 1200 × 630 recommended; falls back to the cover image) and a
@@ -483,3 +496,23 @@ applied to production).
 Database migration `20260924030000_services_faqs_team` (additive, pre-filled
 with the 6 services, 24 FAQs and 11 team members; already applied to
 production).
+
+**Phase 4 — drafts and SEO for existing content:**
+- `publishStatus` (Draft / Published, default Published so nothing live
+  changed) on destinations, courses, events and blog posts, plus SEO title,
+  meta description and share image on destinations, courses and events.
+- Public getters (`src/lib/content/*`) return published items only — or
+  everything while an admin previews; the menu, footer, listing pages, home
+  sections, IELTS preparation courses, booking form and sitemap follow.
+  `/api/leads` links only published destinations and courses.
+- Blog posts: *Save as draft* / *Move to drafts* in the Publishing panel;
+  drafts and scheduled posts can be previewed.
+- Shared admin pieces: `PublishStatusCard`, `PreviewLink`, a Draft /
+  Published list column, `recordMetadata()` in `src/lib/seo.ts` for every
+  record page's metadata, and `createdAction` / `savedAction` in
+  `src/lib/activity.ts` (publishing and unpublishing are logged as such).
+- Verified: home, listing and detail pages, consultation, IELTS preparation
+  and the sitemap matched the live site after the migration.
+
+Database migration `20260924040000_drafts_and_seo` (additive: new columns
+with defaults; already applied to production).

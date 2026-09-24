@@ -6,7 +6,7 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
 import { getServiceBySlug, getServiceLinks } from "@/lib/content/services";
-import { pageMetadata } from "@/lib/seo";
+import { recordMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return (await getServiceLinks()).map((s) => ({ slug: s.slug }));
@@ -20,13 +20,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = await getServiceBySlug(slug);
   if (!service) return {};
-  // The admin's SEO fields, when set, replace the title / summary.
-  return pageMetadata({
+  return recordMetadata(service, {
     path: `/services/${service.slug}`,
-    title: service.seoTitle ? { absolute: service.seoTitle } : service.title,
-    description: service.metaDescription || service.shortDescription,
-    image: service.ogImage || null,
-    imageAlt: service.ogImageAlt || null,
+    title: service.title,
+    description: service.shortDescription,
   });
 }
 

@@ -4,12 +4,15 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { destinationSchema } from "@/lib/validation/destination";
-import { logActivity } from "@/lib/activity";
+import { recordSeoFields } from "@/lib/api/publish";
+import { logActivity, savedAction } from "@/lib/activity";
 
 type Params = { id: string };
 
 export const PATCH = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, destinationSchema);
+  const current = await prisma.destination.findUnique({ where: { id }, select: { publishStatus: true } });
+  if (!current) throw new ApiError(404, "This destination no longer exists. It may have been deleted — refresh the page.");
 
   const existing = await prisma.destination.findUnique({ where: { slug: data.slug } });
   if (existing && existing.id !== id) throw new ApiError(409, "A destination with this slug already exists", "slug");
@@ -37,6 +40,8 @@ export const PATCH = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({
       livingCost: data.livingCost,
       scholarships: data.scholarships,
       visaInfo: data.visaInfo,
+      publishStatus: data.publishStatus,
+      ...recordSeoFields(data),
       universities: {
         deleteMany: {},
         create: data.popularUniversities.map((u, i) => ({ ...u, sortOrder: i })),
@@ -49,7 +54,7 @@ export const PATCH = adminRoute<Params>({ permission: "DESTINATIONS" }, async ({
   });
 
   revalidateTag("destinations", { expire: 0 });
-  await logActivity(session, { action: "UPDATED", entityType: "destination", entityId: id, label: updated.name });
+  await logActivity(session, { action: savedAction(current.publishStatus, data.publishStatus), entityType: "destination", entityId: id, label: updated.name });
   return NextResponse.json({ ok: true });
 });
 

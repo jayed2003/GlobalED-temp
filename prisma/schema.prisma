@@ -111,26 +111,33 @@ model ActivityLog {
 }
 
 model Destination {
-  id           String                  @id @default(cuid())
-  slug         String                  @unique
-  name         String
-  tagline      String
-  heroImage    String
-  heroImageAlt String                  @default("")
-  flagImage    String
-  flagImageAlt String                  @default("")
-  overview     String                  @db.Text
-  whyStudyHere String[]
-  tuitionRange String
-  livingCost   String
-  scholarships String[]
-  visaInfo     String[]
-  sortOrder    Int                     @default(0)
-  universities DestinationUniversity[]
-  faqs         DestinationFaq[]
-  leads        Lead[]
-  createdAt    DateTime                @default(now())
-  updatedAt    DateTime                @updatedAt
+  id              String                  @id @default(cuid())
+  slug            String                  @unique
+  name            String
+  tagline         String
+  heroImage       String
+  heroImageAlt    String                  @default("")
+  flagImage       String
+  flagImageAlt    String                  @default("")
+  overview        String                  @db.Text
+  whyStudyHere    String[]
+  tuitionRange    String
+  livingCost      String
+  scholarships    String[]
+  visaInfo        String[]
+  sortOrder       Int                     @default(0)
+  // Draft = hidden from visitors (menu, lists, booking form); admins can preview.
+  publishStatus   ContentStatus           @default(PUBLISHED)
+  // SEO (all optional; empty = fall back to the name, tagline and hero image)
+  seoTitle        String                  @default("")
+  metaDescription String                  @default("")
+  ogImage         String                  @default("")
+  ogImageAlt      String                  @default("")
+  universities    DestinationUniversity[]
+  faqs            DestinationFaq[]
+  leads           Lead[]
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
 }
 
 model DestinationUniversity {
@@ -152,23 +159,30 @@ model DestinationFaq {
 }
 
 model Course {
-  id          String                   @id @default(cuid())
-  slug        String                   @unique
-  title       String
-  category    CourseCategory
-  image       String
-  imageAlt    String                   @default("")
-  overview    String                   @db.Text
-  curriculum  String[]
-  duration    String
-  schedule    String
-  price       String
-  badge       String?
-  sortOrder   Int                      @default(0)
-  ieltsUsedIn IeltsPreparationCourse[]
-  leads       Lead[]
-  createdAt   DateTime                 @default(now())
-  updatedAt   DateTime                 @updatedAt
+  id              String                   @id @default(cuid())
+  slug            String                   @unique
+  title           String
+  category        CourseCategory
+  image           String
+  imageAlt        String                   @default("")
+  overview        String                   @db.Text
+  curriculum      String[]
+  duration        String
+  schedule        String
+  price           String
+  badge           String?
+  sortOrder       Int                      @default(0)
+  // Draft = hidden from visitors (menu, lists, booking form); admins can preview.
+  publishStatus   ContentStatus            @default(PUBLISHED)
+  // SEO (all optional; empty = fall back to the title, overview and image)
+  seoTitle        String                   @default("")
+  metaDescription String                   @default("")
+  ogImage         String                   @default("")
+  ogImageAlt      String                   @default("")
+  ieltsUsedIn     IeltsPreparationCourse[]
+  leads           Lead[]
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
 }
 
 model IeltsContent {
@@ -210,43 +224,52 @@ model IeltsPreparationCourse {
 }
 
 model BlogPost {
-  id              String       @id @default(cuid())
-  slug            String       @unique
+  id              String        @id @default(cuid())
+  slug            String        @unique
   title           String
   category        BlogCategory
   coverImage      String
-  coverImageAlt   String       @default("")
-  excerpt         String       @db.Text
-  content         String       @db.Text
+  coverImageAlt   String        @default("")
+  excerpt         String        @db.Text
+  content         String        @db.Text
   author          String
   publishedAt     DateTime
   // SEO (all optional; empty = fall back to title / excerpt / cover image)
-  focusKeyword    String       @default("")
-  seoTitle        String       @default("")
-  metaDescription String       @default("")
-  ogImage         String       @default("")
-  ogImageAlt      String       @default("")
-  featured        Boolean      @default(false)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  focusKeyword    String        @default("")
+  seoTitle        String        @default("")
+  metaDescription String        @default("")
+  ogImage         String        @default("")
+  ogImageAlt      String        @default("")
+  // Draft = hidden whatever the publish date; admins can preview.
+  publishStatus   ContentStatus @default(PUBLISHED)
+  featured        Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model EventItem {
-  id             String      @id @default(cuid())
-  slug           String      @unique
-  title          String
-  status         EventStatus
-  date           DateTime
-  time           String
-  venue          String
-  bannerImage    String
-  bannerImageAlt String      @default("")
-  description    String      @db.Text
-  gallery        String[]
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  status          EventStatus
+  date            DateTime
+  time            String
+  venue           String
+  bannerImage     String
+  bannerImageAlt  String        @default("")
+  description     String        @db.Text
+  gallery         String[]
   // Alt text for each gallery photo, same order as `gallery`.
-  galleryAlts    String[]    @default([])
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  galleryAlts     String[]      @default([])
+  // Draft = hidden from visitors; admins can preview. (`status` is Upcoming / Previous.)
+  publishStatus   ContentStatus @default(PUBLISHED)
+  // SEO (all optional; empty = fall back to the title, description and banner)
+  seoTitle        String        @default("")
+  metaDescription String        @default("")
+  ogImage         String        @default("")
+  ogImageAlt      String        @default("")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model Lead {

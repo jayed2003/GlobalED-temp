@@ -41,14 +41,15 @@ export async function POST(request: Request) {
   if (data.destination === "not-sure") {
     destinationOther = "Not sure yet";
   } else if (data.destination) {
-    const dest = await prisma.destination.findUnique({ where: { slug: data.destination } });
+    // Drafts aren't offered on the site, so they're treated like unknown slugs.
+    const dest = await prisma.destination.findFirst({ where: { slug: data.destination, publishStatus: "PUBLISHED" } });
     if (dest) destinationId = dest.id;
     else destinationOther = data.destination;
   }
 
   let courseId: string | undefined;
   if (data.course && data.course !== "no-course") {
-    const course = await prisma.course.findUnique({ where: { slug: data.course } });
+    const course = await prisma.course.findFirst({ where: { slug: data.course, publishStatus: "PUBLISHED" } });
     if (course) courseId = course.id;
   }
 

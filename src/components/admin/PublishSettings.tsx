@@ -6,9 +6,10 @@ import { addYears, dhakaParts, todayInDhaka } from "@/lib/validation/dates";
 import { cn } from "@/lib/utils";
 
 /**
- * Blog publishing: now, or scheduled for a date and time (Bangladesh time).
- * Past dates aren't offered; a scheduled post stays hidden from the public
- * site until its time. When editing, "Keep" leaves the existing time alone.
+ * Blog publishing: now, scheduled for a date and time (Bangladesh time), or a
+ * draft. Past dates aren't offered; a scheduled post stays hidden from the
+ * public site until its time, a draft until it's published. When editing a
+ * live or scheduled post, "Keep" leaves it as it is.
  */
 export default function PublishSettings({
   control,
@@ -20,25 +21,31 @@ export default function PublishSettings({
   register: UseFormRegister<BlogFormValues>;
   errors: FieldErrors<BlogFormValues>;
   /** Editing: the post's current publish time, already formatted. */
-  current?: { label: string; scheduled: boolean };
+  current?: { label: string; scheduled: boolean; draft: boolean };
 }) {
   const [mode, date] = useWatch({ control, name: ["publishMode", "publishDate"] });
   const today = todayInDhaka();
   // A time earlier than now can't be picked for today.
   const minTime = date === today ? dhakaParts(new Date()).time : undefined;
+  const live = current && !current.draft;
 
   const options = [
-    ...(current
+    ...(live
       ? [{ value: "keep", label: current.scheduled ? "Keep schedule" : "Keep original date", hint: current.label }]
       : []),
-    { value: "now", label: "Publish now", hint: current ? "Updates the publish date to now" : "Goes live as soon as you save" },
+    { value: "now", label: "Publish now", hint: live ? "Updates the publish date to now" : "Goes live as soon as you save" },
     { value: "schedule", label: "Schedule for later", hint: "Pick a date and time" },
+    {
+      value: "draft",
+      label: current?.draft ? "Keep as draft" : live ? "Move to drafts" : "Save as draft",
+      hint: "Hidden from the website; you can preview it",
+    },
   ];
 
   return (
     <fieldset className="rounded-xl border border-neutral-200 bg-white p-5">
       <legend className="px-1 text-sm font-semibold text-primary-900">Publishing</legend>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className={cn("grid gap-3", options.length === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-3")}>
         {options.map((o) => (
           <label
             key={o.value}

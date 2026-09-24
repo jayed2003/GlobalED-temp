@@ -8,13 +8,13 @@ import { blogSchema } from "@/lib/validation/blog";
 import { sanitizeBlogHtml } from "@/lib/sanitize-html";
 import { htmlToText } from "@/lib/rich-text";
 import { blogCategoryToEnum } from "@/lib/content/blog";
-import { logActivity } from "@/lib/activity";
+import { logActivity, savedAction } from "@/lib/activity";
 
 type Params = { id: string };
 
 export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ request, session, params: { id } }) => {
   const data = await readJson(request, blogSchema);
-  const current = await prisma.blogPost.findUnique({ where: { id }, select: { publishedAt: true } });
+  const current = await prisma.blogPost.findUnique({ where: { id }, select: { publishedAt: true, publishStatus: true } });
   if (!current) throw new ApiError(404, "This post no longer exists. It may have been deleted — refresh the page.");
   // Only the allowed formatting is ever stored.
   const content = sanitizeBlogHtml(data.content);
@@ -30,6 +30,9 @@ export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ reques
     { excludeId: id, message: `A post titled "${data.title.trim()}" already exists`, field: "title" },
   );
 
+  // "Keep" leaves draft / published as it is.
+  const publishStatus = data.publishMode === "draft" ? "DRAFT" : data.publishMode === "keep" ? current.publishStatus : "PUBLISHED";
+
   const updated = await prisma.blogPost.update({
     where: { id },
     data: {
@@ -42,13 +45,20 @@ export const PATCH = adminRoute<Params>({ permission: "BLOGS" }, async ({ reques
       content,
       author: data.author,
       publishedAt: publishTimestamp(data, current.publishedAt),
+      publishStatus,
       featured: data.featured,
       ...seoFields(data),
     },
   });
 
   revalidateTag("blog-posts", { expire: 0 });
-  await logActivity(session, { action: "UPDATED", entityType: "blog", entityId: id, label: updated.title });
+  await logActivity(session, {
+    action: savedAction(current.publishStatus, publishStatus),
+    entityType: "blog",
+    entityId: id,
+    label: updated.title,
+    details: data.publishMode === "schedule" ? "Scheduled" : "",
+  });
   return NextResponse.json({ ok: true });
 });
 

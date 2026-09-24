@@ -27,9 +27,12 @@ export const blogSchema = z
    *   now      — immediately (the server stamps the current time)
    *   schedule — at publishDate + publishTime, Bangladesh time; hidden from
    *              the public site until then. Past dates/times are refused.
-   *   keep     — (editing only) leave the existing publish date/time as it is
+   *   keep     — (editing only) leave the existing publish date/time — and
+   *              draft / published — as it is
+   *   draft    — hidden from the public site whatever the date; admins can
+   *              preview it. Publish it later with "now" or "schedule".
    */
-  publishMode: z.enum(["now", "schedule", "keep"]),
+  publishMode: z.enum(["now", "schedule", "keep", "draft"]),
   publishDate: z.string().trim(),
   publishTime: z.string().trim(),
   featured: z.boolean(),

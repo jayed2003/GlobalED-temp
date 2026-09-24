@@ -6,8 +6,9 @@ import { adminRequest } from "@/lib/admin-fetch";
 import EditorActionBar from "@/components/admin/ui/EditorActionBar";
 import { useUnsavedChangesGuard } from "@/components/admin/ui/useUnsavedChangesGuard";
 import { toast } from "@/components/admin/ui/toast";
+import { previewHref } from "@/components/admin/ui/PreviewLink";
 import { onInvalidForm, showServerError } from "@/components/admin/form-errors";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, useWatch, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField, Input, Select, Textarea } from "@/components/forms/primitives";
 import ImageUploadField from "@/components/admin/ImageUploadField";
@@ -47,8 +48,8 @@ export default function BlogForm({
   mode: "create" | "edit";
   postId?: string;
   defaultValues?: BlogFormValues;
-  /** Editing: the post's current publish time (for the "Keep" option). */
-  currentPublish?: { label: string; scheduled: boolean };
+  /** Editing: the post's current publish time and state (for the "Keep" option). */
+  currentPublish?: { label: string; scheduled: boolean; draft: boolean };
   /** Public site URL for the search preview (only the server knows the production URL). */
   siteUrl: string;
 }) {
@@ -68,6 +69,7 @@ export default function BlogForm({
     resolver: zodResolver(blogSchema),
     defaultValues: defaultValues ?? emptyValues,
   });
+  const publishMode = useWatch({ control, name: "publishMode" });
 
   useUnsavedChangesGuard(isDirty && !saved);
 
@@ -79,11 +81,13 @@ export default function BlogForm({
     });
     if (!result.ok) return showServerError(result, setError, setStatus);
     setSaved(true);
+    const draft = data.publishMode === "draft" || (data.publishMode === "keep" && currentPublish?.draft);
+    const scheduled = data.publishMode === "schedule" || (data.publishMode === "keep" && currentPublish?.scheduled);
     toast.success(
-      mode === "create" ? "Post created" : "Changes saved",
-      // Scheduled posts aren't on the site yet, so no link for them.
-      data.publishMode === "schedule" || (data.publishMode === "keep" && currentPublish?.scheduled)
-        ? undefined
+      draft ? "Saved as a draft — not on the site yet" : scheduled ? "Saved — scheduled" : mode === "create" ? "Post published" : "Changes saved",
+      // Drafts and scheduled posts aren't on the site yet: offer Preview instead.
+      draft || scheduled
+        ? { href: previewHref(`/blogs/${data.slug}`), linkLabel: "Preview" }
         : { href: `/blogs/${data.slug}`, linkLabel: "View on site" },
     );
     router.push("/admin/blogs");
@@ -171,7 +175,7 @@ export default function BlogForm({
       <EditorActionBar
         dirty={isDirty && !saved}
         busy={isSubmitting || saved}
-        submitLabel={mode === "create" ? "Create Post" : "Save Changes"}
+        submitLabel={mode === "create" ? (publishMode === "draft" ? "Save Draft" : "Create Post") : "Save Changes"}
         error={status?.type === "error" ? status.message : null}
       />
     </form>

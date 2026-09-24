@@ -50,7 +50,15 @@ export interface Faq {
   category?: FaqCategory;
 }
 
-export interface Destination {
+/** A record's own SEO fields (Search & sharing); empty means use its title, text and image. */
+export interface SeoOverrides {
+  seoTitle?: string;
+  metaDescription?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+}
+
+export interface Destination extends SeoOverrides {
   slug: string;
   name: string;
   tagline: string;
@@ -75,7 +83,7 @@ export interface ServiceStep {
   description: string;
 }
 
-export interface Service {
+export interface Service extends SeoOverrides {
   slug: string;
   title: string;
   /** Lucide icon name, e.g. "GraduationCap" */
@@ -84,18 +92,13 @@ export interface Service {
   description: string;
   benefits: string[];
   process: ServiceStep[];
-  /** SEO overrides; empty means use the title / summary. */
-  seoTitle?: string;
-  metaDescription?: string;
-  ogImage?: string;
-  ogImageAlt?: string;
 }
 
 // ---------- Course ----------
 
 export type CourseCategory = "ielts" | "english" | "other-languages";
 
-export interface Course {
+export interface Course extends SeoOverrides {
   slug: string;
   title: string;
   category: CourseCategory;
@@ -198,7 +201,7 @@ export interface BlogPost {
 
 // ---------- Event ----------
 
-export interface EventItem {
+export interface EventItem extends SeoOverrides {
   slug: string;
   title: string;
   status: "upcoming" | "previous";

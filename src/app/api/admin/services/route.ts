@@ -4,7 +4,8 @@ import { prisma } from "@/lib/db";
 import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { serviceSchema } from "@/lib/validation/service";
-import { logActivity } from "@/lib/activity";
+import { recordSeoFields } from "@/lib/api/publish";
+import { createdAction, logActivity } from "@/lib/activity";
 
 export const POST = adminRoute({ permission: "SERVICES" }, async ({ request, session }) => {
   const data = await readJson(request, serviceSchema);
@@ -20,16 +21,15 @@ export const POST = adminRoute({ permission: "SERVICES" }, async ({ request, ses
   );
 
   const created = await prisma.service.create({
-    data: { ...data, sortOrder: services.reduce((max, s) => Math.max(max, s.sortOrder + 1), 0) },
+    data: { ...data, ...recordSeoFields(data), sortOrder: services.reduce((max, s) => Math.max(max, s.sortOrder + 1), 0) },
   });
 
   revalidateTag("services", { expire: 0 });
   await logActivity(session, {
-    action: data.status === "PUBLISHED" ? "PUBLISHED" : "CREATED",
+    ...createdAction(data.status),
     entityType: "service",
     entityId: created.id,
     label: created.title,
-    details: data.status === "DRAFT" ? "Saved as draft" : "",
   });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

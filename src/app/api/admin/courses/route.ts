@@ -5,7 +5,8 @@ import { adminRoute, ApiError, readJson } from "@/lib/api/admin-route";
 import { assertNotDuplicate } from "@/lib/api/duplicates";
 import { courseSchema } from "@/lib/validation/course";
 import { courseCategoryToEnum } from "@/lib/content/courses";
-import { logActivity } from "@/lib/activity";
+import { recordSeoFields } from "@/lib/api/publish";
+import { createdAction, logActivity } from "@/lib/activity";
 
 export const POST = adminRoute({ permission: "COURSES" }, async ({ request, session }) => {
   const data = await readJson(request, courseSchema);
@@ -36,11 +37,13 @@ export const POST = adminRoute({ permission: "COURSES" }, async ({ request, sess
       price: data.price,
       badge: data.badge || null,
       sortOrder: count,
+      publishStatus: data.publishStatus,
+      ...recordSeoFields(data),
     },
   });
 
   revalidateTag("courses", { expire: 0 });
   revalidateTag("ielts-content", { expire: 0 });
-  await logActivity(session, { action: "CREATED", entityType: "course", entityId: created.id, label: created.title });
+  await logActivity(session, { ...createdAction(data.publishStatus), entityType: "course", entityId: created.id, label: created.title });
   return NextResponse.json({ id: created.id }, { status: 201 });
 });

@@ -10,7 +10,7 @@ import JsonLd from "@/components/ui/JsonLd";
 import { ButtonLink } from "@/components/ui/Button";
 import { getEventSlugs, getEventBySlug } from "@/lib/content/events";
 import { formatDate } from "@/lib/labels";
-import { pageMetadata } from "@/lib/seo";
+import { recordMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
 import { isOriginalUpload } from "@/lib/images";
 
@@ -27,7 +27,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const event = await getEventBySlug(slug);
   if (!event) return {};
-  return pageMetadata({
+  return recordMetadata(event, {
     path: `/events/${event.slug}`,
     title: event.title,
     description: event.description,
