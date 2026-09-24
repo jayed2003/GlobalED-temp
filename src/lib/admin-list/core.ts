@@ -20,7 +20,12 @@ export type ColumnFilter =
   /** Pick-list: each option carries the Prisma condition it stands for. */
   | { kind: "select"; options: { value: string; label: string; where: Where }[] }
   /** Exact whole number. */
-  | { kind: "number"; field: string };
+  | { kind: "number"; field: string }
+  /**
+   * Exact match on a value from the database (e.g. a branch name). Shown as a
+   * pick-list whose options the page supplies (see listProps).
+   */
+  | { kind: "value"; field: string };
 
 export interface ListColumn {
   key: string;
@@ -141,6 +146,7 @@ export function buildWhere(config: ListConfig, query: ListQuery, base?: Where): 
       const option = filter.options.find((o) => o.value === value);
       if (option) and.push(resolveNow(option.where, new Date()) as Where);
     }
+    if (filter.kind === "value") and.push(atPath(filter.field, value));
     if (filter.kind === "number") {
       const n = Number.parseInt(value, 10);
       // Out-of-range numbers would make the database reject the query.
@@ -159,15 +165,22 @@ export function paging(config: ListConfig, query: ListQuery): { skip?: number; t
   return { skip: (query.page - 1) * config.pageSize, take: config.pageSize };
 }
 
-/** The parts of a config the browser needs to draw the filter controls. */
-export function clientColumns(columns: ListColumn[]) {
+export type FilterOptions = Record<string, { value: string; label: string }[]>;
+
+/**
+ * The parts of a config the browser needs to draw the filter controls.
+ * `valueOptions` supplies the pick-list for "value" filters, keyed by column.
+ */
+export function clientColumns(columns: ListColumn[], valueOptions: FilterOptions = {}) {
   return columns.map((c) => ({
     key: c.key,
     label: c.label,
     filter: c.filter
       ? c.filter.kind === "select"
         ? { kind: "select" as const, options: c.filter.options.map(({ value, label }) => ({ value, label })) }
-        : { kind: c.filter.kind }
+        : c.filter.kind === "value"
+          ? { kind: "select" as const, options: valueOptions[c.key] ?? [] }
+          : { kind: c.filter.kind }
       : undefined,
   }));
 }

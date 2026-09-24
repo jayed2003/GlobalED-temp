@@ -1,30 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedinIcon,
-  YoutubeIcon,
-} from "@/components/ui/BrandIcons";
-import { site } from "@/data/site";
+import { getBranches, getSiteSettings, telHref } from "@/lib/content/settings";
+import { socialLinks } from "./socialLinks";
 import { services } from "@/data/services";
-import { branches } from "@/data/branches";
 import { getAllDestinations } from "@/lib/content/destinations";
 import { getAllCourses } from "@/lib/content/courses";
 import { legalLinks } from "@/data/legal";
 import Container from "./Container";
 
-const socials = [
-  { label: "Facebook", href: site.socials.facebook, Icon: FacebookIcon },
-  { label: "Instagram", href: site.socials.instagram, Icon: InstagramIcon },
-  { label: "LinkedIn", href: site.socials.linkedin, Icon: LinkedinIcon },
-  { label: "YouTube", href: site.socials.youtube, Icon: YoutubeIcon },
-];
-
 /** Multi-column footer with all branches (PFEC / Career Paths pattern). */
 export default async function Footer() {
-  const [destinations, courses] = await Promise.all([getAllDestinations(), getAllCourses()]);
+  const [destinations, courses, site, branches] = await Promise.all([
+    getAllDestinations(),
+    getAllCourses(),
+    getSiteSettings(),
+    getBranches(),
+  ]);
+  const socials = socialLinks(site);
   return (
     <footer className="bg-primary-950 text-primary-100">
       <Container className="grid grid-cols-2 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -39,11 +32,9 @@ export default async function Footer() {
               className="h-12 w-auto"
             />
           </Link>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-primary-200">
-            Bangladesh&apos;s trusted consultancy for IELTS preparation and
-            study abroad — guiding students to 13 destinations with honest,
-            end-to-end support.
-          </p>
+          {site.footerBlurb && (
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-primary-200">{site.footerBlurb}</p>
+          )}
           <div className="mt-5 flex items-center gap-2">
             {socials.map(({ label, href, Icon }) => (
               <a
@@ -157,7 +148,7 @@ export default async function Footer() {
                   {branch.address}
                 </p>
                 <a
-                  href={`tel:${branch.phones[0].replace(/\s/g, "")}`}
+                  href={telHref(branch.phones[0])}
                   className="mt-1 flex items-center gap-1.5 transition-colors hover:text-accent-300"
                 >
                   <Phone size={13} aria-hidden />

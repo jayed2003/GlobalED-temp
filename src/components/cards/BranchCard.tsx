@@ -38,14 +38,16 @@ export default function BranchCard({ branch }: { branch: Branch }) {
           </li>
         </ul>
       </div>
-      <iframe
-        src={branch.mapEmbedUrl}
-        title={`Map — GlobalEd ${branch.name} branch`}
-        loading="lazy"
-        className="h-56 w-full shrink-0 border-0"
-        referrerPolicy="no-referrer-when-downgrade"
-        allowFullScreen
-      />
+      {branch.mapEmbedUrl && (
+        <iframe
+          src={branch.mapEmbedUrl}
+          title={`Map — GlobalEd ${branch.name} branch`}
+          loading="lazy"
+          className="h-56 w-full shrink-0 border-0"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
+        />
+      )}
     </div>
   );
 }

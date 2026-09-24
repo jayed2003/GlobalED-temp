@@ -1,7 +1,7 @@
 import Container from "@/components/layout/Container";
 import CountUp from "@/components/ui/CountUp";
 import Reveal from "@/components/ui/Reveal";
-import { site } from "@/data/site";
+import { getSiteSettings } from "@/lib/content/settings";
 
 type ParsedStat = { value: number; prefix: string; suffix: string };
 
@@ -17,7 +17,8 @@ function parseStat(raw: string): ParsedStat {
 }
 
 /** Trust statistics band (PFEC / IECC pattern) with animated counters. */
-export default function StatsBand() {
+export default async function StatsBand() {
+  const site = await getSiteSettings();
   const stats = [
     { raw: site.stats.studentsPlaced, label: "Students Placed" },
     { raw: site.stats.partnerUniversities, label: "Partner Universities" },

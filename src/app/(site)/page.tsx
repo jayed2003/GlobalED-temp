@@ -11,7 +11,7 @@ import PartnerMarquee from "@/components/sections/PartnerMarquee";
 import CtaBanner from "@/components/sections/CtaBanner";
 import JsonLd from "@/components/ui/JsonLd";
 import Reveal from "@/components/ui/Reveal";
-import { site } from "@/data/site";
+import { getSiteSettings } from "@/lib/content/settings";
 import type { Metadata } from "next";
 import { DEFAULT_TITLE, pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
@@ -23,7 +23,8 @@ export const metadata: Metadata = pageMetadata({
     "GlobalEd is a trusted study abroad and IELTS preparation consultancy in Bangladesh, guiding students to top destinations including the UK, USA, Canada, Australia, and Europe.",
 });
 
-export default function Home() {
+export default async function Home() {
+  const site = await getSiteSettings();
   return (
     <>
       <JsonLd
@@ -36,12 +37,7 @@ export default function Home() {
             "GlobalEd is a study abroad and IELTS preparation consultancy in Bangladesh.",
           email: site.email,
           telephone: site.phone,
-          sameAs: [
-            site.socials.facebook,
-            site.socials.instagram,
-            site.socials.linkedin,
-            site.socials.youtube,
-          ],
+          sameAs: Object.values(site.socials).filter(Boolean),
         }}
       />
       <JsonLd

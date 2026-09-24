@@ -51,11 +51,18 @@ src/
 ### Where content lives
 
 - **Editable in the admin panel (database):** destinations, courses, blogs,
-  events, IELTS page content and reviews. Edits show on the site immediately.
+  events, IELTS page content, reviews, **site settings** (phone, email,
+  WhatsApp, social links, key numbers, footer text, call-to-action banner)
+  and **branches**. Edits show on the site immediately.
 - **Hard-coded in `src/data/`:** services, team, organization history,
-  branches, FAQs, phone / email / WhatsApp, homepage stats, navigation labels
-  and the legal pages (`legal.ts`). Changing these means editing the file and
-  redeploying.
+  FAQs, navigation labels and the legal pages (`legal.ts`). Changing these
+  means editing the file and redeploying. (Being moved into the admin panel
+  — see "Full-site CMS" in the change log.)
+
+> **Editing from a local copy:** local `.env` points at the production
+> database, but saving content locally only refreshes the *local* cache —
+> the live site keeps showing what it had cached until something is saved
+> through the live admin panel. Make real content changes on the live site.
 
 ### Legal pages
 
@@ -198,6 +205,18 @@ needed to run the site.
   unpublished changes (Next.js draft mode) and a "Preview" banner with
   **Exit preview**. Only signed-in admins with access to that section can
   turn it on; visitors never see drafts.
+- **Site settings** (Settings → Site Settings): brand name and tagline,
+  hotline, email, WhatsApp number, social links (leave one empty to hide its
+  icon), key numbers (students placed, partner universities, visa success,
+  years), footer text and the call-to-action banner's title and text (its
+  buttons stay as designed). Links are checked: social links must be
+  https:// on the matching site.
+- **Branches** (Company → Branches): name, address, phone numbers, email,
+  hours, a Google map (paste the "Embed a map" code; only Google Maps embeds
+  are accepted) and **Shown on site**. Drag to reorder with **Reorder**. The
+  booking form offers the shown branches, and the server checks against the
+  same list. At least one branch must stay shown. Leads keep the branch
+  *name*, so renaming or removing a branch never breaks old leads.
 - **Activity log:** every create, edit, delete, status change and sign-in is
   recorded (who, what, when) in the `ActivityLog` table, kept for 12 months.
   Deleting an admin keeps their name on past entries.
@@ -379,3 +398,21 @@ Making every part of the site editable from the admin panel, in phases
 
 Database migration `20260924000000_activity_log_and_cms_permissions`
 (additive; already applied to production).
+
+**Phase 1 — site settings and branches:**
+- `SiteSettings` (one row) and `Branch` tables, edited under Settings → Site
+  Settings and Company → Branches (new **Site Settings & Branches**
+  permission). Top bar, footer, WhatsApp button, CTA banner, stats band,
+  contact page, consultation page, home structured data and the default
+  share image all read them (cached, refreshed on save).
+- Booking form: `makeLeadSchema(branchNames)` — the form and `/api/leads`
+  validate against the current, shown branches.
+- Leads list: the branch filter lists current branches plus any older name
+  still on a lead.
+- Reusable **Reorder** dialog (drag or keyboard) and reorder endpoints.
+- `src/data/site.ts` removed; `src/data/branches.ts` is only used by the
+  full seed now.
+
+Database migration `20260924010000_site_settings_and_branches` (additive,
+pre-filled with the previous hard-coded values — the site looked identical
+before and after; already applied to production).

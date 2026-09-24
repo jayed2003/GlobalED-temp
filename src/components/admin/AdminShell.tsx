@@ -17,6 +17,8 @@ import {
   Star,
   Menu,
   X,
+  Building2,
+  Settings,
 } from "lucide-react";
 import type { AdminPermission } from "@/generated/prisma/client";
 import SignOutButton from "@/components/admin/SignOutButton";
@@ -53,7 +55,10 @@ const navGroups: { label: string; items: NavItem[] }[] = [
   },
   {
     label: "Company",
-    items: [{ href: "/admin/testimonials", label: "Reviews", icon: Star, permission: "TESTIMONIALS" }],
+    items: [
+      { href: "/admin/testimonials", label: "Reviews", icon: Star, permission: "TESTIMONIALS" },
+      { href: "/admin/branches", label: "Branches", icon: Building2, permission: "SETTINGS" },
+    ],
   },
   {
     label: "Inbox",
@@ -64,7 +69,10 @@ const navGroups: { label: string; items: NavItem[] }[] = [
   },
   {
     label: "Settings",
-    items: [{ href: "/admin/admins", label: "Manage Admins", icon: Users, permission: "MASTER" }],
+    items: [
+      { href: "/admin/settings", label: "Site Settings", icon: Settings, permission: "SETTINGS" },
+      { href: "/admin/admins", label: "Manage Admins", icon: Users, permission: "MASTER" },
+    ],
   },
 ];
 

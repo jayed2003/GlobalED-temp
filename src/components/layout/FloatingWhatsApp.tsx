@@ -1,8 +1,9 @@
 import { MessageCircle } from "lucide-react";
-import { site } from "@/data/site";
+import { getSiteSettings } from "@/lib/content/settings";
 
 /** Floating WhatsApp chat button — visible on every page. */
-export default function FloatingWhatsApp() {
+export default async function FloatingWhatsApp() {
+  const site = await getSiteSettings();
   return (
     <a
       href={`https://wa.me/${site.whatsapp}?text=Hi%20GlobalEd%2C%20I%27d%20like%20a%20free%20consultation`}

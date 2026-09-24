@@ -9,6 +9,16 @@ import { buildWhere, paging, parseListQuery } from "@/lib/admin-list/core";
 import { leadsList } from "@/lib/admin-list/sections";
 import { formatDhakaDate, listProps, type SearchParams } from "@/lib/admin-list/page";
 
+/** Branch filter: today's branches, plus older names still on existing leads. */
+async function leadBranchOptions() {
+  const [current, used] = await Promise.all([
+    prisma.branch.findMany({ select: { name: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] }),
+    prisma.lead.findMany({ distinct: ["branch"], select: { branch: true }, orderBy: { branch: "asc" } }),
+  ]);
+  const names = [...new Set([...current.map((b) => b.name), ...used.map((l) => l.branch)])].filter(Boolean);
+  return names.map((name) => ({ value: name, label: name }));
+}
+
 const formTypeLabels: Record<string, string> = { GENERAL: "Consultation", IELTS: "IELTS Booking" };
 
 export default async function AdminLeadsPage({ searchParams }: { searchParams: SearchParams }) {
@@ -17,7 +27,7 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: S
 
   const query = parseListQuery(leadsList, await searchParams);
   const where = buildWhere(leadsList, query) as Prisma.LeadWhereInput;
-  const [leads, total] = await Promise.all([
+  const [leads, total, branchOptions] = await Promise.all([
     prisma.lead.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -25,6 +35,7 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: S
       ...paging(leadsList, query),
     }),
     prisma.lead.count({ where }),
+    leadBranchOptions(),
   ]);
 
   const rows = leads.map((l) => ({
@@ -52,7 +63,7 @@ export default async function AdminLeadsPage({ searchParams }: { searchParams: S
       rows={rows}
       total={total}
       exportHref="/api/admin/leads/export"
-      {...listProps(leadsList, query)}
+      {...listProps(leadsList, query, { branch: branchOptions })}
     />
   );
 }

@@ -1,17 +1,19 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { site } from "@/data/site";
+import { getSiteSettings } from "@/lib/content/settings";
 
 /**
  * Default social share card (og:image / twitter:image), 1200×630 PNG.
- * Served at /share-image.png and generated once at build time. Pages with
+ * Served at /share-image.png; built once and rebuilt when the tagline changes
+ * in Site settings (the settings cache tag). Pages with
  * their own photo (blog cover, destination hero, …) use that instead — see
  * src/lib/seo.ts.
  */
 export const dynamic = "force-static";
 
 export async function GET() {
+  const site = await getSiteSettings();
   const logo = await readFile(join(process.cwd(), "public/images/logos/white-logo.png"));
   const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
 

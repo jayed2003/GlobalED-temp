@@ -31,6 +31,7 @@ export const grantablePermissions: readonly AdminPermission[] = [
   "LEADS",
   "MESSAGES",
   "TESTIMONIALS",
+  "SETTINGS",
 ];
 
 /** Display names for permissions (admin form checkboxes and the admins list). */

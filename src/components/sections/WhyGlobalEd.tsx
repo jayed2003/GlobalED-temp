@@ -2,9 +2,10 @@ import { ShieldCheck, Users, Globe2, HeartHandshake } from "lucide-react";
 import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/ui/Reveal";
-import { site } from "@/data/site";
+import { getSiteSettings } from "@/lib/content/settings";
+import type { SiteSettings } from "@/types";
 
-const reasons = [
+const reasons = (site: SiteSettings) => [
   {
     icon: ShieldCheck,
     title: "Proven Visa Success",
@@ -28,7 +29,8 @@ const reasons = [
 ];
 
 /** Home "Why GlobalEd" USP section — sits between Destinations and Success Stories. */
-export default function WhyGlobalEd() {
+export default async function WhyGlobalEd() {
+  const site = await getSiteSettings();
   return (
     <section className="bg-primary-50 py-16 sm:py-24">
       <Container>
@@ -38,7 +40,7 @@ export default function WhyGlobalEd() {
           description={`${site.stats.studentsPlaced} students placed over ${site.stats.yearsOfExperience} years — here's why families across Bangladesh choose GlobalEd.`}
         />
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {reasons.map((reason, index) => (
+          {reasons(site).map((reason, index) => (
             <Reveal key={reason.title} delay={index * 80}>
               <div className="h-full rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary-700 text-white">

@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Send, BookOpenCheck, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
-import { branches } from "@/data/branches";
 import type { Destination, Course } from "@/types";
 import { submitLeadForm } from "@/lib/formSubmit";
-import { leadSchema, phoneRegex } from "@/lib/validation/public-forms";
+import { makeLeadSchema, phoneRegex } from "@/lib/validation/public-forms";
 import { addYears, todayInDhaka } from "@/lib/validation/dates";
 import { buttonClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -77,12 +76,15 @@ export default function ConsultationForm({
   defaultCourse,
   destinations,
   courses,
+  branches,
 }: {
   context?: "general" | "ielts";
   defaultDestination?: string;
   defaultCourse?: string;
   destinations: Pick<Destination, "slug" | "name">[];
   courses: Pick<Course, "slug" | "title" | "category">[];
+  /** Branch names a visitor can choose (managed in the admin panel). */
+  branches: string[];
 }) {
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -97,6 +99,8 @@ export default function ConsultationForm({
   const steps = isIelts ? ieltsSteps : generalSteps;
   const step = steps[stepIndex];
   const isLast = stepIndex === steps.length - 1;
+
+  const leadSchema = useMemo(() => makeLeadSchema(branches), [branches]);
 
   const {
     register,
@@ -260,8 +264,8 @@ export default function ConsultationForm({
                 <Select id="c-branch" aria-invalid={!!errors.branch} {...register("branch")}>
                   <option value="">Select a branch</option>
                   {branches.map((branch) => (
-                    <option key={branch.name} value={branch.name}>
-                      {branch.name}
+                    <option key={branch} value={branch}>
+                      {branch}
                     </option>
                   ))}
                 </Select>

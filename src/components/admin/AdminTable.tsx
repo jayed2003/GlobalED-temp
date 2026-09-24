@@ -44,6 +44,7 @@ export default function AdminTable({
   pageSize,
   dateLabel,
   exportHref,
+  actions,
 }: {
   title: string;
   newHref?: string;
@@ -58,6 +59,8 @@ export default function AdminTable({
   pageSize?: number;
   dateLabel: string;
   exportHref?: string;
+  /** Extra buttons in the header (e.g. "Reorder"). */
+  actions?: React.ReactNode;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -192,6 +195,7 @@ export default function AdminTable({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-heading text-2xl font-bold text-primary-900">{title}</h1>
         <div className="flex items-center gap-2">
+          {actions}
           {exportHref && (
             <a
               href={listQuery ? `${exportHref}?${listQuery}` : exportHref}

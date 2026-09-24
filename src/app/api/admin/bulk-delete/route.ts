@@ -26,7 +26,14 @@ const bodySchema = z
 
 const sections: Record<
   ListSection,
-  { permission: AdminPermission | "MASTER"; tags: string[]; count: (w: Where) => Promise<number>; remove: (w: Where) => Promise<{ count: number }> }
+  {
+    permission: AdminPermission | "MASTER";
+    tags: string[];
+    count: (w: Where) => Promise<number>;
+    remove: (w: Where) => Promise<{ count: number }>;
+    /** Throws if deleting these would break the site. */
+    guard?: (w: Where) => Promise<void>;
+  }
 > = {
   destinations: { permission: "DESTINATIONS", tags: ["destinations"], count: (w) => prisma.destination.count({ where: w }), remove: (w) => prisma.destination.deleteMany({ where: w }) },
   courses: { permission: "COURSES", tags: ["courses", "ielts-content"], count: (w) => prisma.course.count({ where: w }), remove: (w) => prisma.course.deleteMany({ where: w }) },
@@ -36,6 +43,19 @@ const sections: Record<
   leads: { permission: "LEADS", tags: [], count: (w) => prisma.lead.count({ where: w }), remove: (w) => prisma.lead.deleteMany({ where: w }) },
   messages: { permission: "MESSAGES", tags: [], count: (w) => prisma.contactMessage.count({ where: w }), remove: (w) => prisma.contactMessage.deleteMany({ where: w }) },
   admins: { permission: "MASTER", tags: [], count: (w) => prisma.adminUser.count({ where: w }), remove: (w) => prisma.adminUser.deleteMany({ where: w }) },
+  branches: {
+    permission: "SETTINGS",
+    tags: ["branches"],
+    count: (w) => prisma.branch.count({ where: w }),
+    remove: (w) => prisma.branch.deleteMany({ where: w }),
+    // Visitors choose a branch in the booking form, so one must stay shown.
+    guard: async (w) => {
+      const remaining = await prisma.branch.count({ where: { AND: [{ shown: true }, { NOT: w }] } });
+      if (remaining === 0) {
+        throw new ApiError(409, "At least one branch must stay on the site — visitors choose one in the booking form.");
+      }
+    },
+  },
 };
 
 /** Activity-log entity for each bulk-delete section. */
@@ -48,6 +68,7 @@ const BULK_ENTITY: Record<keyof typeof sections, EntityType> = {
   leads: "lead",
   messages: "message",
   admins: "admin",
+  branches: "branch",
 };
 
 export const POST = adminRoute({ anyAdmin: true }, async ({ request, session }) => {
@@ -74,6 +95,7 @@ export const POST = adminRoute({ anyAdmin: true }, async ({ request, session }) 
     throw new ApiError(400, `That's ${matching} items — delete at most ${MAX_DELETE} at a time. Narrow the filters first.`);
   }
 
+  await section.guard?.(where);
   const { count } = await section.remove(where);
   for (const tag of section.tags) revalidateTag(tag, { expire: 0 });
 

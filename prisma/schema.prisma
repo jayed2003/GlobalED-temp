@@ -300,3 +300,48 @@ model ContactMessage {
 
   @@index([status, createdAt])
 }
+
+/// Site-wide settings (one row, id "main"): contact details, social links,
+/// headline numbers, footer text and the call-to-action banner.
+/// Edited under Admin → Settings → Site settings.
+model SiteSettings {
+  id                      String   @id @default("main")
+  brandName               String
+  tagline                 String
+  /// As displayed, e.g. "019555 44772"; tel: links are built from it.
+  phone                   String
+  email                   String
+  /// International format, digits only, e.g. "8801955544772" (for wa.me links).
+  whatsapp                String
+  facebookUrl             String   @default("")
+  instagramUrl            String   @default("")
+  linkedinUrl             String   @default("")
+  youtubeUrl              String   @default("")
+  footerBlurb             String   @default("")
+  statStudentsPlaced      String
+  statPartnerUniversities String
+  statVisaSuccessRate     String
+  statYearsOfExperience   String
+  ctaTitle                String
+  ctaText                 String
+  faqCtaTitle             String
+  faqCtaText              String
+  updatedAt               DateTime @updatedAt
+}
+
+/// An office. Shown on the contact page and footer, and offered in the
+/// booking form (leads keep the branch *name*, so renaming one is safe).
+model Branch {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  address     String
+  phones      String[]
+  email       String
+  hours       String
+  /// Google Maps embed URL ("" = no map).
+  mapEmbedUrl String   @default("")
+  shown       Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

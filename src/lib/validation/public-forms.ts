@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { branches } from "@/data/branches";
 import { addYears, isRealDate, todayInDhaka } from "./dates";
 
 /**
@@ -97,14 +96,13 @@ function isoDate(message: string, required: boolean) {
     });
 }
 
-const branchNames = branches.map((b) => b.name);
-
 /** Building blocks for leadSchema below. */
 const leadFields = {
   name: plainText({ min: 2, max: 100, minMessage: "Please enter your full name" }),
   phone: z.string().trim().regex(phoneRegex, "Enter a valid BD number (e.g. 017XXXXXXXX)"),
   email: z.string().trim().max(254).email("Enter a valid email address"),
-  branch: oneOf(branchNames, "Please choose your nearest branch", true),
+  // The branch list is managed in the admin panel, so it is passed in (see makeLeadSchema).
+  branch: (names: readonly string[]) => oneOf(names, "Please choose your nearest branch", true),
   message: plainText({ max: 1000, maxMessage: "Message must be under 1000 characters" }),
   destination: (required: boolean) => slug("Please choose a destination", required),
   course: (required: boolean) => slug("Please choose a course", required),
@@ -139,47 +137,56 @@ const botFields = {
 
 // .prefault("") runs a missing field through its own rules, so the visitor
 // (or API caller) gets "Please enter your full name", not a type error.
-const leadCommon = {
-  name: leadFields.name.prefault(""),
-  phone: leadFields.phone.prefault(""),
-  email: leadFields.email.prefault(""),
-  branch: leadFields.branch.prefault(""),
-  ieltsStatus: leadFields.ieltsStatus.default(""),
-  funding: leadFields.funding.default(""),
-  message: leadFields.message.default(""),
-  consent: z.literal(true, "Please agree to be contacted"),
-  ...botFields,
-};
+function leadCommon(branchNames: readonly string[]) {
+  return {
+    name: leadFields.name.prefault(""),
+    phone: leadFields.phone.prefault(""),
+    email: leadFields.email.prefault(""),
+    branch: leadFields.branch(branchNames).prefault(""),
+    ieltsStatus: leadFields.ieltsStatus.default(""),
+    funding: leadFields.funding.default(""),
+    message: leadFields.message.default(""),
+    consent: z.literal(true, "Please agree to be contacted"),
+    ...botFields,
+  };
+}
 
 /**
  * Consultation / IELTS booking — the only lead schema. Each flow has its own
  * required fields: a free consultation needs a destination and study level,
  * an IELTS booking needs a course and a preferred date. Strict: unknown keys
  * and non-string values (other than the consent checkbox) are rejected.
+ *
+ * Built for the current branch list (managed in the admin panel): the
+ * booking page passes the branches it shows, and /api/leads passes the same
+ * list from the database — one definition, validated identically.
  */
-export const leadSchema = z.discriminatedUnion("formType", [
-  z.strictObject({
-    formType: z.literal("GENERAL"),
-    ...leadCommon,
-    destination: leadFields.destination(true).prefault(""),
-    studyLevel: leadFields.studyLevel(true).prefault(""),
-    course: leadFields.course(false).default(""),
-    preferredDate: leadFields.preferredDate(false).default(""),
-  }),
-  z.strictObject({
-    formType: z.literal("IELTS"),
-    ...leadCommon,
-    destination: leadFields.destination(false).default(""),
-    studyLevel: leadFields.studyLevel(false).default(""),
-    course: leadFields.course(true).prefault(""),
-    preferredDate: leadFields.preferredDate(true).prefault(""),
-  }),
-]);
+export function makeLeadSchema(branchNames: readonly string[]) {
+  return z.discriminatedUnion("formType", [
+    z.strictObject({
+      formType: z.literal("GENERAL"),
+      ...leadCommon(branchNames),
+      destination: leadFields.destination(true).prefault(""),
+      studyLevel: leadFields.studyLevel(true).prefault(""),
+      course: leadFields.course(false).default(""),
+      preferredDate: leadFields.preferredDate(false).default(""),
+    }),
+    z.strictObject({
+      formType: z.literal("IELTS"),
+      ...leadCommon(branchNames),
+      destination: leadFields.destination(false).default(""),
+      studyLevel: leadFields.studyLevel(false).default(""),
+      course: leadFields.course(true).prefault(""),
+      preferredDate: leadFields.preferredDate(true).prefault(""),
+    }),
+  ]);
+}
 
+type LeadSchema = ReturnType<typeof makeLeadSchema>;
 /** What the form fields hold (before defaults / cleaning). */
-export type LeadFormInput = z.input<typeof leadSchema>;
+export type LeadFormInput = z.input<LeadSchema>;
 /** What the API receives after validation. */
-export type LeadData = z.output<typeof leadSchema>;
+export type LeadData = z.output<LeadSchema>;
 
 /** Contact form — the only contact schema (form and /api/contact). */
 export const contactSchema = z.strictObject({

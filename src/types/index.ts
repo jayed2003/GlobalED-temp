@@ -19,6 +19,7 @@ export interface SiteSettings {
   phone: string;
   email: string;
   whatsapp: string;
+  /** Profile links; an empty one hides that icon. */
   socials: {
     facebook: string;
     instagram: string;
@@ -26,6 +27,11 @@ export interface SiteSettings {
     youtube: string;
   };
   stats: SiteStats;
+  footerBlurb: string;
+  /** The call-to-action banner near the bottom of most pages. */
+  cta: { title: string; text: string };
+  /** Its variant on the home page, pointing to the FAQs. */
+  faqCta: { title: string; text: string };
 }
 
 // ---------- Destination ----------

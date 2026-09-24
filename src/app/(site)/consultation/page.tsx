@@ -3,7 +3,7 @@ import { CheckCircle2, ShieldCheck } from "lucide-react";
 import PageHero from "@/components/sections/PageHero";
 import ConsultationForm from "@/components/forms/ConsultationForm";
 import Container from "@/components/layout/Container";
-import { site } from "@/data/site";
+import { getBranchNames, getSiteSettings } from "@/lib/content/settings";
 import { getAllCourses } from "@/lib/content/courses";
 import { getAllDestinations } from "@/lib/content/destinations";
 import { pageMetadata } from "@/lib/seo";
@@ -30,7 +30,12 @@ export default async function ConsultationPage({
   const params = await searchParams;
   const courseSlug = typeof params.course === "string" ? params.course : undefined;
   const destinationSlug = typeof params.destination === "string" ? params.destination : undefined;
-  const [courses, destinations] = await Promise.all([getAllCourses(), getAllDestinations()]);
+  const [courses, destinations, site, branches] = await Promise.all([
+    getAllCourses(),
+    getAllDestinations(),
+    getSiteSettings(),
+    getBranchNames(),
+  ]);
 
   return (
     <>
@@ -88,6 +93,7 @@ export default async function ConsultationPage({
                   defaultDestination={destinationSlug}
                   courses={courses}
                   destinations={destinations}
+                  branches={branches}
                 />
               </div>
             </div>

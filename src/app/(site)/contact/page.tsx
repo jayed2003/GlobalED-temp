@@ -5,8 +5,7 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import BranchCard from "@/components/cards/BranchCard";
 import ContactForm from "@/components/forms/ContactForm";
 import Container from "@/components/layout/Container";
-import { branches } from "@/data/branches";
-import { site } from "@/data/site";
+import { getBranches, getSiteSettings, telHref } from "@/lib/content/settings";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -16,7 +15,8 @@ export const metadata: Metadata = pageMetadata({
     "Visit any GlobalEd branch in Dhanmondi, Banani, or Chattogram — addresses, phone numbers, Google Maps, and our enquiry form.",
 });
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const [site, branches] = await Promise.all([getSiteSettings(), getBranches()]);
   return (
     <>
       <PageHero
@@ -55,7 +55,7 @@ export default function ContactPage() {
                 <div>
                   <p className="text-neutral-500">Call us</p>
                   <a
-                    href={`tel:${site.phone.replace(/\s/g, "")}`}
+                    href={telHref(site.phone)}
                     className="font-semibold text-primary-900 hover:text-primary-700"
                   >
                     {site.phone}

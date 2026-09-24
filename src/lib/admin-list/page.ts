@@ -1,12 +1,12 @@
-import { clientColumns, type ListConfig, type ListQuery } from "./core";
+import { clientColumns, type FilterOptions, type ListConfig, type ListQuery } from "./core";
 
 export type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 /** The AdminTable props that come straight from a list config. */
-export function listProps(config: ListConfig, query: ListQuery) {
+export function listProps(config: ListConfig, query: ListQuery, valueOptions: FilterOptions = {}) {
   return {
-    columns: clientColumns(config.columns),
-    extraFilters: clientColumns(config.extraFilters ?? []),
+    columns: clientColumns(config.columns, valueOptions),
+    extraFilters: clientColumns(config.extraFilters ?? [], valueOptions),
     section: config.section,
     page: query.page,
     pageSize: config.pageSize,

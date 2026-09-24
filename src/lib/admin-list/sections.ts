@@ -1,4 +1,3 @@
-import { branches } from "@/data/branches";
 import { adminPermissionLabels, grantablePermissions } from "@/lib/validation/admin-user";
 import { leadStatusOptions, messageStatusOptions } from "@/lib/inbox";
 import type { ListConfig } from "./core";
@@ -187,7 +186,8 @@ export const leadsList: ListConfig = {
     {
       key: "branch",
       label: "Branch",
-      filter: { kind: "select", options: branches.map((b) => ({ value: b.name, label: b.name, where: { branch: b.name } })) },
+      // Options: current branches plus any older name still on a lead (see the leads page).
+      filter: { kind: "value", field: "branch" },
     },
     { key: "email", label: "Email", filter: { kind: "text", fields: ["email"] } },
   ],
@@ -251,6 +251,30 @@ export const adminsList: ListConfig = {
   orderBy: { createdAt: "asc" },
 };
 
+export const branchesList: ListConfig = {
+  section: "branches",
+  columns: [
+    { key: "name", label: "Branch", filter: { kind: "text", fields: ["name"] } },
+    { key: "address", label: "Address", filter: { kind: "text", fields: ["address"] } },
+    { key: "phone", label: "Phone" },
+    {
+      key: "shown",
+      label: "On site",
+      filter: {
+        kind: "select",
+        options: [
+          { value: "yes", label: "Shown", where: { shown: true } },
+          { value: "no", label: "Hidden", where: { shown: false } },
+        ],
+      },
+    },
+  ],
+  searchFields: ["name", "address", "email", "hours"],
+  dateField: "createdAt",
+  dateLabel: "Created",
+  orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+};
+
 export const listConfigs = {
   destinations: destinationsList,
   courses: coursesList,
@@ -260,6 +284,7 @@ export const listConfigs = {
   leads: leadsList,
   messages: messagesList,
   admins: adminsList,
+  branches: branchesList,
 } as const;
 
 export type ListSection = keyof typeof listConfigs;
