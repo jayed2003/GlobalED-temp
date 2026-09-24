@@ -1,6 +1,7 @@
 import DOMPurify from "isomorphic-dompurify";
 import { contentToHtml } from "@/lib/rich-text";
 import { isOriginalUpload } from "@/lib/images";
+import { SAFE_IMAGE_URL as SAFE_IMAGE } from "@/lib/validation/image-url";
 
 /**
  * Server-side cleaner for blog post HTML from the rich text editor. Runs when
@@ -19,7 +20,6 @@ const ALLOWED_TAGS = ["p", "h2", "h3", "strong", "em", "u", "s", "a", "ul", "ol"
 const ALLOWED_ATTR = ["href", "target", "rel", "src", "alt", "title"];
 
 const SAFE_LINK = /^(https?:\/\/|mailto:|\/(?!\/)|#)/i;
-const SAFE_IMAGE = /^(\/images\/[^\s"'<>]+|https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/[^\s"'<>]+)$/i;
 
 function isExternal(href: string): boolean {
   return /^https?:\/\//i.test(href);

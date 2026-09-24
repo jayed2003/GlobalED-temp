@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { imageAlt } from "./image-alt";
+import { imageUrl } from "./image-url";
 import { noDuplicates } from "./normalize";
 
 export const universitySchema = z.object({
@@ -19,9 +20,9 @@ export const destinationSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, and hyphens only"),
   name: z.string().min(1, "Country name is required"),
   tagline: z.string().min(1, "Tagline is required"),
-  heroImage: z.string().min(1, "Hero image is required"),
+  heroImage: imageUrl("Hero image is required"),
   heroImageAlt: imageAlt(true),
-  flagImage: z.string().min(1, "Flag image is required"),
+  flagImage: imageUrl("Flag image is required"),
   // Optional: defaults to "Flag of {country}".
   flagImageAlt: imageAlt(false),
   overview: z.string().min(1, "Overview is required"),

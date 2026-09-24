@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { imageAlt } from "./image-alt";
+import { imageUrl, optionalImageUrl } from "./image-url";
 import { htmlToText } from "@/lib/rich-text";
 import { addYears, fromDhaka, isRealDate, isRealTime, todayInDhaka } from "./dates";
 
@@ -11,7 +12,7 @@ export const blogSchema = z
     .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, and hyphens only"),
   title: z.string().min(1, "Title is required"),
   category: z.enum(["country-wise", "scholarships", "ielts", "english"]),
-  coverImage: z.string().min(1, "Cover image is required"),
+  coverImage: imageUrl("Cover image is required"),
   coverImageAlt: imageAlt(true),
   excerpt: z.string().min(1, "Excerpt is required"),
   // HTML from the rich text editor. "Required" means some actual text — an
@@ -40,11 +41,7 @@ export const blogSchema = z
     .string()
     .trim()
     .max(200, "Keep the meta description under 200 characters (search engines show about 156)"),
-  ogImage: z
-    .string()
-    .trim()
-    .max(500)
-    .refine((url) => !/\.svg(\?|$)/i.test(url), "Social networks don't show SVG images — upload a JPG or WebP"),
+  ogImage: optionalImageUrl().refine((url) => !/\.svg(\?|$)/i.test(url), "Social networks don't show SVG images — upload a JPG or WebP"),
   ogImageAlt: imageAlt(false),
 })
   .superRefine((post, ctx) => {

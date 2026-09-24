@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { noDuplicates } from "./normalize";
 import { imageAlt } from "./image-alt";
+import { imageUrl } from "./image-url";
 import { addYears, dateField, EARLIEST_CONTENT_DATE, isRealDate, todayInDhaka } from "./dates";
 
 export const eventSchema = z.object({
@@ -18,10 +19,10 @@ export const eventSchema = z.object({
   }),
   time: z.string().min(1, "Time is required"),
   venue: z.string().min(1, "Venue is required"),
-  bannerImage: z.string().min(1, "Banner image is required"),
+  bannerImage: imageUrl("Banner image is required"),
   bannerImageAlt: imageAlt(true),
   description: z.string().min(1, "Description is required"),
-  gallery: z.array(z.string().min(1)).superRefine(noDuplicates((s: string) => s, "photo")),
+  gallery: z.array(imageUrl("Gallery photo is missing")).superRefine(noDuplicates((s: string) => s, "photo")),
   // One alt text per gallery photo, same order as `gallery`.
   galleryAlts: z.array(imageAlt(false)),
 })
