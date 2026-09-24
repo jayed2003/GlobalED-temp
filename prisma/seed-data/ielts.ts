@@ -1,4 +1,4 @@
-import type { IeltsContent } from "@/types";
+import type { IeltsContent } from "../../src/types";
 
 /** IELTS hub page content — from GlobalEd-IELTS-related content.pdf */
 export const ielts: IeltsContent = {

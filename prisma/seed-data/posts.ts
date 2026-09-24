@@ -1,4 +1,4 @@
-import type { BlogPost } from "@/types";
+import type { BlogPost } from "../../src/types";
 
 /**
  * Placeholder blog posts covering the four required categories:

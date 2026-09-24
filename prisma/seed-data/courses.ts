@@ -1,4 +1,4 @@
-import type { Course } from "@/types";
+import type { Course } from "../../src/types";
 
 /** The 7 courses from the company requirements. Prices are placeholders. */
 export const courses: Course[] = [

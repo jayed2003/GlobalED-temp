@@ -1,4 +1,4 @@
-import type { Destination } from "@/types";
+import type { Destination } from "../../src/types";
 
 /**
  * The 13 study destinations from the company requirements.
@@ -662,7 +662,3 @@ export const destinations: Destination[] = [
     ],
   },
 ];
-
-export function getDestinationBySlug(slug: string): Destination | undefined {
-  return destinations.find((d) => d.slug === slug);
-}

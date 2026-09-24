@@ -1,4 +1,4 @@
-import type { EventItem } from "@/types";
+import type { EventItem } from "../../src/types";
 
 /** Placeholder events — replace with the company's real event calendar. */
 export const events: EventItem[] = [

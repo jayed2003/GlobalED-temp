@@ -8,8 +8,12 @@ consultation bookings, IELTS test bookings and contact enquiries.
   about, blogs, events, FAQs, contact, the consultation / IELTS booking form,
   and the legal pages (Privacy Policy, Terms & Conditions, Return and Refund
   Policy).
-- **Admin panel** (`/admin`): manage destinations, courses, blogs, events, IELTS
-  content, reviews, leads and contact messages, plus admin accounts.
+- **Admin panel** (`/admin`): a CMS for the whole site — every page's text and
+  images, destinations, courses, blogs, events, services, FAQs, team, reviews,
+  IELTS content, site settings and branches — with drafts and preview, plus
+  leads, contact messages, a dashboard, an activity log and admin accounts.
+  Layouts, buttons, menus and the legal pages stay in code. Non-technical
+  editors: see the [Admin guide](#admin-guide-for-editors).
 
 ## Tech stack
 
@@ -29,15 +33,16 @@ consultation bookings, IELTS test bookings and contact enquiries.
 ## Project structure
 
 ```
-prisma/                 schema, migrations, seed script
+prisma/                 schema, migrations, seed script (sample content in seed-data/)
 prisma.config.ts        Prisma 7 config (connection URL, seed command)
 src/
   app/(site)/           public pages
   app/admin/            admin panel (login + dashboard)
   app/api/              leads, contact, auth and admin API routes
   components/           layout, sections, cards, forms, admin UI
-  data/                 content that is still hard-coded (see below)
+  data/                 content kept in code: navigation and the legal pages
   lib/content/          cached database reads used by the public pages
+  lib/pages/            the editable pages: each page's sections and fields
   lib/validation/       Zod schemas (shared by forms and API routes)
   lib/api/              admin API wrapper (auth, JSON parsing, error responses)
   lib/admin-list/       admin list search, filters, date ranges and paging
@@ -62,8 +67,7 @@ src/
   Destinations, Courses and Services menus list the published items
   automatically) and the legal pages (`legal.ts`). Changing these means
   editing the file and redeploying. Page layouts, buttons and menus stay in
-  code by design. The other files there are only sample content for
-  `prisma db seed`.
+  code by design.
 
 > **Editing from a local copy:** local `.env` points at the production
 > database, but saving content locally only refreshes the *local* cache —
@@ -115,7 +119,9 @@ npm run dev          # http://localhost:3000
 
 > **The full seed deletes content, so it protects itself.** `prisma/seed.ts`
 > wipes all leads, destinations, courses, blogs, events and reviews, then
-> reloads the sample data from `src/data/`. It refuses to run:
+> reloads the sample data from `prisma/seed-data/`. (Pages, site settings,
+> branches, services, FAQs and team come pre-filled from the migrations.)
+> It refuses to run:
 >
 > - in a production environment (`NODE_ENV=production` or on Vercel) — ever;
 > - on a database that already has any content, leads, contact messages or
@@ -152,13 +158,16 @@ needed to run the site.
 ## Admin panel
 
 - Log in at `/admin/login`.
-- **Roles:** one master `ADMIN` account has full access and manages the other
-  accounts. `EDITOR` accounts only see the sections they have been given.
+- **Roles:** one master `ADMIN` account has full access, manages the other
+  accounts and sees the Activity log. `EDITOR` accounts only see the sections
+  they have been given: Pages, Blogs, Events, Destinations, Courses,
+  Services, IELTS Content, Team, FAQs, Reviews, Leads, Contact Messages, and
+  Site Settings & Branches (one permission each).
 - **Sessions last 8 hours from login**, however active the admin is.
 - Deleting an admin, or changing their permissions, takes effect on their next
   request.
-- **Every list** (destinations, courses, blogs, events, reviews, leads,
-  messages, admins) has a search box, a filter under each column, a date
+- **Every list** (destinations, courses, blogs, events, services, FAQs,
+  team, reviews, branches, leads, messages, admins) has a search box, a filter under each column, a date
   filter (last hour / 24 hours / 7 days / custom range), row checkboxes with
   "select all" and "Delete selected". Filters live in the URL, so a filtered
   view can be bookmarked or shared. Leads, messages and reviews show 10 per
@@ -268,6 +277,80 @@ needed to run the site.
   name on past entries. Read-only.
 - Errors are shown as plain messages on the form; an expired session sends
   you back to the login page.
+
+## Admin guide (for editors)
+
+How the GlobalEd team updates the website without a developer. Sign in at
+`/admin` on the website with the account the master admin made for you — you
+only see the sections you've been given.
+
+### Where to change what
+
+| To change… | Go to |
+|---|---|
+| Headlines, intros, photos and search text of a page (home, about, contact, IELTS…) | Content → Pages |
+| Phone, email, WhatsApp, social links, the key numbers, footer text, the "book a consultation" banner | Settings → Site Settings |
+| An office: address, phone numbers, hours, map | Company → Branches |
+| A country page | Content → Destinations |
+| A course, a service | Content → Courses / Services |
+| Blog posts | Content → Blogs |
+| Events (and marking them Previous once they're over) | Content → Events |
+| The IELTS pages' details | Content → IELTS Content |
+| Questions on the FAQs page | Company → FAQs |
+| People on Our Team | Company → Team |
+| Student reviews | Company → Reviews |
+| Bookings and contact-form messages | Inbox → Leads / Messages |
+
+Menus, buttons, page layouts and the legal pages can't be changed here — ask
+a developer.
+
+### Saving, drafts and preview
+
+- Save with the green button at the bottom of the form (or **Ctrl+S**). The
+  bar tells you when there are unsaved changes, and leaving the page asks
+  first.
+- **Pages:** **Save draft** keeps your changes private, **Preview** opens the
+  real page with them (only you see it), **Publish** puts them live, and
+  **Discard draft** throws them away.
+- **Destinations, courses, events and services:** new ones start as a
+  **Draft**. Check it with **Preview** (top right), then set Publishing to
+  **Published** and save. Saving something that's already published changes
+  the live site straight away — to work on it privately, set it back to Draft
+  first.
+- **Blog posts:** **Publish now**, **Schedule for later** (it appears by
+  itself at that time) or **Save as draft**.
+- While previewing, a yellow bar at the bottom of the site says so — click
+  **Exit preview** when you're done.
+
+### Images
+
+- JPG or WebP (SVG for logos), up to 5 MB. Keep **Optimized** unless a photo
+  has to stay exactly as uploaded.
+- Every image needs **alt text**: a short description of what's in it, e.g.
+  "Students at the UK education fair in Dhaka". It's read aloud to blind
+  visitors and used by Google.
+
+### Search & sharing
+
+Pages, posts, destinations, courses, events and services each have an SEO
+title, a description and a share image (what Facebook and WhatsApp show; 1200
+× 630 works best). Leave them empty to use the page's own title, summary and
+picture — the search preview shows how it will look on Google.
+
+### Order and visibility
+
+- In a form, drag the ⋮⋮ handle to reorder items. In a list (services, FAQs,
+  team, branches), **Reorder** changes the order on the site.
+- Prefer hiding to deleting: FAQs, team members and branches have **Show on
+  site**, and home page sections can be hidden in Pages → Home. Deleting
+  can't be undone.
+
+### The dashboard
+
+**Needs attention** lists what to fix: events still marked Upcoming after
+their date, pages with unpublished changes, drafts, scheduled posts, and posts
+without a meta description. The master admin can see every change, by
+everyone, in Overview → Activity.
 
 ## Security
 
@@ -423,9 +506,9 @@ Follow-up to this batch:
 Database migration `20260923201131_blog_seo_fields` (additive; already
 applied to production) adds the blog SEO columns.
 
-### Full-site CMS (in progress)
+### Full-site CMS (Sept 2026)
 
-Making every part of the site editable from the admin panel, in phases
+Every part of the site made editable from the admin panel, in phases
 (page layouts, navigation, buttons and the legal pages stay in code).
 
 **Phase 0 — foundations:**
@@ -536,3 +619,10 @@ with defaults; already applied to production).
   `AdminTable` gained `readOnly` and `description`; links to still-existing
   items come from `src/lib/activity-links.ts`.
 - Blogs list: an SEO filter for posts without a meta description.
+
+**Phase 6 — cleanup and docs:**
+- The sample content only the seed script uses moved from `src/data/` to
+  `prisma/seed-data/`; `src/data/` now holds just what is deliberately kept in
+  code (navigation and the legal pages).
+- README: the admin panel as a CMS, permissions, drafts and preview, and an
+  [Admin guide](#admin-guide-for-editors) for non-technical editors.

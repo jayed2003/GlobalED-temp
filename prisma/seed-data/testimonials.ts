@@ -1,4 +1,4 @@
-import type { Testimonial } from "@/types";
+import type { Testimonial } from "../../src/types";
 
 /**
  * Student success stories, shown as review images.
