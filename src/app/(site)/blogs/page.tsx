@@ -4,22 +4,20 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import BlogsFilter from "@/components/sections/BlogsFilter";
 import Container from "@/components/layout/Container";
 import { getAllPosts } from "@/lib/content/blog";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/blogs",
-  title: "Blogs & News",
-  description:
-    "Study abroad guides, scholarship news, IELTS tips, and English learning advice from the GlobalEd team in Bangladesh.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("blogs", await getPage("blogs"));
+}
 
 export default async function BlogsPage() {
+  const page = await getPage("blogs");
   const posts = await getAllPosts();
   return (
     <>
       <PageHero
-        title="Blogs & News"
-        description="Practical guides on destinations, scholarships, IELTS, and English — written by our counsellors and instructors."
+        title={page.hero.title}
+        description={page.hero.description}
         breadcrumb={[{ label: "Blogs & Events" }, { label: "Blogs" }]}
       />
       <section className="py-16 sm:py-20">

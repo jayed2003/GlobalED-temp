@@ -2,7 +2,7 @@
 
 import { Plus, Trash2 } from "lucide-react";
 import { arrayMove } from "@dnd-kit/sortable";
-import { Input } from "@/components/forms/primitives";
+import { Input, Textarea } from "@/components/forms/primitives";
 import SortableList from "@/components/admin/ui/SortableList";
 import { useRowIds } from "@/components/admin/ui/useRowIds";
 
@@ -13,12 +13,20 @@ export default function RepeatableFieldList({
   onChange,
   placeholder,
   error,
+  multiline = false,
+  minItems = 0,
+  maxItems = Infinity,
 }: {
   label: string;
   value: string[];
   onChange: (next: string[]) => void;
   placeholder?: string;
   error?: string;
+  /** Paragraph-sized items (a text area per item). */
+  multiline?: boolean;
+  /** Fewest / most items: hides Remove / Add at the limits. */
+  minItems?: number;
+  maxItems?: number;
 }) {
   const rows = useRowIds(value.length);
 
@@ -44,32 +52,46 @@ export default function RepeatableFieldList({
     <div>
       <div className="mb-1.5 flex items-center justify-between">
         <label className="block text-sm font-medium text-primary-900">{label}</label>
-        <button
-          type="button"
-          onClick={add}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-primary-700 hover:underline"
-        >
-          <Plus size={14} aria-hidden /> Add
-        </button>
+        {value.length < maxItems && (
+          <button
+            type="button"
+            onClick={add}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-primary-700 hover:underline"
+          >
+            <Plus size={14} aria-hidden /> Add
+          </button>
+        )}
       </div>
       <SortableList ids={rows.ids} onMove={move} label={label.toLowerCase()}>
         {(index, handle) => (
-          <div className="flex items-center gap-1.5 bg-white">
+          <div className={multiline ? "flex items-start gap-1.5 bg-white" : "flex items-center gap-1.5 bg-white"}>
             {handle}
-            <Input
-              value={value[index]}
-              placeholder={placeholder}
-              aria-label={`${label} ${index + 1}`}
-              onChange={(e) => update(index, e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={() => remove(index)}
-              className="rounded p-1.5 text-red-500 hover:bg-red-50"
-              aria-label={`Remove ${label.toLowerCase()} ${index + 1}`}
-            >
-              <Trash2 size={16} aria-hidden />
-            </button>
+            {multiline ? (
+              <Textarea
+                rows={4}
+                value={value[index]}
+                placeholder={placeholder}
+                aria-label={`${label} ${index + 1}`}
+                onChange={(e) => update(index, e.target.value)}
+              />
+            ) : (
+              <Input
+                value={value[index]}
+                placeholder={placeholder}
+                aria-label={`${label} ${index + 1}`}
+                onChange={(e) => update(index, e.target.value)}
+              />
+            )}
+            {value.length > minItems && (
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="rounded p-1.5 text-red-500 hover:bg-red-50"
+                aria-label={`Remove ${label.toLowerCase()} ${index + 1}`}
+              >
+                <Trash2 size={16} aria-hidden />
+              </button>
+            )}
           </div>
         )}
       </SortableList>

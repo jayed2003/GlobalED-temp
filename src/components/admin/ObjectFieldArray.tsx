@@ -13,13 +13,18 @@ export default function ObjectFieldArray<T extends Record<string, unknown>>({
   emptyItem,
   renderRow,
   error,
+  minItems = 0,
+  maxItems = Infinity,
 }: {
   label: string;
   value: T[];
   onChange: (next: T[]) => void;
   emptyItem: T;
-  renderRow: (item: T, update: (patch: Partial<T>) => void) => React.ReactNode;
+  renderRow: (item: T, update: (patch: Partial<T>) => void, index: number) => React.ReactNode;
   error?: string;
+  /** Fewest / most items: hides Remove / Add at the limits. */
+  minItems?: number;
+  maxItems?: number;
 }) {
   const rows = useRowIds(value.length);
 
@@ -45,27 +50,31 @@ export default function ObjectFieldArray<T extends Record<string, unknown>>({
     <div>
       <div className="mb-1.5 flex items-center justify-between">
         <label className="block text-sm font-medium text-primary-900">{label}</label>
-        <button
-          type="button"
-          onClick={add}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-primary-700 hover:underline"
-        >
-          <Plus size={14} aria-hidden /> Add
-        </button>
+        {value.length < maxItems && (
+          <button
+            type="button"
+            onClick={add}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-primary-700 hover:underline"
+          >
+            <Plus size={14} aria-hidden /> Add
+          </button>
+        )}
       </div>
       <SortableList ids={rows.ids} onMove={move} label={label.toLowerCase()}>
         {(index, handle) => (
           <div className="flex items-start gap-2 rounded-lg border border-neutral-200 bg-white p-3">
             <div className="pt-1">{handle}</div>
-            <div className="flex-1">{renderRow(value[index], (patch) => updateAt(index, patch))}</div>
-            <button
-              type="button"
-              onClick={() => remove(index)}
-              className="rounded p-1.5 text-red-500 hover:bg-red-50"
-              aria-label={`Remove item ${index + 1}`}
-            >
-              <Trash2 size={16} aria-hidden />
-            </button>
+            <div className="flex-1">{renderRow(value[index], (patch) => updateAt(index, patch), index)}</div>
+            {value.length > minItems && (
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="rounded p-1.5 text-red-500 hover:bg-red-50"
+                aria-label={`Remove item ${index + 1}`}
+              >
+                <Trash2 size={16} aria-hidden />
+              </button>
+            )}
           </div>
         )}
       </SortableList>

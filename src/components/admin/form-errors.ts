@@ -18,7 +18,7 @@ export function showServerError<T extends FieldValues>(
 
 // First error message anywhere in a react-hook-form errors tree (including
 // errors on nested list items, which have no inline field to show them).
-function firstMessage(node: unknown): string | undefined {
+export function firstMessage(node: unknown): string | undefined {
   if (!node || typeof node !== "object") return undefined;
   const obj = node as Record<string, unknown>;
   if (typeof obj.message === "string" && obj.message) return obj.message;

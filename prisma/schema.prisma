@@ -345,3 +345,16 @@ model Branch {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+/// Editable page content (Admin → Pages), one row per page key — see
+/// src/lib/pages/defs.ts for each page's fields. `published` is what visitors
+/// see; `draft` holds saved-but-unpublished changes (visible only in preview).
+model SitePage {
+  key           String   @id
+  published     Json
+  draft         Json?
+  /// Who last saved (draft or publish), for the Pages list.
+  updatedByName String   @default("")
+  publishedAt   DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

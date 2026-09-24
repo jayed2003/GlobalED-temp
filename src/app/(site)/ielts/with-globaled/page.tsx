@@ -6,14 +6,13 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { getIeltsContent } from "@/lib/content/ielts";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/ielts/with-globaled",
-  title: "IELTS with GlobalEd",
-  description:
-    "Why prepare for IELTS with GlobalEd — British Council authorized testing, expert trainers, and real mock tests.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const [page, ielts] = await Promise.all([getPage("ielts-with-globaled"), getIeltsContent()]);
+  // An empty SEO title falls back to the title from IELTS Content.
+  return editablePageMetadata("ielts-with-globaled", page, { title: ielts.whyGlobaled.title });
+}
 
 export default async function IeltsWithGlobaledPage() {
   const ielts = await getIeltsContent();

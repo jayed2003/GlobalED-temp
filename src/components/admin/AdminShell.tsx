@@ -19,6 +19,7 @@ import {
   X,
   Building2,
   Settings,
+  LayoutTemplate,
 } from "lucide-react";
 import type { AdminPermission } from "@/generated/prisma/client";
 import SignOutButton from "@/components/admin/SignOutButton";
@@ -46,6 +47,7 @@ const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: "Content",
     items: [
+      { href: "/admin/pages", label: "Pages", icon: LayoutTemplate, permission: "PAGES" },
       { href: "/admin/blogs", label: "Blogs", icon: Newspaper, permission: "BLOGS" },
       { href: "/admin/events", label: "Events", icon: CalendarDays, permission: "EVENTS" },
       { href: "/admin/destinations", label: "Destinations", icon: Globe2, permission: "DESTINATIONS" },

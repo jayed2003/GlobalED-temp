@@ -12,19 +12,17 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import JsonLd from "@/components/ui/JsonLd";
 import Reveal from "@/components/ui/Reveal";
 import { getSiteSettings } from "@/lib/content/settings";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 import type { Metadata } from "next";
-import { DEFAULT_TITLE, pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/",
-  title: { absolute: DEFAULT_TITLE },
-  description:
-    "GlobalEd is a trusted study abroad and IELTS preparation consultancy in Bangladesh, guiding students to top destinations including the UK, USA, Canada, Australia, and Europe.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("home", await getPage("home"));
+}
 
+/** Home page — every section's text is edited in Admin → Pages → Home, and sections can be hidden there. */
 export default async function Home() {
-  const site = await getSiteSettings();
+  const [site, page] = await Promise.all([getSiteSettings(), getPage("home")]);
   return (
     <>
       <JsonLd
@@ -48,29 +46,41 @@ export default async function Home() {
           url: SITE_URL,
         }}
       />
-      <Hero />
-      <StatsBand />
-      <ServicesGrid />
-      <StepsTimeline />
-      <DestinationsGrid />
-      <Reveal>
-        <WhyGlobalEd />
-      </Reveal>
-      <Reveal>
-        <Testimonials />
-      </Reveal>
-      <Reveal>
-        <BlogsPreview />
-      </Reveal>
-      <Reveal>
-        <EventsTeaser />
-      </Reveal>
-      <Reveal>
-        <PartnerMarquee />
-      </Reveal>
-      <Reveal>
-        <CtaBanner variant="faq" />
-      </Reveal>
+      {page.hero.shown && <Hero content={page.hero} />}
+      {page.stats.shown && <StatsBand />}
+      {page.services.shown && <ServicesGrid heading={page.services} />}
+      {page.howItWorks.shown && <StepsTimeline content={page.howItWorks} />}
+      {page.destinations.shown && <DestinationsGrid heading={page.destinations} />}
+      {page.whyUs.shown && (
+        <Reveal>
+          <WhyGlobalEd content={page.whyUs} />
+        </Reveal>
+      )}
+      {page.reviews.shown && (
+        <Reveal>
+          <Testimonials heading={page.reviews} />
+        </Reveal>
+      )}
+      {page.blogs.shown && (
+        <Reveal>
+          <BlogsPreview heading={page.blogs} />
+        </Reveal>
+      )}
+      {page.events.shown && (
+        <Reveal>
+          <EventsTeaser heading={page.events} />
+        </Reveal>
+      )}
+      {page.partners.shown && (
+        <Reveal>
+          <PartnerMarquee title={page.partners.title} />
+        </Reveal>
+      )}
+      {page.faqCta.shown && (
+        <Reveal>
+          <CtaBanner variant="faq" />
+        </Reveal>
+      )}
     </>
   );
 }

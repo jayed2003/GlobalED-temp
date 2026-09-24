@@ -6,22 +6,20 @@ import Testimonials from "@/components/sections/Testimonials";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
 import CtaBanner from "@/components/sections/CtaBanner";
-import { organization } from "@/data/organization";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/about/our-success",
-  title: "Our Success",
-  description:
-    "GlobalEd's track record — milestones since 2013, students placed, visa success rate, and real student success stories.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("about-success", await getPage("about-success"));
+}
 
-export default function OurSuccessPage() {
+export default async function OurSuccessPage() {
+  // Milestones are edited on Our Organization; the reviews heading on Home.
+  const [page, organization, home] = await Promise.all([getPage("about-success"), getPage("about-organization"), getPage("home")]);
   return (
     <>
       <PageHero
-        title="Our Success"
-        description="Since 2013, we've grown from a single IELTS classroom into a track record thousands of students trust."
+        title={page.hero.title}
+        description={page.hero.description}
         breadcrumb={[{ label: "About Us", href: "/about" }, { label: "Our Success" }]}
       />
 
@@ -30,12 +28,12 @@ export default function OurSuccessPage() {
       {/* Milestones */}
       <section className="py-16 sm:py-20">
         <Container className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <PhotoCollage />
+          <PhotoCollage photos={page.photos.photos.map((p) => p.photo)} />
           <div>
-            <SectionHeading eyebrow="Our Journey" title="Milestones Along the Way" align="left" />
+            <SectionHeading eyebrow={page.milestones.eyebrow} title={page.milestones.title} align="left" />
             <ol className="mt-10 space-y-6">
-              {organization.timeline.map((entry) => (
-                <li key={entry.year} className="flex gap-4">
+              {organization.journey.milestones.map((entry, index) => (
+                <li key={index} className="flex gap-4">
                   <span className="flex h-12 w-14 shrink-0 items-center justify-center rounded-lg bg-primary-700 font-heading text-sm font-bold text-white">
                     {entry.year}
                   </span>
@@ -47,7 +45,7 @@ export default function OurSuccessPage() {
         </Container>
       </section>
 
-      <Testimonials />
+      <Testimonials heading={home.reviews} />
 
       <CtaBanner />
     </>

@@ -4,22 +4,20 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import DestinationCard from "@/components/cards/DestinationCard";
 import Container from "@/components/layout/Container";
 import { getAllDestinations } from "@/lib/content/destinations";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/destinations",
-  title: "Study Destinations",
-  description:
-    "Explore 13 study abroad destinations from Bangladesh — UK, USA, Canada, Australia, New Zealand, Europe, South Korea, and Malaysia with GlobalEd's free counselling.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("destinations", await getPage("destinations"));
+}
 
 export default async function DestinationsPage() {
+  const page = await getPage("destinations");
   const destinations = await getAllDestinations();
   return (
     <>
       <PageHero
-        title="Study Abroad Destinations"
-        description="Thirteen countries, hundreds of partner universities — find the destination that fits your goals and budget."
+        title={page.hero.title}
+        description={page.hero.description}
         breadcrumb={[{ label: "Destinations" }]}
       />
       <section className="py-16 sm:py-20">

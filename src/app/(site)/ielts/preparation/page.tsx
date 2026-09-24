@@ -7,14 +7,13 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { getIeltsContent } from "@/lib/content/ielts";
 import { getAllCourses } from "@/lib/content/courses";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/ielts/preparation",
-  title: "IELTS Preparation",
-  description:
-    "IELTS preparation at GlobalEd — a skill-by-skill program plus Essential, Advanced, and Premium packages to match your goals.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const [page, ielts] = await Promise.all([getPage("ielts-preparation"), getIeltsContent()]);
+  // An empty SEO title falls back to the title from IELTS Content.
+  return editablePageMetadata("ielts-preparation", page, { title: ielts.preparation.title });
+}
 
 export default async function IeltsPreparationPage() {
   const [ielts, courses] = await Promise.all([getIeltsContent(), getAllCourses()]);

@@ -6,48 +6,46 @@ import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { getIeltsContent } from "@/lib/content/ielts";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
+import BrandTitle from "@/components/ui/BrandTitle";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/ielts",
-  title: "IELTS with GlobalEd",
-  description:
-    "What is IELTS, why it matters, why prepare with GlobalEd, our IELTS preparation packages, and IELTS test booking for students in Bangladesh.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("ielts", await getPage("ielts"));
+}
 
 export default async function IeltsPage() {
-  const ielts = await getIeltsContent();
+  const [ielts, page] = await Promise.all([getIeltsContent(), getPage("ielts")]);
 
   const links = [
     {
       href: "/ielts/what-is-ielts",
       icon: FileQuestion,
       title: ielts.whatIsIelts.title,
-      description: "Formats, modules, and scoring — the basics of the test.",
+      description: page.cards.whatText,
     },
     {
       href: "/ielts/why-ielts",
       icon: Globe2,
       title: ielts.whyIelts.title,
-      description: "Why IELTS matters for study, work, and migration abroad.",
+      description: page.cards.whyText,
     },
     {
       href: "/ielts/with-globaled",
       icon: BadgeCheck,
       title: ielts.whyGlobaled.title,
-      description: "British Council authorized testing, expert trainers, and free trial services.",
+      description: page.cards.withText,
     },
     {
       href: "/ielts/preparation",
       icon: GraduationCap,
       title: ielts.preparation.title,
-      description: "A skill-by-skill program plus Essential, Advanced, and Premium packages.",
+      description: page.cards.preparationText,
     },
     {
       href: "/consultation",
       icon: BookOpenCheck,
-      title: "Book an IELTS Test",
-      description: "Register for your official IELTS test or preparation package.",
+      title: page.cards.bookTitle,
+      description: page.cards.bookText,
     },
   ];
 
@@ -58,16 +56,9 @@ export default async function IeltsPage() {
         <Container>
           <Breadcrumb items={[{ label: "IELTS" }]} />
           <h1 className="mt-5 max-w-3xl font-heading text-4xl font-bold text-white sm:text-5xl">
-            IELTS with Global<span className="text-accent-500">Ed</span>
+            <BrandTitle text={page.hero.title} />
           </h1>
-          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-primary-100">
-            Whether your goal is to study abroad, migrate, advance your
-            career, or improve your English proficiency, GlobalEd is
-            committed to helping you achieve your target IELTS band score
-            through expert guidance, personalized support, and real exam
-            experience. From registration to test day, our team supports you
-            at every step of your IELTS journey.
-          </p>
+          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-primary-100">{page.hero.description}</p>
           <div className="mt-8">
             <ButtonLink href="/consultation" size="lg">
               <BookOpenCheck size={18} aria-hidden />
@@ -112,7 +103,7 @@ export default async function IeltsPage() {
       <section className="bg-primary-50 py-16 sm:py-20">
         <Container>
           <SectionHeading
-            eyebrow="Real Students. Real Results."
+            eyebrow={page.stories.eyebrow}
             title={ielts.successStories.title}
             description={ielts.successStories.body}
           />

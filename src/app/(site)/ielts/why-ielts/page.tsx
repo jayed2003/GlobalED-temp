@@ -4,14 +4,13 @@ import PageHero from "@/components/sections/PageHero";
 import Container from "@/components/layout/Container";
 import CtaBanner from "@/components/sections/CtaBanner";
 import { getIeltsContent } from "@/lib/content/ielts";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/ielts/why-ielts",
-  title: "Why IELTS?",
-  description:
-    "Why IELTS matters for study, work, and migration abroad — global acceptance, visa requirements, and fair assessment.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const [page, ielts] = await Promise.all([getPage("ielts-why"), getIeltsContent()]);
+  // An empty SEO title falls back to the title from IELTS Content.
+  return editablePageMetadata("ielts-why", page, { title: ielts.whyIelts.title });
+}
 
 export default async function WhyIeltsPage() {
   const ielts = await getIeltsContent();

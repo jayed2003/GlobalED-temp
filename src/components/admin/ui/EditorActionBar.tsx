@@ -19,6 +19,7 @@ export default function EditorActionBar({
   busyLabel = "Saving…",
   error,
   submitIcon,
+  onShortcut,
   children,
 }: {
   dirty: boolean;
@@ -28,6 +29,8 @@ export default function EditorActionBar({
   /** Why the last save failed; shown until the next attempt. */
   error?: string | null;
   submitIcon?: React.ReactNode;
+  /** What Ctrl+S does, if not the main button (e.g. "Save draft" on page editors). */
+  onShortcut?: () => void;
   children?: React.ReactNode;
 }) {
   const barRef = useRef<HTMLDivElement>(null);
@@ -38,12 +41,13 @@ export default function EditorActionBar({
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
         if (busy) return;
-        barRef.current?.closest("form")?.requestSubmit(submitRef.current ?? undefined);
+        if (onShortcut) onShortcut();
+        else barRef.current?.closest("form")?.requestSubmit(submitRef.current ?? undefined);
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [busy]);
+  }, [busy, onShortcut]);
 
   return (
     <div

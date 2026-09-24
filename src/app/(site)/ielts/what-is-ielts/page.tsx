@@ -4,22 +4,21 @@ import PageHero from "@/components/sections/PageHero";
 import Container from "@/components/layout/Container";
 import CtaBanner from "@/components/sections/CtaBanner";
 import { getIeltsContent } from "@/lib/content/ielts";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/ielts/what-is-ielts",
-  title: "What is IELTS?",
-  description:
-    "Learn what IELTS is, its formats, modules, and scoring — the world's most widely accepted English proficiency test.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const [page, ielts] = await Promise.all([getPage("ielts-what"), getIeltsContent()]);
+  // An empty SEO title falls back to the title from IELTS Content.
+  return editablePageMetadata("ielts-what", page, { title: ielts.whatIsIelts.title });
+}
 
 export default async function WhatIsIeltsPage() {
-  const ielts = await getIeltsContent();
+  const [ielts, page] = await Promise.all([getIeltsContent(), getPage("ielts-what")]);
   return (
     <>
       <PageHero
         title={ielts.whatIsIelts.title}
-        description="A quick primer on the world's most widely accepted English proficiency test."
+        description={page.hero.description}
         breadcrumb={[{ label: "IELTS", href: "/ielts" }, { label: "What is IELTS?" }]}
         bannerImage="/images/hero/what-is-ielts.jpg"
         bannerAlt="A student climbing a bar chart towards a graduation-capped globe — GlobalEd, Believe in yourself"

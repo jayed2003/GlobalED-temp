@@ -52,12 +52,15 @@ src/
 
 - **Editable in the admin panel (database):** destinations, courses, blogs,
   events, IELTS page content, reviews, **site settings** (phone, email,
-  WhatsApp, social links, key numbers, footer text, call-to-action banner)
-  and **branches**. Edits show on the site immediately.
-- **Hard-coded in `src/data/`:** services, team, organization history,
-  FAQs, navigation labels and the legal pages (`legal.ts`). Changing these
-  means editing the file and redeploying. (Being moved into the admin panel
-  — see "Full-site CMS" in the change log.)
+  WhatsApp, social links, key numbers, footer text, call-to-action banner),
+  **branches**, and the **text and images of every page** (home, about,
+  contact, consultation, listing pages, IELTS — Admin → Pages). Edits show on
+  the site immediately (pages: when published).
+- **Hard-coded in `src/data/`:** services, team members, FAQs, navigation
+  and the legal pages (`legal.ts`). Changing these means editing the file and
+  redeploying. (Services, FAQs and team are being moved into the admin panel
+  — see "Full-site CMS" in the change log.) Page layouts, buttons and menus
+  stay in code by design.
 
 > **Editing from a local copy:** local `.env` points at the production
 > database, but saving content locally only refreshes the *local* cache —
@@ -211,6 +214,14 @@ needed to run the site.
   years), footer text and the call-to-action banner's title and text (its
   buttons stay as designed). Links are checked: social links must be
   https:// on the matching site.
+- **Pages** (Content → Pages): the text and images of every page, in a
+  fixed layout — headlines, intros, section headings, the home page steps and
+  reasons (with icons), the About story, milestones, mission, vision and
+  sister organizations, photos, and each page's **Search & sharing** (SEO
+  title, description, share image). Home page sections can be hidden.
+  **Save draft** keeps changes private, **Preview** shows them on the real
+  site, **Publish** makes them live, **Discard draft** throws them away.
+  Buttons and where they link stay as designed.
 - **Branches** (Company → Branches): name, address, phone numbers, email,
   hours, a Google map (paste the "Embed a map" code; only Google Maps embeds
   are accepted) and **Shown on site**. Drag to reorder with **Reorder**. The
@@ -416,3 +427,25 @@ Database migration `20260924000000_activity_log_and_cms_permissions`
 Database migration `20260924010000_site_settings_and_branches` (additive,
 pre-filled with the previous hard-coded values — the site looked identical
 before and after; already applied to production).
+
+**Phase 2 — pages:**
+- `SitePage` table (one row per page: `published`, `draft`) and Admin →
+  Pages. Each page is described once in `src/lib/pages/defs.ts` (sections →
+  fields: text, long text, image + alt, icon, lists, repeating items); that
+  one definition drives the validation, the generated editor
+  (`PageEditor.tsx`) and the typed content the site reads (`getPage()` in
+  `src/lib/content/pages.ts`, draft in preview). Adding a field = add it to
+  the definition (with a migration if existing pages need a value).
+- 18 pages: Home (11 sections, each can be hidden), About, Our Organization,
+  Our Success, Our Team, Contact, Consultation, FAQs, Services, Blogs,
+  Events, Destinations, Courses, IELTS and its four sub-pages.
+- Every page's `<title>`, description and share image come from its Search &
+  sharing fields. The contact page's description now names today's branches
+  (Panthapath, Uttara, Banasree) instead of the old ones.
+- Verified: all 18 pages' visible text, links, maps, titles, descriptions,
+  share tags and canonical URLs matched the live site after the migration
+  (only the corrected contact description differs).
+
+Database migration `20260924020000_site_pages` (additive, pre-filled with
+every page's current copy, validated against the page definitions; already
+applied to production).

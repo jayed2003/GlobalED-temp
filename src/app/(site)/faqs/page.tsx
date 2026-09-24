@@ -4,21 +4,19 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import FaqFilter from "@/components/sections/FaqFilter";
 import Container from "@/components/layout/Container";
 import { faqs } from "@/data/faqs";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/faqs",
-  title: "Frequently Asked Questions",
-  description:
-    "Find answers to common questions about GlobalEd's study abroad services, IELTS preparation, university admissions, visa processing, and more.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("faqs", await getPage("faqs"));
+}
 
-export default function FaqsPage() {
+export default async function FaqsPage() {
+  const page = await getPage("faqs");
   return (
     <>
       <PageHero
-        title="Frequently Asked Questions"
-        description="Quick answers to common questions about studying abroad, IELTS, visas, and our services."
+        title={page.hero.title}
+        description={page.hero.description}
         breadcrumb={[{ label: "FAQs" }]}
       />
 

@@ -4,22 +4,20 @@ import CtaBanner from "@/components/sections/CtaBanner";
 import CoursesFilter from "@/components/sections/CoursesFilter";
 import Container from "@/components/layout/Container";
 import { getAllCourses } from "@/lib/content/courses";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/courses",
-  title: "Our Courses",
-  description:
-    "IELTS Regular, Executive, and Master Class courses, Spoken English, One-to-One coaching, Language Club, and Japanese Language at GlobalEd Bangladesh.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("courses", await getPage("courses"));
+}
 
 export default async function CoursesPage() {
+  const page = await getPage("courses");
   const courses = await getAllCourses();
   return (
     <>
       <PageHero
-        title="Our Courses"
-        description="IELTS preparation in three formats, plus Spoken English, personal coaching, and Japanese — taught by certified instructors in small batches."
+        title={page.hero.title}
+        description={page.hero.description}
         breadcrumb={[{ label: "Courses" }]}
       />
       <section className="py-16 sm:py-20">

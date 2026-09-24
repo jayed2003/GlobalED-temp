@@ -6,34 +6,28 @@ import TeamCard from "@/components/cards/TeamCard";
 import Container from "@/components/layout/Container";
 import { organization } from "@/data/organization";
 import { team } from "@/data/team";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/about/our-team",
-  title: "Our Team",
-  description:
-    "Meet GlobalEd's Board of Directors and the certified counsellors, IELTS instructors, and visa experts behind your success.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("about-team", await getPage("about-team"));
+}
 
-export default function OurTeamPage() {
+export default async function OurTeamPage() {
+  const page = await getPage("about-team");
   return (
     <>
       <PhotoHero
-        image="/images/hero/our-team.jpg"
-        imageAlt="The GlobalEd team and partners gathered at a British Council IELTS event"
-        title="Our Team"
-        description="The leadership and people behind thousands of study abroad successes."
+        image={page.hero.image.src}
+        imageAlt={page.hero.image.alt}
+        title={page.hero.title}
+        description={page.hero.description}
         breadcrumb={[{ label: "About Us", href: "/about" }, { label: "Our Team" }]}
       />
 
       {/* Board of Directors */}
       <section className="py-16 sm:py-20">
         <Container>
-          <SectionHeading
-            eyebrow="Leadership"
-            title="Board of Directors"
-            description="The visionary leaders guiding Global Citizen Limited and GlobalEd."
-          />
+          <SectionHeading eyebrow={page.board.eyebrow} title={page.board.title} description={page.board.description} />
           {/* One row of 5 on desktop; wraps (centered) on smaller screens. Every card
               has the same width and the same 24px gap, so spacing stays consistent. */}
           <div className="mt-12 flex flex-wrap justify-center gap-6">
@@ -52,11 +46,7 @@ export default function OurTeamPage() {
       {/* Team */}
       <section className="bg-primary-50 py-16 sm:py-20">
         <Container>
-          <SectionHeading
-            eyebrow="Our Team"
-            title="Meet the People Behind Your Success"
-            description="Certified counsellors, experienced IELTS instructors, and visa documentation experts."
-          />
+          <SectionHeading eyebrow={page.team.eyebrow} title={page.team.title} description={page.team.description} />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {team.map((member) => (
               <TeamCard key={member.name} member={member} />

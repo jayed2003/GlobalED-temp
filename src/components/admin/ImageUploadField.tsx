@@ -12,7 +12,11 @@ import UploadModeToggle from "@/components/admin/UploadModeToggle";
 /** Alt-text input shown under the image (bound with react-hook-form's register). */
 interface AltField {
   id: string;
-  registration: UseFormRegisterReturn;
+  /** Bound to a form field… */
+  registration?: UseFormRegisterReturn;
+  /** …or controlled (e.g. inside a list of records). */
+  value?: string;
+  onChange?: (alt: string) => void;
   error?: string;
   required?: boolean;
   placeholder?: string;
@@ -169,7 +173,7 @@ export default function ImageUploadField({
             placeholder={alt.placeholder ?? "Describe what the image shows"}
             aria-invalid={!!alt.error}
             className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100"
-            {...alt.registration}
+            {...(alt.registration ?? { value: alt.value ?? "", onChange: (e: React.ChangeEvent<HTMLInputElement>) => alt.onChange?.(e.target.value) })}
           />
           <p className="mt-1 text-xs text-neutral-500">Read aloud to visitors who can&apos;t see the image, and used by search engines.</p>
           {alt.error && (

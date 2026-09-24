@@ -6,20 +6,21 @@ import DestinationCard from "@/components/cards/DestinationCard";
 import Reveal from "@/components/ui/Reveal";
 import { cn } from "@/lib/utils";
 import { getAllDestinations } from "@/lib/content/destinations";
+import type { HeadingContent } from "@/lib/pages";
 
 const MOBILE_LIMIT = 4;
 const DESKTOP_LIMIT = 8;
 
 /** Home "Best Study Abroad Destinations from Bangladesh" — 4 on mobile, 8 on desktop. */
-export default async function DestinationsGrid() {
+export default async function DestinationsGrid({ heading }: { heading: HeadingContent }) {
   const destinations = await getAllDestinations();
   return (
     <section className="py-16 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="Study Destinations"
-          title="Best Study Abroad Destinations from Bangladesh"
-          description="Thirteen countries, hundreds of partner universities, one counsellor guiding you to the right choice."
+          eyebrow={heading.eyebrow}
+          title={heading.title}
+          description={heading.description}
         />
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {destinations.map((destination, index) => (

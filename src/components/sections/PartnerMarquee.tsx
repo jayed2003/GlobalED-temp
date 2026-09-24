@@ -3,7 +3,7 @@ import Container from "@/components/layout/Container";
 import { getAllDestinations } from "@/lib/content/destinations";
 
 /** Infinite-scrolling partner university strip (PFEC / IECC logo marquee). */
-export default async function PartnerMarquee() {
+export default async function PartnerMarquee({ title }: { title: string }) {
   const destinations = await getAllDestinations();
   const partners = destinations
     .flatMap((d) => d.popularUniversities.slice(0, 1).map((u) => u.name))
@@ -13,7 +13,7 @@ export default async function PartnerMarquee() {
     <section aria-label="Partner universities" className="border-y border-neutral-100 bg-white py-10">
       <Container>
         <p className="text-center text-sm font-semibold uppercase tracking-widest text-neutral-500">
-          Our Partner Universities Worldwide
+          {title}
         </p>
       </Container>
       <div className="mt-6 overflow-hidden" aria-hidden>

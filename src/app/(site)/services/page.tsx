@@ -7,23 +7,21 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Container from "@/components/layout/Container";
 import { services } from "@/data/services";
 import { faqs } from "@/data/faqs";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/services",
-  title: "Our Services",
-  description:
-    "University admission support, scholarship guidance, documentation, visa application, pre & post departure guidance, and language support from GlobalEd Bangladesh.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("services", await getPage("services"));
+}
 
 const serviceFaqs = faqs.slice(-4); // Last 4 are service-related FAQs
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const page = await getPage("services");
   return (
     <>
       <PageHero
-        title="Our Services"
-        description="End-to-end study abroad support — from choosing the right university to settling into your new campus."
+        title={page.hero.title}
+        description={page.hero.description}
         breadcrumb={[{ label: "Services" }]}
       />
 
@@ -39,7 +37,7 @@ export default function ServicesPage() {
 
       <section className="bg-primary-50 py-16 sm:py-20">
         <Container className="max-w-3xl">
-          <SectionHeading eyebrow="FAQs" title="Common Questions About Our Services" />
+          <SectionHeading eyebrow={page.faqs.eyebrow} title={page.faqs.title} />
           <div className="mt-10">
             <FaqAccordion faqs={serviceFaqs} />
           </div>

@@ -3,46 +3,27 @@ import Link from "next/link";
 import { ArrowRight, Building2, TrendingUp, Users2 } from "lucide-react";
 import PageHero from "@/components/sections/PageHero";
 import Container from "@/components/layout/Container";
-import { pageMetadata } from "@/lib/seo";
+import BrandTitle from "@/components/ui/BrandTitle";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/about",
-  title: "About Us",
-  description:
-    "Learn about GlobalEd — our history since 2013, our mission and vision, our sister educational organizations, board of directors, and the team behind thousands of study abroad successes.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("about", await getPage("about"));
+}
 
-const links = [
-  {
-    href: "/about/our-success",
-    icon: TrendingUp,
-    title: "Our Success",
-    description: "Milestones since 2013, students placed, and real student success stories.",
-  },
-  {
-    href: "/about/our-organization",
-    icon: Building2,
-    title: "Our Organization",
-    description: "Our story, mission, vision, and sister educational organizations.",
-  },
-  {
-    href: "/about/our-team",
-    icon: Users2,
-    title: "Our Team",
-    description: "Board of Directors and the people behind your success.",
-  },
-];
+export default async function AboutPage() {
+  const page = await getPage("about");
+  // Where each card links stays as designed; the text is edited in Admin → Pages.
+  const links = [
+    { href: "/about/our-success", icon: TrendingUp, title: page.cards.successTitle, description: page.cards.successText },
+    { href: "/about/our-organization", icon: Building2, title: page.cards.organizationTitle, description: page.cards.organizationText },
+    { href: "/about/our-team", icon: Users2, title: page.cards.teamTitle, description: page.cards.teamText },
+  ];
 
-export default function AboutPage() {
   return (
     <>
       <PageHero
-        title={
-          <>
-            About Global<span className="text-accent-500">Ed</span>
-          </>
-        }
-        description="From a single IELTS classroom to one of Bangladesh's most trusted study abroad consultancies."
+        title={<BrandTitle text={page.hero.title} />}
+        description={page.hero.description}
         breadcrumb={[{ label: "About Us" }]}
       />
 

@@ -6,9 +6,16 @@ import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import TestimonialCard from "@/components/cards/TestimonialCard";
 import type { Testimonial } from "@/types";
+import type { HeadingContent } from "@/lib/pages";
 
 /** Success stories carousel — scroll-snap track with prev/next controls. */
-export default function TestimonialsCarousel({ testimonials }: { testimonials: Testimonial[] }) {
+export default function TestimonialsCarousel({
+  testimonials,
+  heading,
+}: {
+  testimonials: Testimonial[];
+  heading: HeadingContent;
+}) {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: number) => {
@@ -25,9 +32,9 @@ export default function TestimonialsCarousel({ testimonials }: { testimonials: T
         <div className="flex items-end justify-between gap-6">
           <SectionHeading
             align="left"
-            eyebrow="Success Stories & Reviews"
-            title="Loved by Our Students"
-            description="Real reviews from students now studying at universities across the globe."
+            eyebrow={heading.eyebrow}
+            title={heading.title}
+            description={heading.description}
           />
           <div className="hidden shrink-0 gap-2 sm:flex">
             <button

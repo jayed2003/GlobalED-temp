@@ -3,9 +3,10 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import EventCard from "@/components/cards/EventCard";
 import { ButtonLink } from "@/components/ui/Button";
 import { getAllEvents } from "@/lib/content/events";
+import type { HeadingContent } from "@/lib/pages";
 
 /** Home upcoming events teaser (PFEC pattern). */
-export default async function EventsTeaser() {
+export default async function EventsTeaser({ heading }: { heading: HeadingContent }) {
   const events = await getAllEvents();
   const upcoming = events
     .filter((event) => event.status === "upcoming")
@@ -18,9 +19,9 @@ export default async function EventsTeaser() {
     <section className="bg-white py-16 sm:py-20">
       <Container>
         <SectionHeading
-          eyebrow="Events"
-          title="Upcoming Events"
-          description="Meet university representatives, join free IELTS mock tests, and get on-spot assessments."
+          eyebrow={heading.eyebrow}
+          title={heading.title}
+          description={heading.description}
         />
         <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
           {upcoming.map((event) => (

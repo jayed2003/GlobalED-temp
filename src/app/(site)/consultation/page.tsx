@@ -6,27 +6,18 @@ import Container from "@/components/layout/Container";
 import { getBranchNames, getSiteSettings } from "@/lib/content/settings";
 import { getAllCourses } from "@/lib/content/courses";
 import { getAllDestinations } from "@/lib/content/destinations";
-import { pageMetadata } from "@/lib/seo";
+import { editablePageMetadata, getPage } from "@/lib/content/pages";
 
-export const metadata: Metadata = pageMetadata({
-  path: "/consultation",
-  title: "Book Your Free Consultation",
-  description:
-    "Register for a free study abroad consultation with GlobalEd — expert guidance on destinations, universities, scholarships, IELTS, and visas.",
-});
-
-const trustPoints = [
-  "100% free — no counselling charges, ever",
-  "Personalized university shortlist for your profile",
-  "Scholarship and funding assessment included",
-  "Response within 24 hours on working days",
-];
+export async function generateMetadata(): Promise<Metadata> {
+  return editablePageMetadata("consultation", await getPage("consultation"));
+}
 
 export default async function ConsultationPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const page = await getPage("consultation");
   const params = await searchParams;
   const courseSlug = typeof params.course === "string" ? params.course : undefined;
   const destinationSlug = typeof params.destination === "string" ? params.destination : undefined;
@@ -40,8 +31,8 @@ export default async function ConsultationPage({
   return (
     <>
       <PageHero
-        title="Book Your Free Consultation"
-        description="One form, one counsellor, one clear plan for your study abroad journey."
+        title={page.hero.title}
+        description={page.hero.description}
         breadcrumb={[{ label: "Free Consultation" }]}
       />
 
@@ -51,11 +42,9 @@ export default async function ConsultationPage({
           <aside className="lg:col-span-2">
             <div className="rounded-2xl bg-primary-700 p-8 text-white">
               <ShieldCheck size={36} aria-hidden className="text-accent-400" />
-              <h2 className="mt-4 font-heading text-2xl font-bold">
-                Why Students Trust GlobalEd
-              </h2>
+              <h2 className="mt-4 font-heading text-2xl font-bold">{page.trust.title}</h2>
               <ul className="mt-6 space-y-4">
-                {trustPoints.map((point) => (
+                {page.trust.points.map((point) => (
                   <li key={point} className="flex gap-2.5 text-sm leading-relaxed text-primary-100">
                     <CheckCircle2 size={17} aria-hidden className="mt-0.5 shrink-0 text-accent-400" />
                     {point}

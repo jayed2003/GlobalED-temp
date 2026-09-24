@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Breadcrumb, { type BreadcrumbItem } from "@/components/layout/Breadcrumb";
 import Container from "@/components/layout/Container";
+import { isOriginalUpload } from "@/lib/images";
 
 /**
  * Full-width photo hero (same look as the destination pages): the photo is dimmed and
@@ -24,6 +25,7 @@ export default function PhotoHero({
       <div className="absolute inset-0">
         <Image
           src={image}
+          unoptimized={isOriginalUpload(image)}
           alt={imageAlt}
           fill
           priority

@@ -1,50 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  MessageCircle,
-  MapPin,
-  FileCheck,
-  ClipboardCheck,
-  Stamp,
-  PlaneTakeoff,
-} from "lucide-react";
 import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
+import SiteIcon from "@/components/ui/SiteIcon";
+import type { PageContent } from "@/lib/pages";
 import { cn } from "@/lib/utils";
 
-const steps = [
-  {
-    title: "Free Counselling",
-    description: "Share your goals — we assess your profile and explore your options together.",
-    icon: MessageCircle,
-  },
-  {
-    title: "Destination & University",
-    description: "Shortlist the right country, course, and university for your budget and ambitions.",
-    icon: MapPin,
-  },
-  {
-    title: "Application & Offer",
-    description: "We prepare and submit flawless applications, then follow up until your offer arrives.",
-    icon: FileCheck,
-  },
-  {
-    title: "Documentation",
-    description: "Every document double-checked against the exact embassy checklist.",
-    icon: ClipboardCheck,
-  },
-  {
-    title: "Visa Application",
-    description: "Mock interviews and precise filing — the reason behind our strong visa success rate.",
-    icon: Stamp,
-  },
-  {
-    title: "Pre-Departure & Beyond",
-    description: "Briefings, accommodation, airport pickup, and support after you land.",
-    icon: PlaneTakeoff,
-  },
-];
+type Content = PageContent<"home">["howItWorks"];
+type Step = Content["steps"][number];
 
 /**
  * Where the progress line sits, as a fraction of the viewport height: the
@@ -59,13 +23,11 @@ function StepNode({
   active,
   iconRef,
 }: {
-  step: (typeof steps)[number];
+  step: Step;
   index: number;
   active: boolean;
   iconRef: (el: HTMLSpanElement | null) => void;
 }) {
-  const Icon = step.icon;
-
   return (
     <li className="relative flex gap-5 pb-12 last:pb-0 sm:gap-6">
       <div className="relative z-10 flex flex-none flex-col items-center">
@@ -78,7 +40,7 @@ function StepNode({
               : "border-neutral-300 bg-white text-neutral-400",
           )}
         >
-          <Icon size={22} aria-hidden />
+          <SiteIcon name={step.icon} size={22} aria-hidden />
         </span>
       </div>
       <div
@@ -111,7 +73,7 @@ function StepNode({
  * position, in both directions: scrolling down fills the rail and lights the
  * steps, scrolling back up empties it and dims them again.
  */
-export default function StepsTimeline() {
+export default function StepsTimeline({ content }: { content: Content }) {
   const listRef = useRef<HTMLOListElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLDivElement>(null);
@@ -167,11 +129,7 @@ export default function StepsTimeline() {
   return (
     <section className="bg-primary-50 py-16 sm:py-24">
       <Container>
-        <SectionHeading
-          eyebrow="How It Works"
-          title="Your Step-by-Step Study Abroad Process"
-          description="A clear, proven path from your first meeting with us to your first day abroad. Scroll to follow the journey."
-        />
+        <SectionHeading eyebrow={content.eyebrow} title={content.title} description={content.description} />
         <ol ref={listRef} className="relative mx-auto mt-12 max-w-2xl">
           <div
             ref={railRef}
@@ -183,9 +141,9 @@ export default function StepsTimeline() {
               className="h-full w-full origin-top scale-y-0 bg-primary-700 transition-transform duration-150 ease-out motion-reduce:transition-none"
             />
           </div>
-          {steps.map((step, index) => (
+          {content.steps.map((step, index) => (
             <StepNode
-              key={step.title}
+              key={`${index}-${step.title}`}
               step={step}
               index={index}
               active={index < activeCount}
