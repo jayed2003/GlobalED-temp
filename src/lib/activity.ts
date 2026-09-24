@@ -1,5 +1,5 @@
 import type { Session } from "next-auth";
-import type { ActivityAction } from "@/generated/prisma/client";
+import type { ActivityAction, AdminPermission } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 
 /**
@@ -31,6 +31,52 @@ export const ENTITY_LABELS = {
 } as const;
 
 export type EntityType = keyof typeof ENTITY_LABELS;
+
+/** Who may see an entry on the dashboard: the section's permission ("MASTER" = master admin only). */
+export const ENTITY_PERMISSION: Record<EntityType, AdminPermission | "MASTER"> = {
+  destination: "DESTINATIONS",
+  course: "COURSES",
+  blog: "BLOGS",
+  event: "EVENTS",
+  ielts: "IELTS",
+  testimonial: "TESTIMONIALS",
+  lead: "LEADS",
+  message: "MESSAGES",
+  admin: "MASTER",
+  page: "PAGES",
+  settings: "SETTINGS",
+  branch: "SETTINGS",
+  service: "SERVICES",
+  faq: "FAQS",
+  team: "TEAM",
+  session: "MASTER",
+};
+
+/** Entity types an admin may see (all of them for the master admin). */
+export function visibleEntityTypes(role: "ADMIN" | "EDITOR", permissions: AdminPermission[]): EntityType[] {
+  return (Object.keys(ENTITY_PERMISSION) as EntityType[]).filter((type) => {
+    const needs = ENTITY_PERMISSION[type];
+    return role === "ADMIN" || (needs !== "MASTER" && permissions.includes(needs));
+  });
+}
+
+export function entityLabel(type: string): string {
+  return ENTITY_LABELS[type as EntityType] ?? type;
+}
+
+/**
+ * One entry as a sentence after the admin's name, split so the item can be a
+ * link: "published" + "blog post" + "Study in the UK".
+ */
+export function describeActivity(entry: { action: ActivityAction; entityType: string; entityLabel: string }) {
+  const label = entityLabel(entry.entityType);
+  // "Blog post" → "blog post", but "FAQ" and "IELTS content" keep their capitals.
+  const type = /^[A-Z]{2}/.test(label) ? label : label.charAt(0).toLowerCase() + label.slice(1);
+  if (entry.action === "SIGNED_IN") return { verb: "signed in", type: "", item: "" };
+  if (entry.action === "BULK_DELETED") return { verb: "deleted", type: "", item: `${entry.entityLabel} (${type}s)` };
+  const item = entry.entityLabel.toLowerCase() === label.toLowerCase() ? "" : entry.entityLabel;
+  return { verb: ACTION_LABELS[entry.action], type, item };
+}
 
 export const ACTION_LABELS: Record<ActivityAction, string> = {
   CREATED: "created",

@@ -254,9 +254,18 @@ needed to run the site.
 - **Team** (Company → Team): name, role, photo with alt text, optional short
   bio, **Board of Directors** or **Team**, and **Show on the Our Team page**.
   Each group has its own order (**Reorder board** / **Reorder team**).
-- **Activity log:** every create, edit, delete, status change and sign-in is
-  recorded (who, what, when) in the `ActivityLog` table, kept for 12 months.
-  Deleting an admin keeps their name on past entries.
+- **Dashboard:** a greeting and quick actions; unread leads, leads in the
+  last 7 and 30 days and unread messages; a leads-per-week chart (12 weeks);
+  **Needs attention** (past events still marked Upcoming, pages with
+  unpublished changes, drafts, scheduled posts, posts without a meta
+  description — each links to the right screen); recent activity; and how
+  much content is live. Every part only shows the sections that admin can
+  open.
+- **Activity log** (Overview → Activity, master admin only): every create,
+  edit, publish, delete, status change and sign-in (who, what, when), kept
+  for 12 months, with search and filters by admin, action, section and date.
+  Items that still exist link to their editor; deleting an admin keeps their
+  name on past entries. Read-only.
 - Errors are shown as plain messages on the form; an expired session sends
   you back to the login page.
 
@@ -516,3 +525,14 @@ production).
 
 Database migration `20260924040000_drafts_and_seo` (additive: new columns
 with defaults; already applied to production).
+
+**Phase 5 — dashboard and activity:**
+- New dashboard (`src/app/admin/(dashboard)/page.tsx`, data in
+  `src/lib/dashboard.ts`): stats, leads-per-week chart (`LeadsChart`, plain
+  elements plus a screen-reader table), Needs attention, recent activity
+  (`ActivityFeed`), content counts; permission-aware throughout; on phones the
+  cards stack with Needs attention first.
+- Activity page (`/admin/activity`) on the shared list tooling:
+  `AdminTable` gained `readOnly` and `description`; links to still-existing
+  items come from `src/lib/activity-links.ts`.
+- Blogs list: an SEO filter for posts without a meta description.

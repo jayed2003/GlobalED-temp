@@ -1,5 +1,6 @@
 import { adminPermissionLabels, grantablePermissions } from "@/lib/validation/admin-user";
 import { leadStatusOptions, messageStatusOptions } from "@/lib/inbox";
+import { ENTITY_LABELS } from "@/lib/activity";
 import type { ListConfig } from "./core";
 
 /**
@@ -118,6 +119,14 @@ export const blogsList: ListConfig = {
           { value: "yes", label: "Featured", where: { featured: true } },
           { value: "no", label: "Not featured", where: { featured: false } },
         ],
+      },
+    },
+    {
+      key: "seo",
+      label: "SEO",
+      filter: {
+        kind: "select",
+        options: [{ value: "missing", label: "No meta description", where: { metaDescription: "" } }],
       },
     },
   ],
@@ -387,6 +396,49 @@ export const teamList: ListConfig = {
   dateField: "createdAt",
   dateLabel: "Added",
   orderBy: [{ group: "asc" }, { sortOrder: "asc" }, { createdAt: "asc" }],
+};
+
+/**
+ * The activity log (master admin only). Read-only, so it is deliberately not
+ * in `listConfigs` (which bulk delete works from).
+ */
+export const activityList: ListConfig = {
+  section: "activity",
+  columns: [
+    { key: "when", label: "When" },
+    { key: "admin", label: "Admin", filter: { kind: "value", field: "adminName" } },
+    {
+      key: "action",
+      label: "Action",
+      filter: {
+        kind: "select",
+        options: [
+          { value: "created", label: "Created", where: { action: "CREATED" } },
+          { value: "updated", label: "Updated", where: { action: "UPDATED" } },
+          { value: "published", label: "Published", where: { action: "PUBLISHED" } },
+          { value: "unpublished", label: "Unpublished", where: { action: "UNPUBLISHED" } },
+          { value: "deleted", label: "Deleted", where: { action: { in: ["DELETED", "BULK_DELETED"] } } },
+          { value: "status", label: "Status changed", where: { action: "STATUS_CHANGED" } },
+          { value: "signin", label: "Signed in", where: { action: "SIGNED_IN" } },
+        ],
+      },
+    },
+    {
+      key: "type",
+      label: "Section",
+      filter: {
+        kind: "select",
+        options: Object.entries(ENTITY_LABELS).map(([value, label]) => ({ value, label, where: { entityType: value } })),
+      },
+    },
+    { key: "item", label: "Item", filter: { kind: "text", fields: ["entityLabel"] } },
+    { key: "details", label: "Details", filter: { kind: "text", fields: ["details"] } },
+  ],
+  searchFields: ["adminName", "entityLabel", "details"],
+  dateField: "createdAt",
+  dateLabel: "When",
+  orderBy: { createdAt: "desc" },
+  pageSize: 50,
 };
 
 export const listConfigs = {

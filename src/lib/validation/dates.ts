@@ -122,3 +122,15 @@ export function formatDhakaDateTime(d: Date): string {
 export function isInFuture(d: Date): boolean {
   return d.getTime() > Date.now();
 }
+
+/** "just now", "5 min ago", "3 h ago", "2 days ago"; older than a week: the date. */
+export function timeAgo(d: Date, now = Date.now()): string {
+  const minutes = Math.floor((now - d.getTime()) / 60_000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return days === 1 ? "yesterday" : `${days} days ago`;
+  return new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Dhaka", day: "numeric", month: "short", year: "numeric" }).format(d);
+}

@@ -23,6 +23,7 @@ import {
   Briefcase,
   HelpCircle,
   UsersRound,
+  History,
 } from "lucide-react";
 import type { AdminPermission } from "@/generated/prisma/client";
 import SignOutButton from "@/components/admin/SignOutButton";
@@ -45,7 +46,10 @@ interface NavItem {
 const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: "Overview",
-    items: [{ href: "/admin", label: "Dashboard", icon: LayoutDashboard, permission: null }],
+    items: [
+      { href: "/admin", label: "Dashboard", icon: LayoutDashboard, permission: null },
+      { href: "/admin/activity", label: "Activity", icon: History, permission: "MASTER" },
+    ],
   },
   {
     label: "Content",

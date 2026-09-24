@@ -12,8 +12,9 @@ import { cn } from "@/lib/utils";
 export interface AdminTableRow {
   id: string;
   cells: React.ReactNode[];
-  editHref: string;
-  deleteEndpoint: string;
+  /** Omitted in a read-only list. */
+  editHref?: string;
+  deleteEndpoint?: string;
   label: string;
   /** Unread inbox item: shown in bold. */
   unread?: boolean;
@@ -29,9 +30,11 @@ const inputClass =
  * filter, row selection with "select all" and bulk delete, pagination and
  * (for leads) CSV download. All state lives in the URL (see
  * src/lib/admin-list/core.ts); the server page does the filtering.
+ * `readOnly` lists (the activity log) have no selection, edit or delete.
  */
 export default function AdminTable({
   title,
+  description,
   newHref,
   newLabel,
   editLabel,
@@ -45,8 +48,11 @@ export default function AdminTable({
   dateLabel,
   exportHref,
   actions,
+  readOnly = false,
 }: {
   title: string;
+  /** One line under the title. */
+  description?: string;
   newHref?: string;
   newLabel?: string;
   editLabel?: string;
@@ -61,6 +67,7 @@ export default function AdminTable({
   exportHref?: string;
   /** Extra buttons in the header (e.g. "Reorder"). */
   actions?: React.ReactNode;
+  readOnly?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -125,7 +132,7 @@ export default function AdminTable({
   const deleteCount = allMatching ? total : selected.size;
 
   const confirmDelete = async () => {
-    if (!pendingDelete) return;
+    if (!pendingDelete?.deleteEndpoint) return;
     setDeleting(true);
     setError(null);
     const result = await adminRequest(pendingDelete.deleteEndpoint, { method: "DELETE" });
@@ -193,7 +200,10 @@ export default function AdminTable({
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-heading text-2xl font-bold text-primary-900">{title}</h1>
+        <div>
+          <h1 className="font-heading text-2xl font-bold text-primary-900">{title}</h1>
+          {description && <p className="mt-1 max-w-2xl text-sm text-neutral-500">{description}</p>}
+        </div>
         <div className="flex items-center gap-2">
           {actions}
           {exportHref && (
@@ -337,34 +347,36 @@ export default function AdminTable({
         <table className="w-full text-left text-sm">
           <thead className="border-b border-neutral-200 bg-neutral-50">
             <tr>
-              <th className="w-10 px-4 py-3">
-                <input
-                  type="checkbox"
-                  aria-label="Select all on this page"
-                  className="h-4 w-4 accent-primary-700"
-                  checked={allOnPage}
-                  ref={(el) => {
-                    if (el) el.indeterminate = selected.size > 0 && !allOnPage;
-                  }}
-                  onChange={toggleAllOnPage}
-                  disabled={selectableRows.length === 0}
-                />
-              </th>
+              {!readOnly && (
+                <th className="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    aria-label="Select all on this page"
+                    className="h-4 w-4 accent-primary-700"
+                    checked={allOnPage}
+                    ref={(el) => {
+                      if (el) el.indeterminate = selected.size > 0 && !allOnPage;
+                    }}
+                    onChange={toggleAllOnPage}
+                    disabled={selectableRows.length === 0}
+                  />
+                </th>
+              )}
               {columns.map((col) => (
                 <th key={col.key} className="px-4 py-3 font-semibold text-neutral-600">
                   {col.label}
                 </th>
               ))}
-              <th className="px-4 py-3" />
+              {!readOnly && <th className="px-4 py-3" />}
             </tr>
             <tr className="border-t border-neutral-200">
-              <th />
+              {!readOnly && <th />}
               {columns.map((col) => (
                 <th key={col.key} className="px-4 pb-2.5 pt-0 font-normal">
                   {filterControl(col, true)}
                 </th>
               ))}
-              <th />
+              {!readOnly && <th />}
             </tr>
           </thead>
           <tbody>
@@ -377,49 +389,55 @@ export default function AdminTable({
                   (selected.has(row.id) || allMatching) && "bg-primary-50/60",
                 )}
               >
-                <td className="px-4 py-3">
-                  {row.selectable !== false && (
-                    <input
-                      type="checkbox"
-                      aria-label={`Select ${row.label}`}
-                      className="h-4 w-4 accent-primary-700"
-                      checked={allMatching || selected.has(row.id)}
-                      disabled={allMatching}
-                      onChange={() => toggleRow(row.id)}
-                    />
-                  )}
-                </td>
+                {!readOnly && (
+                  <td className="px-4 py-3">
+                    {row.selectable !== false && (
+                      <input
+                        type="checkbox"
+                        aria-label={`Select ${row.label}`}
+                        className="h-4 w-4 accent-primary-700"
+                        checked={allMatching || selected.has(row.id)}
+                        disabled={allMatching}
+                        onChange={() => toggleRow(row.id)}
+                      />
+                    )}
+                  </td>
+                )}
                 {row.cells.map((cell, index) => (
                   <td key={index} className="px-4 py-3 text-neutral-700">
                     {cell}
                   </td>
                 ))}
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
-                    <Link
-                      href={row.editHref}
-                      className="rounded p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-primary-700"
-                      aria-label={`${editLabel ?? "Edit"} ${row.label}`}
-                    >
-                      <Pencil size={16} aria-hidden />
-                    </Link>
-                    {row.selectable !== false && (
-                      <button
-                        type="button"
-                        onClick={() => setPendingDelete(row)}
-                        className="rounded p-1.5 text-neutral-500 hover:bg-red-50 hover:text-red-600"
-                        aria-label={`Delete ${row.label}`}
-                      >
-                        <Trash2 size={16} aria-hidden />
-                      </button>
-                    )}
-                  </div>
-                </td>
+                {!readOnly && (
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-2">
+                      {row.editHref && (
+                        <Link
+                          href={row.editHref}
+                          className="rounded p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-primary-700"
+                          aria-label={`${editLabel ?? "Edit"} ${row.label}`}
+                        >
+                          <Pencil size={16} aria-hidden />
+                        </Link>
+                      )}
+                      {row.selectable !== false && row.deleteEndpoint && (
+                        <button
+                          type="button"
+                          onClick={() => setPendingDelete(row)}
+                          className="rounded p-1.5 text-neutral-500 hover:bg-red-50 hover:text-red-600"
+                          aria-label={`Delete ${row.label}`}
+                        >
+                          <Trash2 size={16} aria-hidden />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={columns.length + 2} className="px-4 py-8 text-center text-neutral-400">
+                <td colSpan={columns.length + (readOnly ? 0 : 2)} className="px-4 py-8 text-center text-neutral-400">
                   {hasFilters ? "Nothing matches these filters." : "Nothing here yet."}
                 </td>
               </tr>
