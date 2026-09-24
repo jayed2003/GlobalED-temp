@@ -643,3 +643,10 @@ with defaults; already applied to production).
   countries (today there are 13). The `Pagination` component
   (`src/components/ui/Pagination.tsx`) and `src/lib/pagination.ts` can be
   reused for other public lists.
+- **Courses page in pages of 9**, within the chosen category. The category
+  chips are now links (`/courses?category=ielts`, `…&page=2`), so a filtered
+  view can be shared and the back button works; switching category starts at
+  page 1 and keeps your place on the page. Page 2+ of all courses gets its
+  own title and canonical URL; category views point search engines at
+  `/courses`. Unknown categories and page numbers are 404s. Controls appear
+  once a view has more than 9 courses (today there are 7).
