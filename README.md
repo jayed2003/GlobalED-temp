@@ -295,11 +295,16 @@ only see the sections you've been given.
 | A course, a service | Content → Courses / Services |
 | Blog posts | Content → Blogs |
 | Events (and marking them Previous once they're over) | Content → Events |
-| The IELTS pages' details | Content → IELTS Content |
+| The text on the IELTS pages (what IELTS is, reasons, GlobalEd's services, preparation, success stories) | Content → IELTS Content |
+| The IELTS pages' header intros, the hub's card texts and their search text | Content → Pages (IELTS group) |
 | Questions on the FAQs page | Company → FAQs |
 | People on Our Team | Company → Team |
 | Student reviews | Company → Reviews |
 | Bookings and contact-form messages | Inbox → Leads / Messages |
+
+The IELTS pages are the one place split in two: their text is in **IELTS
+Content**, while the headers, card texts and search settings are in
+**Pages**.
 
 Menus, buttons, page layouts and the legal pages can't be changed here — ask
 a developer.
@@ -522,8 +527,8 @@ Every part of the site made editable from the admin panel, in phases
   SEO fields (`SeoFields.tsx`) used by the blog SEO panel.
 - Activity log (`src/lib/activity.ts`) wired into every admin change and
   sign-in; preview mode (`src/lib/preview.ts`, `/api/admin/preview`).
-- New permissions reserved for the coming sections: Pages, Services, FAQs,
-  Team, Site Settings (offered in the admin form once each section exists).
+- New permissions for the CMS sections: Pages, Services, FAQs, Team, Site
+  Settings (each offered in the admin form once its section shipped).
 
 Database migration `20260924000000_activity_log_and_cms_permissions`
 (additive; already applied to production).
