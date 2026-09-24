@@ -410,8 +410,8 @@ Database migration `20260924000000_activity_log_and_cms_permissions`
 - Leads list: the branch filter lists current branches plus any older name
   still on a lead.
 - Reusable **Reorder** dialog (drag or keyboard) and reorder endpoints.
-- `src/data/site.ts` removed; `src/data/branches.ts` is only used by the
-  full seed now.
+- `src/data/site.ts` and `src/data/branches.ts` removed (their content now
+  lives in the database, pre-filled by the migration).
 
 Database migration `20260924010000_site_settings_and_branches` (additive,
 pre-filled with the previous hard-coded values — the site looked identical
