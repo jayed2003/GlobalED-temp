@@ -57,7 +57,7 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
   return (
     <AdminTable
       title="Activity"
-      description="Every change made in the admin panel and every sign-in, newest first. Kept for 12 months; items that still exist link to their editor."
+      description="Every change made in the admin panel and every sign-in, newest first. Kept for 6 months; items that still exist link to their editor."
       readOnly
       rows={rows}
       total={total}

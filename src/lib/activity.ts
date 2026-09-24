@@ -89,8 +89,8 @@ export const ACTION_LABELS: Record<ActivityAction, string> = {
   SIGNED_IN: "signed in",
 };
 
-/** Entries are kept for a year. */
-const RETENTION_MS = 365 * 24 * 60 * 60 * 1000;
+/** Entries are kept for six months. */
+const RETENTION_MS = 183 * 24 * 60 * 60 * 1000;
 
 interface Entry {
   action: ActivityAction;

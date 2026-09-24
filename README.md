@@ -272,7 +272,8 @@ needed to run the site.
   open.
 - **Activity log** (Overview → Activity, master admin only): every create,
   edit, publish, delete, status change and sign-in (who, what, when), kept
-  for 12 months, with search and filters by admin, action, section and date.
+  for 6 months (older entries are cleared automatically as new ones are
+  logged), with search and filters by admin, action, section and date.
   Items that still exist link to their editor; deleting an admin keeps their
   name on past entries. Read-only.
 - Errors are shown as plain messages on the form; an expired session sends
