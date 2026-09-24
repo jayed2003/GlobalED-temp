@@ -46,53 +46,33 @@ const steps = [
   },
 ];
 
-/** One node on the flow chart — activates itself as it scrolls into view. */
+/**
+ * Where the progress line sits, as a fraction of the viewport height: the
+ * rail fills down to it, and every step whose icon is above it is lit.
+ */
+const TRIGGER = 0.65;
+
+/** One node on the flow chart. */
 function StepNode({
   step,
   index,
-  onActivate,
+  active,
+  iconRef,
 }: {
   step: (typeof steps)[number];
   index: number;
-  onActivate: (index: number) => void;
+  active: boolean;
+  iconRef: (el: HTMLSpanElement | null) => void;
 }) {
-  const ref = useRef<HTMLLIElement>(null);
-  const [active, setActive] = useState(false);
   const Icon = step.icon;
 
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      const f = requestAnimationFrame(() => {
-        setActive(true);
-        onActivate(index);
-      });
-      return () => cancelAnimationFrame(f);
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setActive(true);
-          onActivate(index);
-        }
-      },
-      { threshold: 0.5, rootMargin: "0px 0px -15% 0px" },
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index]);
-
   return (
-    <li ref={ref} className="relative flex gap-5 pb-12 last:pb-0 sm:gap-6">
+    <li className="relative flex gap-5 pb-12 last:pb-0 sm:gap-6">
       <div className="relative z-10 flex flex-none flex-col items-center">
         <span
+          ref={iconRef}
           className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-500 sm:h-14 sm:w-14",
+            "flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-500 motion-reduce:transition-none sm:h-14 sm:w-14",
             active
               ? "border-primary-700 bg-primary-700 text-white shadow-md shadow-primary-700/30"
               : "border-neutral-300 bg-white text-neutral-400",
@@ -103,7 +83,7 @@ function StepNode({
       </div>
       <div
         className={cn(
-          "flex-1 rounded-xl border p-5 transition-all duration-500 sm:p-6",
+          "flex-1 rounded-xl border p-5 transition-all duration-500 motion-reduce:transition-none sm:p-6",
           active
             ? "translate-y-0 border-primary-100 bg-white opacity-100 shadow-sm"
             : "translate-y-2 border-transparent bg-transparent opacity-40",
@@ -126,17 +106,63 @@ function StepNode({
   );
 }
 
-/** Home step-by-step study abroad process — scroll-driven interactive flow chart. */
+/**
+ * Home step-by-step study abroad process — a flow chart driven by the scroll
+ * position, in both directions: scrolling down fills the rail and lights the
+ * steps, scrolling back up empties it and dims them again.
+ */
 export default function StepsTimeline() {
+  const listRef = useRef<HTMLOListElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
-  const [furthestActive, setFurthestActive] = useState(-1);
+  const fillRef = useRef<HTMLDivElement>(null);
+  const iconRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const [activeCount, setActiveCount] = useState(0);
 
-  const handleActivate = (index: number) => {
-    setFurthestActive((prev) => Math.max(prev, index));
-  };
+  useEffect(() => {
+    const list = listRef.current;
+    const rail = railRef.current;
+    const fill = fillRef.current;
+    if (!list || !rail || !fill) return;
 
-  const fillPercent =
-    furthestActive < 0 ? 0 : ((furthestActive + 1) / steps.length) * 100;
+    // Reduced motion: show the whole process at once instead of animating it.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const icons = iconRefs.current.filter((el): el is HTMLSpanElement => el !== null);
+      if (icons.length === 0) return;
+      const centre = (el: HTMLElement) => {
+        const r = el.getBoundingClientRect();
+        return r.top + r.height / 2;
+      };
+      const first = centre(icons[0]);
+      const last = centre(icons[icons.length - 1]);
+
+      // The rail runs from the first step's icon to the last one's.
+      rail.style.top = `${first - list.getBoundingClientRect().top}px`;
+      rail.style.height = `${last - first}px`;
+
+      const line = reduced ? Number.POSITIVE_INFINITY : window.innerHeight * TRIGGER;
+      const progress = last > first ? Math.min(Math.max((line - first) / (last - first), 0), 1) : 1;
+      // `scale` (not `transform`), so it replaces the scale-y-0 starting state.
+      fill.style.scale = `1 ${progress}`;
+      setActiveCount(icons.filter((el) => centre(el) <= line).length);
+    };
+    // At most one measurement per frame, however fast the scroll events come.
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, []);
 
   return (
     <section className="bg-primary-50 py-16 sm:py-24">
@@ -146,19 +172,27 @@ export default function StepsTimeline() {
           title="Your Step-by-Step Study Abroad Process"
           description="A clear, proven path from your first meeting with us to your first day abroad. Scroll to follow the journey."
         />
-        <ol className="relative mx-auto mt-12 max-w-2xl">
+        <ol ref={listRef} className="relative mx-auto mt-12 max-w-2xl">
           <div
             ref={railRef}
-            className="absolute left-6 top-0 h-full w-0.5 bg-neutral-200 sm:left-7"
+            className="absolute bottom-6 left-6 top-6 w-0.5 -translate-x-1/2 bg-neutral-200 sm:left-7 sm:top-7"
             aria-hidden
           >
             <div
-              className="w-full bg-primary-700 transition-[height] duration-500 ease-out"
-              style={{ height: `${fillPercent}%` }}
+              ref={fillRef}
+              className="h-full w-full origin-top scale-y-0 bg-primary-700 transition-transform duration-150 ease-out motion-reduce:transition-none"
             />
           </div>
           {steps.map((step, index) => (
-            <StepNode key={step.title} step={step} index={index} onActivate={handleActivate} />
+            <StepNode
+              key={step.title}
+              step={step}
+              index={index}
+              active={index < activeCount}
+              iconRef={(el) => {
+                iconRefs.current[index] = el;
+              }}
+            />
           ))}
         </ol>
       </Container>
