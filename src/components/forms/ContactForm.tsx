@@ -1,17 +1,27 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "@/lib/zod";
+import { useForm, type Resolver } from "react-hook-form";
+import type { z } from "@/lib/zod";
 import { Send } from "lucide-react";
 import { submitLeadForm } from "@/lib/formSubmit";
-import { contactSchema, type ContactFormInput } from "@/lib/validation/public-forms";
+import type { contactSchema, ContactFormInput } from "@/lib/validation/public-forms";
 import TurnstileWidget from "./TurnstileWidget";
 import { FormField, FormStatus, Honeypot, Input, SubmitButton, Textarea } from "./primitives";
 
 // The same schema object validates this form and /api/contact.
 type FormData = z.output<typeof contactSchema>;
+
+// The schema (and Zod, ~90 KB) loads the first time the form validates — on
+// leaving a field or sending — instead of with the page: this form is at the
+// bottom of /contact.
+const resolver: Resolver<ContactFormInput, unknown, FormData> = async (values, context, options) => {
+  const [{ zodResolver }, { contactSchema }] = await Promise.all([
+    import("@hookform/resolvers/zod"),
+    import("@/lib/validation/public-forms"),
+  ]);
+  return zodResolver(contactSchema)(values, context, options);
+};
 
 /** General enquiry form on the contact page. */
 export default function ContactForm() {
@@ -25,7 +35,7 @@ export default function ContactForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormInput, unknown, FormData>({
-    resolver: zodResolver(contactSchema),
+    resolver,
     mode: "onBlur",
   });
 
