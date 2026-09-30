@@ -22,9 +22,9 @@ export default function Hero({ content }: { content: PageContent<"home">["hero"]
             <Image
               src="/images/logos/logo-02.png"
               alt="GlobalED"
-              width={509}
-              height={100}
-              priority
+              width={244}
+              height={48}
+              loading="eager"
               className="ml-1 inline-block h-9 w-auto -translate-y-1.5 align-middle sm:h-11 sm:-translate-y-2 lg:h-12 lg:-translate-y-2.5"
             />
           </h1>
@@ -46,10 +46,11 @@ export default function Hero({ content }: { content: PageContent<"home">["hero"]
               src={content.image.src}
               alt={content.image.alt}
               fill
-              priority
+              loading="eager"
+              fetchPriority="high"
               unoptimized={isOriginalUpload(content.image.src)}
               className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              sizes="(max-width: 543px) calc(100vw - 32px), 512px"
             />
           </div>
         </div>

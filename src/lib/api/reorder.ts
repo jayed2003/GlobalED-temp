@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 
 /**
  * Body of every "save new order" request from a list's Reorder dialog: the

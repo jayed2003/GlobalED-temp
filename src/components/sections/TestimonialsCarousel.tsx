@@ -139,7 +139,7 @@ export default function TestimonialsCarousel({
       const step = cardStep(track);
       if (step) setPerView(Math.max(1, Math.round((track.clientWidth + GAP) / step)));
     };
-    measure();
+    // Also runs once right away, after layout (no forced reflow).
     const observer = new ResizeObserver(measure);
     observer.observe(track);
     return () => observer.disconnect();

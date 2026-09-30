@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { imageAlt } from "./image-alt";
 import { imageUrl, optionalImageUrl } from "./image-url";
 import { htmlToText } from "@/lib/rich-text";

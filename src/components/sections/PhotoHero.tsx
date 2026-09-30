@@ -28,7 +28,8 @@ export default function PhotoHero({
           unoptimized={isOriginalUpload(image)}
           alt={imageAlt}
           fill
-          priority
+          loading="eager"
+          fetchPriority="high"
           className="object-cover opacity-40"
           sizes="100vw"
         />

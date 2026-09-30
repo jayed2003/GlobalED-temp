@@ -1,4 +1,5 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import LazyMap from "@/components/ui/LazyMap";
 import type { Branch } from "@/types";
 
 /** Branch card with contact details and an embedded Google Map. */
@@ -39,14 +40,7 @@ export default function BranchCard({ branch }: { branch: Branch }) {
         </ul>
       </div>
       {branch.mapEmbedUrl && (
-        <iframe
-          src={branch.mapEmbedUrl}
-          title={`Map — GlobalEd ${branch.name} branch`}
-          loading="lazy"
-          className="h-56 w-full shrink-0 border-0"
-          referrerPolicy="no-referrer-when-downgrade"
-          allowFullScreen
-        />
+        <LazyMap src={branch.mapEmbedUrl} title={`Map — GlobalEd ${branch.name} branch`} className="h-56 w-full shrink-0" />
       )}
     </div>
   );

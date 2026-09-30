@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 
 /**
  * An image we host: a file under /images or an upload in our Vercel Blob

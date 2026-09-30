@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import type { AdminPermission } from "@/generated/prisma/client";
 
 /** Every permission the database knows (the AdminPermission enum). */

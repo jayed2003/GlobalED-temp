@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { plainText } from "./public-forms";
 import { noDuplicates } from "./normalize";
 import { checkSeoImageAlt, seoRecordFields } from "./seo";

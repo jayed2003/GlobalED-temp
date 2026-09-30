@@ -29,9 +29,9 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
             <Image
               src="/images/logos/logo-01.png"
               alt="GlobalEd"
-              width={460}
-              height={90}
-              priority
+              width={183}
+              height={36}
+              loading="eager"
               className="h-8 w-auto sm:h-9"
             />
           </Link>
@@ -120,8 +120,8 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
               <Image
                 src="/images/logos/logo-01.png"
                 alt="GlobalEd"
-                width={460}
-                height={90}
+                width={142}
+                height={28}
                 className="h-7 w-auto"
               />
               <button

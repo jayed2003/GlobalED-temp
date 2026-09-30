@@ -105,7 +105,8 @@ export default async function BlogDetailPage({
                 unoptimized={isOriginalUpload(post.coverImage)}
                 alt={post.coverImageAlt ?? post.title}
                 fill
-                priority
+                loading="eager"
+                fetchPriority="high"
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 896px"
               />

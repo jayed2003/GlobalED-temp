@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { noDuplicates } from "./normalize";
 
 const uspSchema = z.object({

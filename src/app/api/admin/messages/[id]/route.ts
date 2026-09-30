@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { prisma } from "@/lib/db";
 import { adminRoute, readJson } from "@/lib/api/admin-route";
 import { messageStatusOptions } from "@/lib/inbox";

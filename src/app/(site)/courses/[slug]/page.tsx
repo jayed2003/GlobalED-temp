@@ -94,7 +94,8 @@ export default async function CourseDetailPage({
               unoptimized={isOriginalUpload(course.image)}
               alt={course.imageAlt ?? course.title}
               fill
-              priority
+              loading="eager"
+              fetchPriority="high"
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />

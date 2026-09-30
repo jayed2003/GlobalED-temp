@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { signIn } from "next-auth/react";
 import { LogIn } from "lucide-react";
 import { FormField, FormStatus, Input, SubmitButton } from "@/components/forms/primitives";

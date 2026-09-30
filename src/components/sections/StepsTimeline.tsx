@@ -94,22 +94,25 @@ export default function StepsTimeline({ content }: { content: Content }) {
       frame = 0;
       const icons = iconRefs.current.filter((el): el is HTMLSpanElement => el !== null);
       if (icons.length === 0) return;
-      const centre = (el: HTMLElement) => {
+      // Measure everything first, then write styles: reading a position after
+      // a style change would make the browser redo layout on every frame.
+      const centres = icons.map((el) => {
         const r = el.getBoundingClientRect();
         return r.top + r.height / 2;
-      };
-      const first = centre(icons[0]);
-      const last = centre(icons[icons.length - 1]);
+      });
+      const listTop = list.getBoundingClientRect().top;
+      const line = reduced ? Number.POSITIVE_INFINITY : window.innerHeight * TRIGGER;
+      const first = centres[0];
+      const last = centres[centres.length - 1];
 
       // The rail runs from the first step's icon to the last one's.
-      rail.style.top = `${first - list.getBoundingClientRect().top}px`;
+      rail.style.top = `${first - listTop}px`;
       rail.style.height = `${last - first}px`;
 
-      const line = reduced ? Number.POSITIVE_INFINITY : window.innerHeight * TRIGGER;
       const progress = last > first ? Math.min(Math.max((line - first) / (last - first), 0), 1) : 1;
       // `scale` (not `transform`), so it replaces the scale-y-0 starting state.
       fill.style.scale = `1 ${progress}`;
-      setActiveCount(icons.filter((el) => centre(el) <= line).length);
+      setActiveCount(centres.filter((c) => c <= line).length);
     };
     // At most one measurement per frame, however fast the scroll events come.
     const schedule = () => {

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { plainText } from "@/lib/validation/public-forms";
 import { imageAlt } from "@/lib/validation/image-alt";
 import { imageUrl, optionalImageUrl } from "@/lib/validation/image-url";

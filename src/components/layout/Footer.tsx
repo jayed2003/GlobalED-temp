@@ -28,8 +28,8 @@ export default async function Footer() {
             <Image
               src="/images/logos/white-logo.png"
               alt="GlobalEd — Building Global Future"
-              width={460}
-              height={113}
+              width={196}
+              height={48}
               className="h-12 w-auto"
             />
           </Link>

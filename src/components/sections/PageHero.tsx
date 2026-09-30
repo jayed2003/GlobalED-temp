@@ -108,7 +108,8 @@ export default function PageHero({
             alt={bannerAlt}
             width={bannerWidth}
             height={bannerHeight}
-            priority
+            loading="eager"
+            fetchPriority="high"
             sizes={size === "tall" ? "(max-width: 1024px) 100vw, 50vw" : "(max-width: 1024px) 100vw, 64vw"}
             style={{ "--fade-left": `${fadeLeft}%`, "--fade-y": `${bannerFadeY}%` } as React.CSSProperties}
             className={cn(

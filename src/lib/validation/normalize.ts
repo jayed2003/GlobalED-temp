@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { z } from "@/lib/zod";
 
 /**
  * Comparison key for "is this the same thing?" checks: Unicode-normalised,

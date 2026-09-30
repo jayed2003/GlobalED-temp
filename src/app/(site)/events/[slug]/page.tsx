@@ -74,7 +74,8 @@ export default async function EventDetailPage({
             unoptimized={isOriginalUpload(event.bannerImage)}
             alt={event.bannerImageAlt ?? event.title}
             fill
-            priority
+            loading="eager"
+            fetchPriority="high"
             className="object-cover opacity-40"
             sizes="100vw"
           />

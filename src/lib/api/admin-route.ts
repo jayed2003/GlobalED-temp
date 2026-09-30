@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { Session } from "next-auth";
-import type { z } from "zod";
+import type { z } from "@/lib/zod";
 import { Prisma, type AdminPermission } from "@/generated/prisma/client";
 import { requireAdmin, requirePermission, requireSession } from "@/lib/authz";
 

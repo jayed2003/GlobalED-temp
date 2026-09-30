@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { noDuplicates } from "./normalize";
 import { imageAlt } from "./image-alt";
 import { imageUrl } from "./image-url";

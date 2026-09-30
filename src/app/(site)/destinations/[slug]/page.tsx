@@ -78,7 +78,8 @@ export default async function DestinationDetailPage({
             unoptimized={isOriginalUpload(destination.heroImage)}
             alt={destination.heroImageAlt ?? `Study in ${destination.name}`}
             fill
-            priority
+            loading="eager"
+            fetchPriority="high"
             className="object-cover opacity-40"
             sizes="100vw"
           />

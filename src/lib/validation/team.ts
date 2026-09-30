@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { plainText } from "./public-forms";
 import { imageAlt } from "./image-alt";
 import { imageUrl } from "./image-url";
