@@ -29,6 +29,8 @@ export default function ImageUploadField({
   error,
   alt,
   large,
+  fit = "cover",
+  modeChoice = true,
 }: {
   label: string;
   value: string;
@@ -40,6 +42,10 @@ export default function ImageUploadField({
    * 16:9 on the site). Otherwise a small thumbnail.
    */
   large?: boolean;
+  /** Small preview: "contain" shows the whole image (logos) instead of cropping it. */
+  fit?: "cover" | "contain";
+  /** Show the Optimized / Original choice (off where it makes no difference, e.g. logos). */
+  modeChoice?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -78,7 +84,7 @@ export default function ImageUploadField({
       type="button"
       onClick={() => inputRef.current?.click()}
       disabled={uploading}
-      className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:border-neutral-400 hover:bg-neutral-100 disabled:opacity-60"
     >
       {uploading ? <Loader2 size={16} aria-hidden className="animate-spin" /> : <UploadCloud size={16} aria-hidden />}
       {uploading ? "Uploading…" : large && value ? "Replace image" : "Upload Image"}
@@ -134,7 +140,7 @@ export default function ImageUploadField({
           <div className="mt-3 flex flex-wrap items-start gap-x-4 gap-y-2">
             {fileInput}
             {uploadButton}
-            <UploadModeToggle value={mode} onChange={setMode} />
+            {modeChoice && <UploadModeToggle value={mode} onChange={setMode} />}
           </div>
           <p className="mt-1.5 text-xs text-neutral-500">JPG, WebP or SVG, max 5 MB · shown at 16:9 (e.g. 1600 × 900 px)</p>
           {uploadError && <p className="mt-1.5 text-xs font-medium text-red-600">{uploadError}</p>}
@@ -143,13 +149,20 @@ export default function ImageUploadField({
         <div className="flex items-center gap-4">
           <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50">
             {value ? (
-              <Image src={value} alt={`Preview: ${label}`} fill className="object-cover" sizes="128px" unoptimized={isOriginalUpload(value)} />
+              <Image
+                src={value}
+                alt={`Preview: ${label}`}
+                fill
+                className={fit === "contain" ? "object-contain p-2" : "object-cover"}
+                sizes="128px"
+                unoptimized={isOriginalUpload(value)}
+              />
             ) : (
               <div className="flex h-full items-center justify-center text-xs text-neutral-400">No image</div>
             )}
           </div>
           <div className="space-y-2">
-            <UploadModeToggle value={mode} onChange={setMode} />
+            {modeChoice && <UploadModeToggle value={mode} onChange={setMode} />}
             {fileInput}
             {uploadButton}
             <p className="mt-1.5 text-xs text-neutral-500">JPG, WebP or SVG, max 5 MB</p>

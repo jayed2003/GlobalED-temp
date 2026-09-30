@@ -35,15 +35,15 @@ export default function SectionCard({
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-controls={bodyId}
-          className="flex min-w-0 flex-1 items-start gap-3 text-left"
+          className="group flex min-w-0 flex-1 items-start gap-3 text-left"
         >
           <ChevronDown
             size={18}
             aria-hidden
-            className={cn("mt-1 shrink-0 text-neutral-400 transition-transform", !open && "-rotate-90")}
+            className={cn("mt-1 shrink-0 text-neutral-400 transition group-hover:text-primary-600", !open && "-rotate-90")}
           />
           <span className="min-w-0">
-            <span className="block font-heading text-base font-bold text-primary-900">{title}</span>
+            <span className="block font-heading text-base font-bold text-primary-900 transition-colors group-hover:text-primary-600">{title}</span>
             {description && <span className="mt-0.5 block text-xs text-neutral-500">{description}</span>}
           </span>
         </button>

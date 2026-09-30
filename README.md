@@ -207,6 +207,12 @@ needed to run the site.
   straight away). Editing a published item saves it live; to work on it
   privately, move it back to Draft first. Lists show the status and filter
   by it. The booking form only offers published destinations and courses.
+- **Partner universities strip** (home page): every university on a
+  published destination that has a **logo** — set in Destinations → a
+  country → Popular Universities (optional, per university; SVG or a wide
+  WebP on a transparent background). The university name is the logo's alt
+  text. The strip is grey until hovered and pauses on hover; with no logos
+  at all it's hidden. Its title is in Pages → Home.
 - **Search & sharing** for destinations, courses, events and services: SEO
   title, meta description and share image with a search preview. Empty
   fields fall back to the page's usual title, text and image.
@@ -293,6 +299,7 @@ only see the sections you've been given.
 | Phone, email, WhatsApp, social links, the key numbers, footer text, the "book a consultation" banner | Settings → Site Settings |
 | An office: address, phone numbers, hours, map | Company → Branches |
 | A country page | Content → Destinations |
+| The university logos in the home page's partner strip | Content → Destinations → a country → Popular Universities → Logo |
 | A course, a service | Content → Courses / Services |
 | Blog posts | Content → Blogs |
 | Events (and marking them Previous once they're over) | Content → Events |
@@ -334,7 +341,8 @@ a developer.
   has to stay exactly as uploaded.
 - Every image needs **alt text**: a short description of what's in it, e.g.
   "Students at the UK education fair in Dhaka". It's read aloud to blind
-  visitors and used by Google.
+  visitors and used by Google. (University logos are the exception: their
+  alt text is the university's name.)
 
 ### Search & sharing
 

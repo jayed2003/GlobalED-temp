@@ -168,7 +168,7 @@ export default async function AdminDashboardPage() {
               <ul className="-mx-2 space-y-1">
                 {attention.map((item) => (
                   <li key={item.key}>
-                    <Link href={item.href} className="flex items-start gap-3 rounded-lg p-2 hover:bg-neutral-50">
+                    <Link href={item.href} className="flex items-start gap-3 rounded-lg p-2 hover:bg-neutral-100">
                       {item.tone === "warning" ? (
                         <AlertTriangle size={18} aria-label="Warning" className="mt-0.5 shrink-0 text-amber-600" />
                       ) : (

@@ -25,7 +25,7 @@ function mapDestination(d: DestinationWithRelations): Destination {
     flagImageAlt: d.flagImageAlt || `Flag of ${d.name}`,
     overview: d.overview,
     whyStudyHere: d.whyStudyHere,
-    popularUniversities: d.universities.map((u) => ({ name: u.name, city: u.city })),
+    popularUniversities: d.universities.map((u) => ({ name: u.name, city: u.city, logo: u.logo })),
     tuitionRange: d.tuitionRange,
     livingCost: d.livingCost,
     scholarships: d.scholarships,
@@ -50,7 +50,9 @@ async function loadDestinations(where: Prisma.DestinationWhereInput): Promise<De
 
 const getPublishedDestinations = unstable_cache(
   () => loadDestinations({ publishStatus: "PUBLISHED" }),
-  ["destinations-published"],
+  // Change the key when the cached shape changes (v2: university logos), or
+  // entries cached before a deploy are served without the new fields.
+  ["destinations-published-v2"],
   { tags: ["destinations"] },
 );
 

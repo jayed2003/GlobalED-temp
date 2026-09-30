@@ -20,7 +20,7 @@ export const destinations: Destination[] = [
       "Large, welcoming Bangladeshi community across all major cities",
     ],
     popularUniversities: [
-      { name: "University of Manchester", city: "Manchester" },
+      { name: "University of Manchester", city: "Manchester", logo: "/images/universities/university-of-manchester.webp" },
       { name: "University of Birmingham", city: "Birmingham" },
       { name: "University of Leeds", city: "Leeds" },
       { name: "University of Greenwich", city: "London" },
@@ -64,7 +64,7 @@ export const destinations: Destination[] = [
       "Flexible curricula — choose majors and minors across fields",
     ],
     popularUniversities: [
-      { name: "Arizona State University", city: "Tempe, AZ" },
+      { name: "Arizona State University", city: "Tempe, AZ", logo: "/images/universities/arizona-state-university.webp" },
       { name: "Northeastern University", city: "Boston, MA" },
       { name: "University of Texas at Arlington", city: "Arlington, TX" },
       { name: "New York Institute of Technology", city: "New York, NY" },
@@ -110,7 +110,7 @@ export const destinations: Destination[] = [
       "A genuine pathway to permanent residency",
     ],
     popularUniversities: [
-      { name: "University of British Columbia (Okanagan)", city: "Kelowna, British Columbia" },
+      { name: "University of British Columbia (Okanagan)", city: "Kelowna, British Columbia", logo: "/images/universities/university-of-british-columbia.webp" },
       { name: "University of Alberta", city: "Edmonton, Alberta" },
       { name: "University of Waterloo", city: "Waterloo, Ontario" },
       { name: "Queen's University", city: "Kingston, Ontario" },
@@ -169,7 +169,7 @@ export const destinations: Destination[] = [
       "High quality of life and safe, student-friendly cities",
     ],
     popularUniversities: [
-      { name: "University of Melbourne", city: "Melbourne, VIC" },
+      { name: "University of Melbourne", city: "Melbourne, VIC", logo: "/images/universities/university-of-melbourne.webp" },
       { name: "Monash University", city: "Melbourne, VIC" },
       { name: "University of Queensland", city: "Brisbane, QLD" },
       { name: "Victoria University", city: "Melbourne, VIC" },
@@ -213,7 +213,7 @@ export const destinations: Destination[] = [
       "Stunning environment with a relaxed, welcoming culture",
     ],
     popularUniversities: [
-      { name: "University of Auckland", city: "Auckland" },
+      { name: "University of Auckland", city: "Auckland", logo: "/images/universities/university-of-auckland.webp" },
       { name: "University of Otago", city: "Dunedin" },
       { name: "Victoria University of Wellington", city: "Wellington" },
       { name: "University of Canterbury", city: "Christchurch" },
@@ -257,7 +257,7 @@ export const destinations: Destination[] = [
       "Scholarships covering 25–100% of tuition fees",
     ],
     popularUniversities: [
-      { name: "Lund University", city: "Lund" },
+      { name: "Lund University", city: "Lund", logo: "/images/universities/lund-university.webp" },
       { name: "Uppsala University", city: "Uppsala" },
       { name: "KTH Royal Institute of Technology", city: "Stockholm" },
       { name: "University of Gothenburg", city: "Gothenburg" },
@@ -301,7 +301,7 @@ export const destinations: Destination[] = [
       "2-year post-study residence permit to find work",
     ],
     popularUniversities: [
-      { name: "University of Helsinki", city: "Helsinki" },
+      { name: "University of Helsinki", city: "Helsinki", logo: "/images/universities/university-of-helsinki.webp" },
       { name: "Aalto University", city: "Espoo" },
       { name: "Tampere University", city: "Tampere" },
       { name: "University of Turku", city: "Turku" },
@@ -345,7 +345,7 @@ export const destinations: Destination[] = [
       "Part-time work rights and post-study job-seeking period",
     ],
     popularUniversities: [
-      { name: "University of Copenhagen", city: "Copenhagen" },
+      { name: "University of Copenhagen", city: "Copenhagen", logo: "/images/universities/university-of-copenhagen.webp" },
       { name: "Aarhus University", city: "Aarhus" },
       { name: "Technical University of Denmark (DTU)", city: "Lyngby" },
       { name: "Aalborg University", city: "Aalborg" },
@@ -389,7 +389,7 @@ export const destinations: Destination[] = [
       "Warm climate and low cost of living",
     ],
     popularUniversities: [
-      { name: "National and Kapodistrian University of Athens", city: "Athens" },
+      { name: "National and Kapodistrian University of Athens", city: "Athens", logo: "/images/universities/national-and-kapodistrian-university-of-athens.webp" },
       { name: "Aristotle University of Thessaloniki", city: "Thessaloniki" },
       { name: "University of Patras", city: "Patras" },
       { name: "Athens University of Economics and Business", city: "Athens" },
@@ -434,7 +434,7 @@ export const destinations: Destination[] = [
       "International Community — meet students and professionals from different countries while studying in Malta",
     ],
     popularUniversities: [
-      { name: "University of Malta", city: "Msida" },
+      { name: "University of Malta", city: "Msida", logo: "/images/universities/university-of-malta.webp" },
       { name: "Malta College of Arts, Science & Technology", city: "Paola" },
       { name: "American University of Malta", city: "Cospicua" },
       { name: "Global College Malta", city: "SmartCity Malta" },
@@ -501,7 +501,7 @@ export const destinations: Destination[] = [
     popularUniversities: [
       { name: "University of Cyprus", city: "Nicosia" },
       { name: "Cyprus University of Technology", city: "Limassol" },
-      { name: "University of Nicosia", city: "Nicosia" },
+      { name: "University of Nicosia", city: "Nicosia", logo: "/images/universities/university-of-nicosia.webp" },
       { name: "European University Cyprus", city: "Nicosia" },
       { name: "Frederick University", city: "Nicosia" },
     ],
@@ -543,7 +543,7 @@ export const destinations: Destination[] = [
       "Growing number of English-taught bachelor's and master's programs across business, engineering, and international studies",
     ],
     popularUniversities: [
-      { name: "Seoul National University", city: "Seoul" },
+      { name: "Seoul National University", city: "Seoul", logo: "/images/universities/seoul-national-university.webp" },
       { name: "Yonsei University", city: "Seoul" },
       { name: "KAIST (Korea Advanced Institute of Science and Technology)", city: "Daejeon" },
       { name: "Sungkyunkwan University (SKKU)", city: "Seoul / Suwon" },
@@ -615,7 +615,7 @@ export const destinations: Destination[] = [
       "English-Taught Programmes — many Malaysian higher education programmes are delivered in English",
     ],
     popularUniversities: [
-      { name: "University of Malaya", city: "Kuala Lumpur" },
+      { name: "University of Malaya", city: "Kuala Lumpur", logo: "/images/universities/university-of-malaya.webp" },
       { name: "Universiti Teknologi Malaysia", city: "Johor Bahru / Kuala Lumpur" },
       { name: "Universiti Kebangsaan Malaysia", city: "Bangi" },
       { name: "Taylor's University", city: "Subang Jaya" },

@@ -39,6 +39,8 @@ export interface SiteSettings {
 export interface University {
   name: string;
   city: string;
+  /** Optional; universities with a logo appear in the home page's partner strip. */
+  logo?: string;
 }
 
 export type FaqCategory = "general" | "study-abroad" | "ielts";

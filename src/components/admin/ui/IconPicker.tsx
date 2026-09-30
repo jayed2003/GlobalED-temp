@@ -70,7 +70,7 @@ export default function IconPicker({
         aria-controls={gridId}
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "flex w-full items-center gap-3 rounded-lg border bg-white px-3 py-2 text-left text-sm text-neutral-800 hover:bg-neutral-50",
+          "flex w-full items-center gap-3 rounded-lg border bg-white px-3 py-2 text-left text-sm text-neutral-800 hover:bg-neutral-100",
           invalid ? "border-red-500" : "border-neutral-300",
         )}
       >
@@ -108,7 +108,7 @@ export default function IconPicker({
                 }}
                 className={cn(
                   "flex h-11 w-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-primary-500",
-                  selected ? "bg-primary-700 text-white" : "text-neutral-600 hover:bg-primary-50 hover:text-primary-800",
+                  selected ? "bg-primary-700 text-white" : "text-neutral-600 hover:bg-primary-100 hover:text-primary-800",
                 )}
               >
                 <Icon size={20} aria-hidden />

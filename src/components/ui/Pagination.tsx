@@ -41,7 +41,7 @@ export default function Pagination({
         {content}
       </span>
     ) : (
-      <Link href={href(to)} rel={dir} aria-label={name} className={cn(itemClass, "text-primary-700 hover:bg-primary-50")}>
+      <Link href={href(to)} rel={dir} aria-label={name} className={cn(itemClass, "text-primary-700 hover:bg-primary-100")}>
         {content}
       </Link>
     );
@@ -63,7 +63,7 @@ export default function Pagination({
             aria-current={n === page ? "page" : undefined}
             className={cn(
               itemClass,
-              n === page ? "bg-primary-700 text-white" : "text-primary-800 hover:bg-primary-50",
+              n === page ? "bg-primary-700 text-white" : "text-primary-800 hover:bg-primary-100",
             )}
           >
             {n}

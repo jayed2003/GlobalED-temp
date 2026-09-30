@@ -1,12 +1,14 @@
 import { z } from "zod";
 import { imageAlt } from "./image-alt";
-import { imageUrl } from "./image-url";
+import { imageUrl, optionalImageUrl } from "./image-url";
 import { noDuplicates } from "./normalize";
 import { checkSeoImageAlt, seoRecordFields } from "./seo";
 
 export const universitySchema = z.object({
   name: z.string().min(1, "University name is required"),
   city: z.string().min(1, "City is required"),
+  // Optional: shown in the home page's partner universities strip.
+  logo: optionalImageUrl(),
 });
 
 export const destinationFaqSchema = z.object({

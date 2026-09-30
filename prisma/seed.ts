@@ -186,7 +186,7 @@ async function main() {
         visaInfo: d.visaInfo,
         sortOrder: index,
         universities: {
-          create: d.popularUniversities.map((u, i) => ({ name: u.name, city: u.city, sortOrder: i })),
+          create: d.popularUniversities.map((u, i) => ({ name: u.name, city: u.city, logo: u.logo ?? "", sortOrder: i })),
         },
         faqs: {
           create: d.faqs.map((f, i) => ({ q: f.q, a: f.a, sortOrder: i })),

@@ -26,7 +26,7 @@ export default function FormSuccess({
       <button
         type="button"
         onClick={onReset}
-        className="mt-6 text-sm font-semibold text-primary-700 underline-offset-4 hover:underline"
+        className="mt-6 text-sm font-semibold text-primary-700 underline-offset-4 transition-colors hover:text-primary-900 hover:underline"
       >
         Submit another enquiry
       </button>

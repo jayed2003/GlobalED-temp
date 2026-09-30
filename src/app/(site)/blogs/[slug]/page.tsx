@@ -148,7 +148,7 @@ export default async function BlogDetailPage({
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full border border-neutral-200 px-4 py-1.5 text-sm text-neutral-600 transition-colors hover:border-primary-300 hover:text-primary-700"
+                  className="rounded-full border border-neutral-200 px-4 py-1.5 text-sm text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-100 hover:text-primary-800"
                 >
                   {item.label}
                 </Link>

@@ -166,7 +166,7 @@ export default function OgImageField({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:border-neutral-400 hover:bg-neutral-100 disabled:opacity-60"
         >
           {uploading ? <Loader2 size={16} aria-hidden className="animate-spin" /> : <UploadCloud size={16} aria-hidden />}
           {uploading ? "Uploading…" : value ? "Replace image" : "Choose file"}

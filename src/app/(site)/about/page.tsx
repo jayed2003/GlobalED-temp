@@ -34,7 +34,7 @@ export default async function AboutPage() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="group rounded-xl border border-neutral-200 bg-white p-6 shadow-sm transition-colors hover:border-primary-200 hover:bg-primary-50"
+                className="group rounded-xl border border-neutral-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-300 hover:shadow-lg motion-reduce:hover:translate-y-0"
               >
                 <link.icon size={28} aria-hidden className="text-accent-600" />
                 <h2 className="mt-3 font-heading text-lg font-semibold text-primary-900">

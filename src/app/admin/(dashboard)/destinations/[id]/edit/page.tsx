@@ -48,7 +48,7 @@ export default async function EditDestinationPage({ params }: { params: Promise<
             livingCost: destination.livingCost,
             scholarships: destination.scholarships,
             visaInfo: destination.visaInfo,
-            popularUniversities: destination.universities.map((u) => ({ name: u.name, city: u.city })),
+            popularUniversities: destination.universities.map((u) => ({ name: u.name, city: u.city, logo: u.logo })),
             faqs: destination.faqs.map((f) => ({ q: f.q, a: f.a })),
             publishStatus: destination.publishStatus,
             seoTitle: destination.seoTitle,

@@ -52,7 +52,7 @@ export default function CoursesFilter({
               "rounded-full px-5 py-2 text-sm font-medium transition-colors",
               active === filter.key
                 ? "bg-primary-700 text-white"
-                : "border border-neutral-200 bg-white text-neutral-600 hover:bg-primary-50 hover:text-primary-700",
+                : "border border-neutral-200 bg-white text-neutral-600 hover:border-primary-300 hover:bg-primary-100 hover:text-primary-800",
             )}
           >
             {filter.label}

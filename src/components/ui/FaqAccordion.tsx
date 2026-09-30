@@ -17,9 +17,9 @@ export default function FaqAccordion({ faqs }: { faqs: Faq[] }) {
             type="button"
             onClick={() => setOpen(open === index ? null : index)}
             aria-expanded={open === index}
-            className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left transition-colors hover:bg-primary-50"
+            className="group flex w-full items-center justify-between gap-4 px-6 py-4 text-left transition-colors hover:bg-primary-100"
           >
-            <span className="font-medium text-primary-900">{faq.q}</span>
+            <span className="font-medium text-primary-900 transition-colors group-hover:text-primary-700">{faq.q}</span>
             <ChevronDown
               size={18}
               aria-hidden

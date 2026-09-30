@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import type { NavItem } from "@/data/navigation";
+import { buttonClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import Container from "./Container";
 
@@ -72,7 +73,7 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
                           <Link
                             href={child.href}
                             onClick={(e) => e.currentTarget.blur()}
-                            className="block rounded-lg px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-primary-50 hover:text-primary-700"
+                            className="block rounded-lg px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-primary-100 hover:text-primary-800"
                           >
                             {child.label}
                           </Link>
@@ -87,17 +88,16 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/consultation"
-              className="hidden rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-primary-950 shadow-sm transition-colors hover:bg-accent-400 sm:inline-block lg:px-6"
-            >
-              Free Consultation
-            </Link>
+            <span className="hidden sm:block">
+              <Link href="/consultation" className={buttonClasses({ size: "sm", className: "sm:py-2.5 lg:px-6" })}>
+                Free Consultation
+              </Link>
+            </span>
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
               aria-label="Open navigation menu"
-              className="rounded-md p-2 text-primary-800 hover:bg-primary-50 lg:hidden"
+              className="rounded-md p-2 text-primary-800 transition-colors hover:bg-primary-100 lg:hidden"
             >
               <Menu size={24} aria-hidden />
             </button>
@@ -128,7 +128,7 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
                 type="button"
                 onClick={() => setMobileOpen(false)}
                 aria-label="Close navigation menu"
-                className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100"
+                className="rounded-md p-2 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
               >
                 <X size={22} aria-hidden />
               </button>
@@ -145,7 +145,7 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
                           setOpenGroup(openGroup === item.label ? null : item.label)
                         }
                         aria-expanded={openGroup === item.label}
-                        className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold text-primary-700 hover:bg-primary-50"
+                        className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100"
                       >
                         {item.label}
                         <ChevronDown
@@ -163,7 +163,7 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
                             <Link
                               href={item.href}
                               onClick={() => setMobileOpen(false)}
-                              className="block rounded-lg px-3 py-2 text-sm font-medium text-primary-700 hover:bg-primary-50"
+                              className="block rounded-lg px-3 py-2 text-sm font-medium text-primary-700 transition-colors hover:bg-primary-100"
                             >
                               View all {item.label}
                             </Link>
@@ -173,7 +173,7 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
                               <Link
                                 href={child.href}
                                 onClick={() => setMobileOpen(false)}
-                                className="block rounded-lg px-3 py-2 text-sm text-neutral-600 hover:bg-primary-50 hover:text-primary-700"
+                                className="block rounded-lg px-3 py-2 text-sm text-neutral-600 transition-colors hover:bg-primary-100 hover:text-primary-800"
                               >
                                 {child.label}
                               </Link>
@@ -186,7 +186,7 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
                     <Link
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block rounded-lg px-3 py-3 text-sm font-semibold text-neutral-800 hover:bg-primary-50"
+                      className="block rounded-lg px-3 py-3 text-sm font-semibold text-neutral-800 transition-colors hover:bg-primary-100 hover:text-primary-800"
                     >
                       {item.label}
                     </Link>
@@ -199,7 +199,7 @@ export default function Navbar({ navItems }: { navItems: NavItem[] }) {
               <Link
                 href="/consultation"
                 onClick={() => setMobileOpen(false)}
-                className="block rounded-lg bg-accent-500 px-6 py-3 text-center text-sm font-semibold text-primary-950 hover:bg-accent-400"
+                className={buttonClasses({ className: "w-full" })}
               >
                 Book Your Free Consultation
               </Link>

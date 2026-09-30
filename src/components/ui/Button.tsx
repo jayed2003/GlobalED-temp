@@ -5,10 +5,10 @@ type Variant = "primary" | "secondary" | "outline" | "white";
 type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-accent-500 text-primary-950 hover:bg-accent-400 shadow-sm",
+  primary: "bg-accent-500 text-primary-950 hover:bg-accent-600 shadow-sm",
   secondary: "bg-primary-700 text-white hover:bg-primary-600",
-  outline: "border-2 border-primary-700 text-primary-700 hover:bg-primary-50",
-  white: "bg-white text-primary-800 hover:bg-primary-50",
+  outline: "border-2 border-primary-700 text-primary-700 hover:bg-primary-700 hover:text-white",
+  white: "bg-white text-primary-800 hover:bg-primary-100 hover:text-primary-900",
 };
 
 const sizes: Record<Size, string> = {
@@ -23,10 +23,10 @@ export interface ButtonStyleOptions {
   className?: string;
 }
 
-/** Shared button styling for links and buttons. */
+/** Shared button styling for links and buttons. Hover: colour change, lift and shadow (no lift with reduced motion). */
 export function buttonClasses({ variant = "primary", size = "md", className }: ButtonStyleOptions = {}) {
   return cn(
-    "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
+    "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-[color,background-color,border-color,box-shadow,translate] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:shadow-sm disabled:translate-y-0 disabled:shadow-none motion-reduce:hover:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
     variants[variant],
     sizes[size],
     className,

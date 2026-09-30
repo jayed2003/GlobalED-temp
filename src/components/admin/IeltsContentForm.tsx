@@ -18,7 +18,7 @@ import { ieltsContentSchema, type IeltsContentFormValues } from "@/lib/validatio
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <details open className="rounded-xl border border-neutral-200 bg-white p-6">
-      <summary className="cursor-pointer font-heading text-lg font-bold text-primary-900">{title}</summary>
+      <summary className="cursor-pointer font-heading text-lg font-bold text-primary-900 transition-colors hover:text-primary-600">{title}</summary>
       <div className="mt-5 space-y-5">{children}</div>
     </details>
   );

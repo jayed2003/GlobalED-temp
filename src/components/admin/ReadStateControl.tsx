@@ -37,7 +37,7 @@ export default function ReadStateControl({ endpoint, read }: { endpoint: string;
       <button
         type="button"
         onClick={() => save(!isRead)}
-        className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+        className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-700 hover:border-neutral-400 hover:bg-neutral-100"
       >
         {isRead ? <Mail size={16} aria-hidden /> : <MailOpen size={16} aria-hidden />}
         {isRead ? "Mark as unread" : "Mark as read"}

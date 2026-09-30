@@ -39,7 +39,7 @@ export default function AdminError({
         </button>
         <Link
           href="/admin"
-          className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+          className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-semibold text-neutral-700 hover:border-neutral-400 hover:bg-neutral-100"
         >
           Back to dashboard
         </Link>

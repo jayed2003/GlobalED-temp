@@ -103,7 +103,8 @@ export const homePage = definePage({
     events: section({ title: "Events", description: "Heading above the upcoming events.", toggle: true, fields: headingFields() }),
     partners: section({
       title: "Partner universities strip",
-      description: "The scrolling list of partner universities (taken from the destinations).",
+      description:
+        "The scrolling strip of partner university logos. It shows every university that has a logo — add or change logos under Destinations → a country → Popular Universities.",
       toggle: true,
       fields: { title: text({ label: "Title", max: 80 }) },
     }),

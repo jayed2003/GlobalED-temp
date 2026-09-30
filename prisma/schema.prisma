@@ -146,6 +146,8 @@ model DestinationUniversity {
   destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
   name          String
   city          String
+  // Optional. Universities with a logo make up the home page's partner strip.
+  logo          String      @default("")
   sortOrder     Int         @default(0)
 }
 
@@ -294,6 +296,11 @@ model Lead {
   readAt           DateTime?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
+
+  // Admin → Leads filters by status and lists newest first; the unfiltered
+  // list, the dashboard counts and the weekly chart go by date alone.
+  @@index([status, createdAt])
+  @@index([createdAt])
 }
 
 model Testimonial {

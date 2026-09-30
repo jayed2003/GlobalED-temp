@@ -210,7 +210,7 @@ export default function AdminTable({
             <a
               href={listQuery ? `${exportHref}?${listQuery}` : exportHref}
               download
-              className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 hover:border-neutral-400 hover:bg-neutral-100"
             >
               <Download size={16} aria-hidden /> Download CSV
             </a>
@@ -298,7 +298,7 @@ export default function AdminTable({
           <button
             type="button"
             onClick={clearAll}
-            className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-xs font-semibold text-primary-700 hover:bg-primary-50"
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-xs font-semibold text-primary-700 hover:bg-primary-100"
           >
             <X size={14} aria-hidden /> Clear filters
           </button>
@@ -384,7 +384,7 @@ export default function AdminTable({
               <tr
                 key={row.id}
                 className={cn(
-                  "border-b border-neutral-100 last:border-0 hover:bg-neutral-50",
+                  "border-b border-neutral-100 last:border-0 hover:bg-neutral-100",
                   row.unread && "font-semibold",
                   (selected.has(row.id) || allMatching) && "bg-primary-50/60",
                 )}

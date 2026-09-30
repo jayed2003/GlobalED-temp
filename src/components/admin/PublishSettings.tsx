@@ -51,7 +51,7 @@ export default function PublishSettings({
             key={o.value}
             className={cn(
               "flex cursor-pointer gap-2.5 rounded-lg border p-3 text-sm",
-              mode === o.value ? "border-primary-500 bg-primary-50" : "border-neutral-200 hover:bg-neutral-50",
+              mode === o.value ? "border-primary-500 bg-primary-50" : "border-neutral-200 hover:bg-neutral-100",
             )}
           >
             <input type="radio" value={o.value} className="mt-0.5 accent-primary-700" {...register("publishMode")} />

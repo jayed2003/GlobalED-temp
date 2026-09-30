@@ -148,7 +148,7 @@ export default function AdminShell({
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     active
                       ? "bg-primary-50 text-primary-900"
-                      : "text-neutral-600 hover:bg-neutral-50 hover:text-primary-900",
+                      : "text-neutral-600 hover:bg-neutral-100 hover:text-primary-900",
                   )}
                 >
                   <item.icon size={18} aria-hidden className={active ? "text-primary-700" : "text-neutral-400"} />

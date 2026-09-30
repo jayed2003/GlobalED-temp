@@ -178,29 +178,54 @@ export default function DestinationForm({
         </FormField>
       </div>
 
-      <Controller
-        control={control}
-        name="popularUniversities"
-        render={({ field }) => (
-          <ObjectFieldArray
-            label="Popular Universities"
-            value={field.value}
-            onChange={field.onChange}
-            emptyItem={{ name: "", city: "" }}
-            error={errors.popularUniversities?.message as string | undefined}
-            renderRow={(item, update) => (
-              <div className="grid gap-2 sm:grid-cols-2">
-                <Input
-                  placeholder="University name"
-                  value={item.name}
-                  onChange={(e) => update({ name: e.target.value })}
-                />
-                <Input placeholder="City" value={item.city} onChange={(e) => update({ city: e.target.value })} />
-              </div>
-            )}
-          />
-        )}
-      />
+      <div>
+        <Controller
+          control={control}
+          name="popularUniversities"
+          render={({ field }) => (
+            <ObjectFieldArray
+              label="Popular Universities"
+              value={field.value}
+              onChange={field.onChange}
+              emptyItem={{ name: "", city: "", logo: "" }}
+              error={errors.popularUniversities?.message as string | undefined}
+              renderRow={(item, update, index) => (
+                <div className="space-y-3">
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Input
+                      placeholder="University name"
+                      value={item.name}
+                      onChange={(e) => update({ name: e.target.value })}
+                    />
+                    <Input placeholder="City" value={item.city} onChange={(e) => update({ city: e.target.value })} />
+                  </div>
+                  <ImageUploadField
+                    label="Logo (optional)"
+                    fit="contain"
+                    modeChoice={false}
+                    value={item.logo}
+                    onChange={(url) => update({ logo: url })}
+                    error={errors.popularUniversities?.[index]?.logo?.message}
+                  />
+                  {item.logo && (
+                    <button
+                      type="button"
+                      onClick={() => update({ logo: "" })}
+                      className="text-xs font-semibold text-red-600 hover:text-red-700 hover:underline"
+                    >
+                      Remove logo
+                    </button>
+                  )}
+                </div>
+              )}
+            />
+          )}
+        />
+        <p className="mt-2 text-xs text-neutral-500">
+          Universities with a logo appear in the partner universities strip on the home page (the university name is
+          used as its alt text). A wide logo on a transparent background works best: SVG, or WebP about 160 px tall.
+        </p>
+      </div>
 
       <Controller
         control={control}

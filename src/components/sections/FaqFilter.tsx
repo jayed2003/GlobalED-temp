@@ -38,7 +38,7 @@ export default function FaqFilter({ faqs }: { faqs: Faq[] }) {
                 "rounded-full border px-5 py-2 text-sm font-semibold transition-colors duration-200",
                 isActive
                   ? "border-primary-700 bg-primary-700 text-white shadow-sm"
-                  : "border-neutral-200 bg-white text-neutral-600 hover:border-primary-200 hover:text-primary-700",
+                  : "border-neutral-200 bg-white text-neutral-600 hover:border-primary-300 hover:bg-primary-100 hover:text-primary-800",
               )}
             >
               {filter.label}
