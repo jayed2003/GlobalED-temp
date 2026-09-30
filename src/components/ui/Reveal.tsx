@@ -77,7 +77,10 @@ export default function Reveal({
         transitionProperty: "opacity, transform",
         transitionDuration: "700ms",
         transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
-        willChange: "opacity, transform",
+        // No will-change: it would keep every revealed section on its own GPU
+        // layer for good, and at browser zoom levels like 90% Chrome can draw a
+        // 1px seam where two such layers meet. The transition is still
+        // GPU-animated while it runs.
       }}
     >
       {children}
