@@ -48,7 +48,9 @@ async function loadCourses(where: Prisma.CourseWhereInput): Promise<Course[]> {
 
 const getPublishedCourses = unstable_cache(
   () => loadCourses({ publishStatus: "PUBLISHED" }),
-  ["courses-published"],
+  // Change the key when cached course data changes outside the admin panel
+  // (v2: the course images migration), or old entries keep being served.
+  ["courses-published-v2"],
   { tags: ["courses"] },
 );
 
