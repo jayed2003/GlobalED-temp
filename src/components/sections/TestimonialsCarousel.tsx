@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Container from "@/components/layout/Container";
 import SectionHeading from "@/components/ui/SectionHeading";
 import TestimonialCard from "@/components/cards/TestimonialCard";
@@ -29,8 +29,8 @@ function cardStep(track: HTMLElement | null) {
 /**
  * Success stories carousel. Rotates by a full view (3 cards on desktop, 2 on
  * tablet) every few seconds and loops endlessly; the arrows move by a view
- * too, and the track can be swiped. Rotation pauses while hovered or focused,
- * with the pause button, off screen, on phones and with reduced motion.
+ * too, and the track can be swiped. Rotation pauses while hovered or focused
+ * and off screen, and doesn't run on phones or with reduced motion.
  *
  * Endless loop: the track holds copies of the list side by side and stays in
  * the middle copy — whenever scrolling stops elsewhere it jumps back by whole
@@ -55,7 +55,6 @@ export default function TestimonialsCarousel({
   const [canAutoplay, setCanAutoplay] = useState(false);
   const [inView, setInView] = useState(false);
   const [held, setHeld] = useState(false);
-  const [paused, setPaused] = useState(false);
   // Bumped on every manual move, so the timer starts over.
   const [restart, setRestart] = useState(0);
 
@@ -146,7 +145,7 @@ export default function TestimonialsCarousel({
     return () => observer.disconnect();
   }, []);
 
-  // Rotate only where the arrows and pause button are shown, and never with reduced motion.
+  // Rotate only where the arrows are shown, and never with reduced motion.
   useEffect(() => {
     const wide = window.matchMedia("(min-width: 640px)");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -170,7 +169,7 @@ export default function TestimonialsCarousel({
   }, []);
 
   const rotates = count > perView;
-  const autoplay = rotates && canAutoplay && inView && !held && !paused;
+  const autoplay = rotates && canAutoplay && inView && !held;
   useEffect(() => {
     if (!autoplay) return;
     const timer = window.setInterval(() => {
@@ -201,16 +200,6 @@ export default function TestimonialsCarousel({
               <div className="hidden shrink-0 gap-2 sm:flex">
                 <button type="button" onClick={() => manualMove(-1)} aria-label="Previous reviews" className={controlClasses}>
                   <ChevronLeft size={20} aria-hidden />
-                </button>
-                {/* Hidden with reduced motion, where nothing rotates. */}
-                <button
-                  type="button"
-                  onClick={() => setPaused((p) => !p)}
-                  aria-label={paused ? "Play automatic rotation" : "Pause automatic rotation"}
-                  title={paused ? "Play" : "Pause"}
-                  className={`${controlClasses} motion-reduce:hidden`}
-                >
-                  {paused ? <Play size={18} aria-hidden /> : <Pause size={18} aria-hidden />}
                 </button>
                 <button type="button" onClick={() => manualMove(1)} aria-label="Next reviews" className={controlClasses}>
                   <ChevronRight size={20} aria-hidden />
