@@ -12,7 +12,7 @@ import { pageMetadata, SITE_NAME } from "@/lib/seo";
 
 const getPublishedRow = unstable_cache(
   async (key: string) => prisma.sitePage.findUnique({ where: { key }, select: { published: true } }),
-  ["site-page"],
+  ["site-page-v2"],
   { tags: ["pages"] },
 );
 
