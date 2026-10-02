@@ -117,19 +117,6 @@ eventImages.forEach(([slug, label], i) => {
   add(`images/events/${slug}.svg`, gradient(label, "GlobalEd Events", 1200, 675, i));
 });
 
-// --- Blog covers ---
-const blogImages = [
-  ["study-in-uk-guide", "Study in UK Guide"],
-  ["sweden-scholarships", "Sweden Scholarships"],
-  ["ielts-writing-band7", "IELTS Writing Band 7"],
-  ["ielts-vs-pte", "IELTS vs PTE"],
-  ["speaking-confidence", "Speaking Confidence"],
-  ["study-in-malaysia", "Study in Malaysia"],
-];
-blogImages.forEach(([slug, label], i) => {
-  add(`images/blog/${slug}.svg`, gradient(label, "GlobalEd Blog", 1200, 675, i + 3));
-});
-
 // --- Misc ---
 add("images/hero/home-hero.svg", gradient("Your Future Starts Here", "IELTS | Study Abroad", 1200, 900, 0));
 add("images/og-default.svg", gradient("GlobalEd", "IELTS & Study Abroad Consultancy", 1200, 630, 1));
