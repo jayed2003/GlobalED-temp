@@ -120,8 +120,6 @@ eventImages.forEach(([slug, label], i) => {
 // --- Misc ---
 add("images/hero/home-hero.svg", gradient("Your Future Starts Here", "IELTS | Study Abroad", 1200, 900, 0));
 add("images/og-default.svg", gradient("GlobalEd", "IELTS & Study Abroad Consultancy", 1200, 630, 1));
-add("images/logos/sister-language-club.svg", gradient("Language Club", "", 400, 200, 4));
-add("images/logos/sister-foundation.svg", gradient("Foundation", "", 400, 200, 5));
 
 let count = 0;
 for (const [path, content] of files) {
