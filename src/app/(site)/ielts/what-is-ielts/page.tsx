@@ -26,7 +26,7 @@ export default async function WhatIsIeltsPage() {
         bannerHeight={768}
         bannerUniformHeight
         bannerFadeLeft={12}
-        bannerFadeY={6}
+        bannerFadeY={0}
       />
 
       <section className="py-16 sm:py-20">

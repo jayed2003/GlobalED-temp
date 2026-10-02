@@ -49,7 +49,7 @@ export default async function PartnerMarquee({ title }: { title: string }) {
               {partners.map((partner) => (
                 <li
                   key={partner.name}
-                  className="group/logo flex h-20 w-44 items-center justify-center rounded-xl border border-neutral-200 bg-white px-5 py-4 shadow-sm transition duration-300 hover:border-primary-200 hover:shadow-md sm:h-24 sm:w-52"
+                  className="group/logo flex h-20 w-44 items-center justify-center px-5 py-4 sm:h-24 sm:w-52"
                 >
                   <div className="relative h-full w-full">
                     <Image
