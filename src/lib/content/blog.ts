@@ -56,7 +56,7 @@ async function loadPosts(where: Prisma.BlogPostWhereInput): Promise<BlogPost[]> 
 
 const getPublishedPostsIncludingScheduled = unstable_cache(
   () => loadPosts({ publishStatus: "PUBLISHED" }),
-  ["blog-posts-published"],
+  ["blog-posts-published-v2"],
   { tags: ["blog-posts"] },
 );
 
@@ -81,7 +81,7 @@ const getPublishedPostBySlug = unstable_cache(
     const row = await prisma.blogPost.findFirst({ where: { slug, publishStatus: "PUBLISHED" } });
     return row ? mapPost(row) : undefined;
   },
-  ["blog-post-published-by-slug"],
+  ["blog-post-published-by-slug-v2"],
   { tags: ["blog-posts"] },
 );
 
